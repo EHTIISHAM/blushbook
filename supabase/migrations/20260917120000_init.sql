@@ -383,15 +383,12 @@ create policy bookings_owner_all on public.bookings
   using (profile_id = (select auth.uid()))
   with check (profile_id = (select auth.uid()));
 
--- Visitors need to know which slots are gone, and nothing else. The column
--- grants below keep client names and contacts out of reach.
-create policy bookings_public_busy_select on public.bookings
-  for select to anon, authenticated
-  using (
-    status in ('booked', 'completed')
-    and public.is_page_live(profile_id)
-    and starts_at > now() - interval '1 day'
-  );
+-- No public select policy on bookings at all. Visitors still need to know
+-- which slots are gone, but a row policy plus column grants would be one
+-- careless `grant` away from leaking a client list, and policies are OR'd:
+-- a signed-in tech carries the `authenticated` grants onto every other
+-- studio's rows. public.get_busy_times below exposes the times instead, and
+-- nothing else.
 
 -- ---------------------------------------------------------------------------
 -- Column grants
@@ -432,10 +429,33 @@ grant select (
   id, profile_id, blocked_on
 ) on public.blocked_dates to anon;
 
--- Busy times only: no client_name, no client_contact.
-grant select (
-  profile_id, starts_at, ends_at, status
-) on public.bookings to anon;
+-- Nothing on bookings for anon. Busy slots come from get_busy_times.
+
+-- The only thing a booking page needs to know about other people's bookings
+-- is which stretches of time are already spoken for.
+create or replace function public.get_busy_times(
+  p_profile_id uuid,
+  p_from timestamptz,
+  p_to timestamptz
+)
+returns table (starts_at timestamptz, ends_at timestamptz)
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select b.starts_at, b.ends_at
+  from public.bookings b
+  where b.profile_id = p_profile_id
+    and b.status in ('booked', 'completed')
+    and b.starts_at < p_to
+    and b.ends_at > p_from
+    and public.is_page_live(p_profile_id)
+  order by b.starts_at;
+$$;
+
+revoke execute on function public.get_busy_times(uuid, timestamptz, timestamptz) from public;
+grant execute on function public.get_busy_times(uuid, timestamptz, timestamptz) to anon, authenticated;
 
 -- Billing columns are written by the Paddle webhook using the service role,
 -- which bypasses RLS. No client-side role may write them.

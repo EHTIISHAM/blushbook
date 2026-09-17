@@ -103,11 +103,12 @@ export type BookingRow = {
   updated_at: string;
 }
 
-/** What a visitor may read: busy times, never who booked them. */
-export type BusyBooking = Pick<
-  BookingRow,
-  "profile_id" | "starts_at" | "ends_at" | "status"
->;
+/**
+ * What a visitor may read, via the get_busy_times function: the stretches of
+ * time that are spoken for, never who booked them. Visitors have no select
+ * privilege on the bookings table itself.
+ */
+export type BusyBooking = Pick<BookingRow, "starts_at" | "ends_at">;
 
 type Writable<Row, Required extends keyof Row, Generated extends keyof Row> = {
   [K in Required]: Row[K];
@@ -180,6 +181,14 @@ export type Database = {
       set_slug: {
         Args: { p_slug: string };
         Returns: string;
+      };
+      get_busy_times: {
+        Args: {
+          p_profile_id: string;
+          p_from: string;
+          p_to: string;
+        };
+        Returns: { starts_at: string; ends_at: string }[];
       };
       set_weekly_hours: {
         Args: {

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blushbook: one booking link for beauty pros</title>
+<meta name="description" content="One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.">
+<meta property="og:title" content="Blushbook: one booking link for beauty pros">
+<meta property="og:description" content="One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.">
+<!-- After deploying, upload og-image.png from the logo kit and add:
+     <meta property="og:image" content="https://YOUR-DOMAIN/og-image.png"> -->
+<meta name="theme-color" content="#B3123F">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0iI0IzMTIzRiIvPjxwYXRoIGQ9Ik0xMDAgMjIgQzEwMCAyMiAxNTQgODQgMTU0IDEyNyBDMTU0IDE2MS45OCAxMjMuNzYgMTgwIDEwMCAxODAgQzc2LjI0IDE4MCA0NiAxNjEuOTggNDYgMTI3IEM0NiA4NCAxMDAgMjIgMTAwIDIyIFoiIGZpbGw9IiNGQkYzRjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYuMDggNC41Mikgc2NhbGUoMC4yNTkyNCkiLz48L3N2Zz4=">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAUa0lEQVR42u2de3TV1ZXHz+v3u+97c0MeRAgkIZHwSFCmFNAWB2EE1BGxPqbAWrZCHWofQlut1Xms1nGmhbWcts5qrWts7Rq7ljLO6gLbWjrSKooMikgrWFMe4RUeed73/T3OOXv+uCFKuAmBPOCG/f0TktzfPb/P2XufffbZh75cfANBofKJ4RCgEA4UwoFCOFAIBwrhQCEcKIQDhXCgEA4UwoFCIRwohAOFcKAQDhTCgUI4UAgHCuFAIRwohAOFQjhQCAcK4UAhHCiEA4VwoBAOFMKBQjhQCAcKhXCgEA4UwoFCOFAIBwrhQCEcKIQDhXCgEA4UwoFCIRz9iVJCKQ4DwpGHDJCKaI18IBznkOFKMxpiHgOkQj4Qjo+xwZibSDd+/xsznnrETaQow2FBOHJkCGG3dVV/4Y6KpfPH3bmwevUddlsXFQJHhi/3VV3hZDhtXZWfXTzz2X9W6bR2nKuW3Zjef7Tr7b0iFCBao+W4UsngTGWs4JSq6RvWaikBCADRUk7fsDY4pUplLMoZwnFlfnWqbZcKNmfjem9FibZsyhhlTFu2t6Jkzsb1VDBtu4RRhKPQEhKD/xtAQalrnnokNLVGJtKU8zPmhMtEOjS15pqnHgGlCFwuD4xwDEgg5WC/tiGsjo6aL91TufJmN56kgp8diHA3nqxceXPNl+5xOuODD04H/8AIx0Bnobc0SuDiZzQVwm7tnLD8lqmPP+AmUj024+xwhLuJ1NTHHyi/aa4bS+T9mQGjAd7SaCEajwKDgzKqbWf8zfOMSBDUxWSrKGMqnQ1OqZ7+vbUk5zPy/pHcPzLasGGdCAcuMjNGKShlRILjb56nbYcWWvhSWHBQ0EANMfbGWaHq8cpy6YW+MEpBae73zt643ntVicra/eS7KGMqlQk31NY/ttru6urlegb2aVRZbqh6/NgbZ1FDgAZCKMIxTCtPKtPZ6LTaommTSuc0gpQXupRggjtd8crli8PTJrnx1HmdBRVCJtM1D9w9YfktTnvsgoMPRkHK0jmNRdMmRafVynSWcoRjeEINUNoI+qc+uMKNpybcfmPp3BkymR74hKaMyVQ2UD2udu0KlbXZwH4RAAiB6d9b66scq9LZgWfWqeAymS6dO2PC7Te68dTUB1cYQT+oQtrYKwQ4KKGcUUrszljl0vmRKdUynWUeo/ZzSwkh2nYoZwMZcQAA0NPXr/VXXaUdZ4AviTKmMpZvfFnDhrUAGgYSCFNKOdO2Qwip/dxS5jFkOhuZUl25dL7dGaOUUM4Kwr1c7ulzyhgoLdNZSknlbfOnrl2pMhblXFtOqGacv6K0490PZDJDKWH92nwqhNMRq1u3svbB5W4scUEOgjKmMtmimVNkIt26dWd/aXVKKWMgpco6IuBrePjzY/96lkxmmBDackrmNDqxZOIvh2XGolwwzgez5hqJwb9877KnBJRWWduMhsfMnDJp5S2R+mplux+VXABwj+kk0wd/vvn4b7e7iTRllHnMc0eccqbSVnBK1ae3PkM5IwAXbNsBcn7tjQX3p/58mAe8oPS5ZGjbAQ1GODB+8fWT7r3NDAWU7fQ8LWGMe4z4h80Hn/91x+4/O10J7vNQzgggHBcaYbjSV1Ey8Y6FpbMbiq6td1o7lWX3CiFBa8qYZ0yR1d51cuvOYy+/nmg6TA1xFh+5Kh5Gb9j2bHBylcpaF7cjD1pznzfVdPj1eauIBip4709xZXhyVeXf3lCxYLa3JGp3xHKPd9YfUYp7PWZpcfz9/cd/88bxV95wYkl6uZqQy9mtUEIgefB4Yv8Rlc4GJlQIr0c7bk+2ADRQzo1Q4NTruw4+t6l1+x43llSOS891CpZ1zVOPlN00V6bSF53OopRqx/FPqPCNLTm5+TVunmOiKCVaJw4cje87SAUP103UUoGGnvU2KC38Pu3Kll9va37xt517mpRla1ddthHqZexWCAGtQWmQSln2+FvnTV5zt39siczalFGigZlCuXL/s788vHGLsh3uMSljvRPhnLuxRNlNc6/71Q+HpIoHtDbCwbdu/Wrr73YYRWFQ6qz/lQq0zj1M1d2L6lYt44bQjiSMggbh82ROtTc9vfH4r7Zxr4cKTjm7nAuLLms4uicspYRRmcww05jxj39fsXC2TKaZx7TbY7sefjLedNgIByljoHWeqaw0EWze1meC9RO15ZDBvwmtmddMfXhk24L7idQkF8GcG5Nq7SZSkclVn1j/NU9JkbYdEQqcfHXnHx//iXZcEfITDZArEcCl7CCmKoDWIJURDijLbn7xFXAlASJ83pbfvRXbe8AzJkIAQKl8cSh34sn6x1aHG+tU1iZDMkcZU1k73FhX/9hqJ57M46TOPIxnTCS290DL794SPi8BAq5sfvEVZdlGOJAzMJc5GaSAKsFAa+73pg+fAKXH3fyp1u1/3Pvd/zRCAZC675RXJtJY1/jvD4FSlAzZvjmlVEsVmXF16//usFpaeb71UXeEEfB17NpX1HB1tLH2zz/4xYnfbjeKQiAVJsGGhQ/m9Zx8bZfdHjv12jsyY/fzvgGActawYZ0I+UHKocxLUgpSipC/YcM6yll/aTFKZcY+9do7dnvs5Gu7mNcDBVV3WFA1pECYKay2rlD1uBOvvCnT2b6WHlQItzNe88W7atbcJePJIa8WpozprBWaUmO3dbW//q4I9pkWo5SojGUWhY5u+oMIeIkGhGPYc6apIy2gNO1rt10qHvRd+6NviZB/mM4p5f5isLby2AtbiCv7DGgoBaWU5WRPthVcSUehFfsAUMFPbdsl+95tz8WhVZ9fGpxcpawhikPzRqaWHZxcVfX5pfkj057QJ2uf2rard9KsIObh5b6UzT/iFPqwz5Qxmc6GplZ/eusz1OBkWHdBAQhn4Ko3Ftyf/KBZBHx9hRT9PDBajiGPTGFAcagrh9eSUwrugCLTQiSDjLKjCVRwtzNRtXpZ6fxZMpEaVOHnAD+Rc5lIlc6fVbV6mduZuIhqMYRjZNCg4EiztKhmzZ3adkYsLU0Z07ZTs+ZOs7QIHDmaDmGPHjgoZ248Vbl8yfDGoX1HppXLl7jx1Gg6JMdGodlwLrzweLAfTrXjjj7jwUah2chaZIS3OhlTWWv0GQ+GZgONx2iG4xKbjdFrPBiaDTQeoxYOypibTFeuuKRmo5fxWLHETaZHQe8oVvBmQyoRDlSvWqbdS2k2PjIerlu9atnFH69FOIbwZchMtmTezEDdhBHNbfSb8wjUTSiZN1NmshThuLR0aEdWLl/CTGOkSyX62knRwEyjcvkSXfhhRyHDwZjKWJHG2tL5s2QmO2I+HjQQAMpZnnNNuW3hTLZ0/qxIY63KWKSQIw9WyFaDyoxVvvh6T2kUHHdkpikozb0mNQxluUYkmMd+UAqO6ymNli++XmasgvYshWw5NHCfWb5oLig9MhMUpBIhf+bIyR23rX39unuPv7glf1koY6B0+aK53GeSwtysL3A4GFNZK1RfHZ05RVn2CExQ7UoRDmSaW3bctrZ9265E08G2P+xivY5enjFpyrKjM6eE6qsv8er6yoSDUiqzdtnC2SISHOLi8vw2Q5rRcKa55a1bH8wcPmFEQt6y0rqvr8yfdsuVp0eCZQtny6xduJ6lYC2HBu41y5dcNwLtUEBKoyjc8tKrbyxckzly0iyO2K1dk791X7BuYp+GgVJQunzJddxbwJ6lMOFgTGWt8PRJI+BTcmQc+8Vv3lnxqNMeNyIhu62rfNHcmgfulsk+j2X3eJbw9EmF61kK8qEppcp2iq6tF+Hh9Sk9ZLy76tsi4Oc+j7ZsEQk0bFhHGO3/OBNIKcLBomvrle1QbFI7kgINxXMaRsCbdJPh9xFOCSXdh28balUqM5DMSvGcBkC3MpJ2A1zpKYtGPzFtuPZTgGi3NxmUMjeWLL/pjEM53ym63D5L9BPTPGXRYa+DRzg+ZjY08xie0uiwRKMAANqMho8+/+szZDCiCUgpwgNwKGfHpJ7SKPMYUJhXcxSm5ZDKW1ZMTdHfoAOAVAQAlM6b5+5rEUQY417P3m/+YM+afxU+L+GMaE0Fd2LJqvtuH7hDyUFMTeEtKy7QHVpWgGxQZdnhhjqzONKXuQYNhDOjKMS8HiMSMCJBogfQKUUDYZR7zfe++ETT+me5z9NNBmMymS6aWT/50VX9nN7O6/7M4ki4oW5k0nRDrsK8rIpScGU/NoN7DJW1Dz238cTm34fqqsfdtbB4biNIpV3Z56TPkeHz7v7Cd478bJOvvFxLN9fnDwAIpblTdP0sX/t8HLdQt2cL9iazvoYbgBoie6Jt550PxXZ/yD1m++93H/rxf0+8b2njk1/nXlNl7Dzn0s4mw1M2Rrtu9+cIYbd1Xv3QvaXzZ11oA9PzPCq6lZGPVbnXc+ipFzp37/VWlIiw3ygKmdHw0Z9t3jZvVebIKaMo1Ov2E1C6Fxk9P3CRDmW0aHRe45VtaRUeH0gFSoNSoLVRHEl80PzmTQ+0vPRqdxdAAEJzjUFNEfCdS0YvhzICOzgIx5AtOPv5T++4MmWf1YwWpDQiAac99s7Kx478/GUjEiKEaNsVoUDm2Ok3Fz1w7PnfeEqLP04GFcLpjE/68j2DPZYNmAQbWTKokd/3U8aUZdd+9bORaXUynfn4+RGQintNEfTvXvXt3fc/zrwesziSPnh8x20Ptr36thE9q6noEDoUmm9bH+EYJjCAez2J9/c7nfE8406ptl3fxIpPvvg9Kniv6x1zeREzGj7y003/t+xrp7fs2HnXQ+kDxz1l0d6ByOAdCgA1hNMZT7y/n3s9ANi8ZWTMhuBWayc4+dellDMZT4XPXO9ICT3r1QKA1mZxuG3r2zvv/Eb6UItRFNRnL4yHyqFQxsCRVmtnIfZ8Klg4DOHGkvF9B5hh5J2RPdc7Tv2XL1nt7ee+XVBaBP3MYzLT6JU/HSqHAgDMMOL7DrixZIF6lsLcsmdMJrNOR4ye2136I/vB3USq5ot3Vd13h9uVJz/R3UP43F8HMjQNTAEoZ05HTCazFOs5RpYPGtvd1N9NJZRSSkHra374zdC0GrdrQNd/UkPYHV1V990+NI2jgMR2N1GGSbARV6b5xHkuw6JUO5IIPnvj+kBd5flvWmFMZaxAzfjadStU1h6ClBclmeYTmOcY2ahDaxHyd2x/L9V0mPu8pO+9WcqZzlrBugnX/uhR7Uro944mSqnK2tOe+PIFXQKXX2du7unY/p4I+XHLfkRjUmYa2Za2Q0+/xEyj/1UiFcKNJUpu+KuZP/kHN5bss7WtEE5HrHL54vF/t8jtu+nsBUSjpnHo6ZeyLW3MNAo0z1F47a173Dn3mIkPDlXcOs9TFu2/YCKXGSue3WAdP93+xnvn3uCX6wjorSiZ9V9PMI8x2I7YANxrpv5y9P2vP8kNA93KpVjQmobd2nV6y1vMNHvdmJTXZchk+pofP1b52cVOWxfzmD3xCmUMAJxEctq/fdVXWa4HfVoflGKmeXrLW3ZrFy1Ys1HYASkoJQK+I89tdjsT508kUAoAWsrpG9YG66uyJ1uJJlRwKriyHJW16x/9wrjP3OgmUoO9YiGXhulMHHluswj4zkstupVhQ9tjpptbAlVXjbluxnkTVpRScF2zOFL2N3PczoTV0mqd7gCpjEhwxg8erlu34iIKefJEoq40IqGjP3/58E83GZEQKcxQtHvECrEx/ln2wJFmefGnXvkPf824gbzdXHEy93jiew/E9zRxn7d4ToO3omRIyAClRCiQOdTy5pIvO6c7qSkK16cUPhy5nZRkxl991dxN3/dNGKst5/yd/ABAaR7wMUMQQpRla8cdgosjlWZeM3v01I6lazPNJ0TIfwGFzRhzDE/koUU4mD5wfOfdDxOpmSnOb8kppYKrrO3Gk248Cf0Ull5IYoOZgki98+6H0weOi3Cw0Mkgo6MSDKQ0ouHkvkN7vvJdZpqEsYGcXaaMUs4p50NQ36WBMMZMc89Xvpvcd8iIhnsVAGBAekmlNfd7O7bvyR47Pe6OBaAUKD0ymxqgNOWspwTVHFNU0CuU0QgHIQRAhIId29/LHjs97jMLqMG1NewXa4BUPOhjpvFRCepoIWN0wUEI0VoEA11v7+vcvqdoZr1/YoW2HQAYjgNFoDUlxIgEE/sOvnvvP53c/PposhmjEQ5CCAD3e5NNh4+/sIWZRvF1jdxjasclGobKy4DShIAI+ChnB596Yffqb6eajhhFoVFGxmiEI8eHz0uUOrHpta539oWn1/onjOVeU2XtXJXHIKwFEKWNSJCZRvxP+3ev/s6hH23kHpP7faOPjNGQ5+hvvcqZG08Jv694bmPd11aWLvikdlyVsbp3VSgbiC0BDQQ0IYQA4X4vM422rW/vf/L5zh1/kpmsEQmC0gWd6boi4ch9Pc5AaZlMM49ZtWpZ9ZrPhOqrexbAKmOD1h+xQnN2h/TQQBnjfk/Pbkvyw+bmp//n8LO/1LYjQoG++tQiHIWFCAetnc6476rSMddf468eV3RtffDqCZGGup5zs9qVIBUhhArOzhyKAani7+9P/eVo7L0PM80tHdv3ZE+0mcURytio9CNXIhzdX1Vw7bgylclZBSMcGDNvZuU9iwhn4MpwQ623fAwhxDrdkXj/ADUEUfrYi1s6tu12E+mcdRFBPzONHENXxIhdOXB0ByK5zAcl4EqZsbqrhJQ2S6Mi4CWEyLTltHURznIHZITfSw3R3YtBj9rwIq8EuaIE8JE7oNQIB0jOJlACrut02LkwxSwtOlPXDqD0lWMqrmw48mQszoixnnTqFUsDwtGnUcEx6CWGQ4BCOFAIBwrhQCEcKIQDhXCgEA4UwoFCOFAIBwqFcKAQDhTCgUI4UAgHCuFAIRwohAOFcKAQDhQK4UAhHCiEA4VwoBAOFMKBQjhQCAcK4UAhHCgUwoFCOFAIBwrhQCEcKIQDhXCgEA4UwoFCOFAIBwqFcKAQDhTCgUI4UAgH6vLS/wNnUWP1BV6gEQAAAABJRU5ErkJggg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF3F5;--paper:#FFFFFF;--ink:#2A1420;--muted:#76596A;--line:#EBD9E1;
+  --mauve:#EAD3E0;--bubble:#F1E4EA;--cherry:#B3123F;--cherry-ink:#FFFFFF;
+  --butter:#F7E8B5;--frame:#2A1420;--spark:#F0547E;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B0F16;--paper:#26161F;--ink:#F7E9EF;--muted:#C3A7B4;--line:#3D2632;
+    --mauve:#33202B;--bubble:#3A2530;--cherry:#F0547E;--cherry-ink:#1B0F16;
+    --butter:#4A3D1C;--frame:#0F080C;--spark:#F7E8B5;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B0F16;--paper:#26161F;--ink:#F7E9EF;--muted:#C3A7B4;--line:#3D2632;
+  --mauve:#33202B;--bubble:#3A2530;--cherry:#F0547E;--cherry-ink:#1B0F16;
+  --butter:#4A3D1C;--frame:#0F080C;--spark:#F7E8B5;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cherry);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1080px;margin-left:auto;margin-right:auto;padding-left:20px;padding-right:20px}
+.narrow{max-width:800px}
+h1,h2{font-family:"Instrument Serif",Georgia,"Times New Roman",serif;font-weight:400;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(36px,6vw,54px);line-height:1;max-width:20ch}
+h3{margin:0;font-size:17px;font-weight:700;line-height:1.3}
+p{margin:0}
+section{scroll-margin-top:12px}
+
+/* buttons */
+.btn{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:999px;padding:14px 24px;font-weight:700;font-size:15px;background:var(--cherry);color:var(--cherry-ink);text-decoration:none;text-align:center}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.sm{padding:9px 16px;font-size:14px}
+
+/* polish drop: the brand mark */
+.drop{flex:none;display:inline-block;width:22px;height:28px;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:var(--swatch,var(--cherry));position:relative}
+.drop::after{content:"";position:absolute;left:5px;top:5px;width:5px;height:9px;border-radius:50%;background:#ffffff80;transform:rotate(-18deg)}
+
+/* header */
+.masthead{display:flex;justify-content:space-between;align-items:center;padding-top:16px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:32px;height:36px;flex:none}
+.brand-name{font-family:"Instrument Serif",Georgia,serif;font-size:25px;line-height:1;letter-spacing:.12em}
+.bm-drop{fill:var(--cherry)}.bm-shine{fill:#fff}.bm-spark{fill:var(--spark)}
+.foot-brand{display:inline-flex;align-items:center;gap:8px}.foot-brand svg{width:18px;height:20px;flex:none}
+
+/* hero */
+.hero{display:grid;gap:44px;padding-top:24px;padding-bottom:64px}
+@media (min-width:880px){.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;padding-top:40px;padding-bottom:96px}}
+h1{font-size:clamp(58px,11.5vw,116px);line-height:.9}
+.lede{font-size:18px;margin-top:22px;max-width:32em}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.fine{margin-top:14px;font-size:14px;color:var(--muted)}
+.caption{text-align:center;margin-top:14px;font-size:14px;color:var(--muted)}
+
+/* phone demo */
+.phone{position:relative;width:min(100%,310px);margin:0 auto;border-radius:46px;background:var(--frame);padding:11px;overflow:hidden;box-shadow:0 34px 60px -32px rgba(42,20,32,.5)}
+.notch{position:absolute;top:19px;left:50%;transform:translateX(-50%);width:84px;height:22px;border-radius:999px;background:var(--frame);z-index:3}
+.screen{background:var(--paper);border-radius:35px;height:560px;overflow-y:auto;padding:38px 16px 16px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.notif{position:absolute;left:18px;right:18px;top:18px;z-index:4;display:flex;gap:10px;align-items:flex-start;background:var(--ink);color:var(--bg);border-radius:20px;padding:12px 14px;font-size:13px;line-height:1.4;transform:translateY(-150%);opacity:0;transition:transform .5s cubic-bezier(.2,.9,.3,1.15),opacity .3s}
+.notif.show{transform:none;opacity:1}
+.notif .drop{width:16px;height:20px;margin-top:2px}
+.notif .drop::after{left:4px;top:4px;width:4px;height:6px}
+.p-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.p-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--cherry);color:var(--cherry-ink);font-family:"Instrument Serif",Georgia,serif;font-size:21px}
+.p-name{font-weight:700;font-size:14px;line-height:1.2}
+.p-handle{font-size:12px;color:var(--muted)}
+.p-label{font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 6px}
+.p-svc{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:8px 10px;margin-bottom:6px;font-size:13px}
+.p-svc[aria-pressed="true"]{border-color:var(--cherry)}
+.p-svc-name{flex:1;font-weight:600;line-height:1.25}
+.p-svc-name small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+.p-price{font-family:"Instrument Serif",Georgia,serif;font-size:21px;line-height:1}
+.p-days{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.p-day{border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:5px 0;font-size:11px;color:var(--muted);line-height:1.2}
+.p-day b{display:block;font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:19px;color:var(--ink)}
+.p-day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.p-day[aria-pressed="true"] b{color:var(--bg)}
+.p-times{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.p-time{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 0;font-size:12px;font-weight:600}
+.p-time[aria-pressed="true"]{background:var(--cherry);border-color:var(--cherry);color:var(--cherry-ink)}
+.p-time:disabled{text-decoration:line-through;color:var(--muted);opacity:.55;cursor:not-allowed}
+.p-btn{display:block;width:100%;margin-top:16px;border:0;border-radius:999px;padding:12px;font-weight:700;font-size:14px;background:var(--cherry);color:var(--cherry-ink)}
+.p-btn:disabled{opacity:.45;cursor:not-allowed}
+.p-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.ok-screen{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:0 6px}
+.ok-mark{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--cherry);color:var(--cherry-ink);font-size:28px}
+.ok-title{font-family:"Instrument Serif",Georgia,serif;font-size:32px;line-height:1}
+.ok-sub{font-size:14px}
+.ok-next{font-size:13px;background:var(--butter);border-radius:12px;padding:9px 12px}
+@media (prefers-reduced-motion:reduce){.notif{transition:none}}
+
+/* shared section rhythm */
+.band{padding-top:64px;padding-bottom:64px;border-top:1.5px solid var(--line)}
+
+/* DM contrast */
+.dm-grid{display:grid;gap:18px;margin-top:26px}
+@media (min-width:760px){.dm-grid{grid-template-columns:1fr 1fr;align-items:start}}
+.thread{margin:0;background:var(--paper);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.thread.better{box-shadow:inset 0 0 0 1.5px var(--cherry)}
+.thread figcaption{font-weight:700;font-size:14px;margin-bottom:8px}
+.bub{max-width:82%;padding:9px 13px;border-radius:18px;font-size:14px;line-height:1.35}
+.bub.in{align-self:flex-start;background:var(--bubble);border-bottom-left-radius:6px}
+.bub.out{align-self:flex-end;background:var(--cherry);color:var(--cherry-ink);border-bottom-right-radius:6px}
+.bub.sys{align-self:stretch;max-width:none;background:var(--butter);border-radius:14px;text-align:center;margin-top:8px}
+.seen{align-self:flex-end;font-size:12px;color:var(--muted)}
+
+/* steps */
+.steps{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:28px;counter-reset:step}
+@media (min-width:760px){.steps{grid-template-columns:repeat(3,1fr);gap:36px}}
+.steps li{counter-increment:step;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:start}
+.steps li::before{content:counter(step);grid-row:span 2;font-family:"Instrument Serif",Georgia,serif;font-size:64px;line-height:.8;color:var(--cherry)}
+.steps p{color:var(--muted);max-width:34ch}
+
+/* pricing */
+.pricing{padding-top:64px;padding-bottom:64px}
+.plan{background:var(--mauve);border-radius:34px;padding:30px 22px;display:grid;gap:24px;max-width:800px;margin:0 auto}
+@media (min-width:760px){.plan{grid-template-columns:1fr 1fr;padding:44px;column-gap:44px}}
+.plan h2{font-size:clamp(32px,5vw,44px)}
+.price{margin:16px 0 8px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.price s{font-size:22px;color:var(--muted)}
+.price .now{font-family:"Instrument Serif",Georgia,serif;font-size:80px;line-height:.9}
+.price .per{font-size:15px;color:var(--muted)}
+.launch{font-size:14px;max-width:34ch}
+.includes{list-style:none;margin:0;padding:0;display:grid;gap:12px;align-content:center}
+.includes li{display:flex;gap:12px;align-items:flex-start}
+.includes li::before{content:"";flex:none;width:12px;height:15px;margin-top:5px;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:var(--cherry)}
+.plan .btn{width:100%;grid-column:1/-1;padding:16px 24px;font-size:16px}
+.plan .btn.soon{background:var(--paper);color:var(--muted);cursor:default}
+.plan-note{grid-column:1/-1;text-align:center;font-size:14px;color:var(--muted);margin-top:-10px}
+
+/* faq */
+.faq{padding-bottom:72px}
+.faq h2{margin-bottom:10px}
+details{border-bottom:1.5px solid var(--line);padding:16px 0}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;font-family:"Instrument Serif",Georgia,serif;font-size:30px;line-height:.7;color:var(--cherry)}
+details[open] summary::after{content:"−"}
+details p{margin-top:8px;color:var(--muted);max-width:60ch}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:22px;padding-bottom:40px;border-top:1.5px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="bb-mark" viewBox="27 20 146 162">
+    <path class="bm-drop" d="M100 22 C100 22 154 84 154 127 C154 161.98 123.76 180 100 180 C76.24 180 46 161.98 46 127 C46 84 100 22 100 22 Z"/>
+    <path class="bm-shine" d="M75.38 123.62 L74.1 122.63 L72.6 122.01 L71 121.8 L69.4 122.01 L67.9 122.63 L66.62 123.62 L65.63 124.9 L65.01 126.4 L64.8 128 L65.01 129.6 L65.63 131.1 L66.62 132.38 L83.64 153.36 L85.08 154.54 L86.74 155.39 L88.53 155.88 L90.39 155.99 L92.23 155.72 L93.97 155.08 L95.55 154.09 L96.89 152.79 L128.99 104.67 L129.56 103.45 L129.44 102.11 L128.67 101.01 L127.45 100.44 L126.11 100.56 L125.01 101.33 L89.53 135.09 Z"/>
+    <path class="bm-spark" d="M44 37 Q46.4 49.6 59 52 Q46.4 54.4 44 67 Q41.6 54.4 29 52 Q41.6 49.6 44 37 Z"/>
+    <path class="bm-spark" d="M156 37 Q158.4 49.6 171 52 Q158.4 54.4 156 67 Q153.6 54.4 141 52 Q153.6 49.6 156 37 Z"/>
+  </symbol>
+</svg>
+
+<header class="masthead wrap" id="top">
+  <a class="brand" href="#top" aria-label="Blushbook home"><svg class="brand-mark" aria-hidden="true"><use href="#bb-mark"></use></svg><span class="brand-name">BLUSHBOOK</span></a>
+  <a class="btn sm" href="#pricing">Start free</a>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <h1>Fully booked,<br>zero DMs.</h1>
+      <p class="lede">One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit, so you can stop answering “what times do you have?” at midnight.</p>
+      <div class="cta-row">
+        <a class="btn" href="#pricing">Start free</a>
+        <a class="btn ghost" href="#how">How it works</a>
+      </div>
+      <p class="fine">Made for lash, nail and brow techs. Free until your first booking comes in.</p>
+    </div>
+    <div>
+      <div class="phone" aria-label="Demo of a Blushbook booking page">
+        <div class="notch" aria-hidden="true"></div>
+        <div class="notif" id="notif" role="status" aria-live="polite"></div>
+        <div class="screen" id="screen"></div>
+      </div>
+      <p class="caption">Book as a client, then see what lands on your phone.</p>
+    </div>
+  </section>
+
+  <section class="band wrap" aria-labelledby="dm-h">
+    <h2 id="dm-h">DM bookings eat your evenings</h2>
+    <div class="dm-grid">
+      <figure class="thread">
+        <figcaption>Your DMs now</figcaption>
+        <p class="bub in">hiii are you free thursday?</p>
+        <p class="bub out">I have 11am or 2:30!</p>
+        <p class="bub in">how much is hybrid again</p>
+        <p class="bub out">$75, and a $20 deposit holds it</p>
+        <p class="bub in">can u do 4 instead 🥺</p>
+        <p class="bub out">4 is taken, is 5:30 ok?</p>
+        <p class="seen">Seen 11:52pm</p>
+      </figure>
+      <figure class="thread better">
+        <figcaption>Your DMs with Blushbook</figcaption>
+        <p class="bub in">hiii are you free thursday?</p>
+        <p class="bub out">Hey babe, all my open times are here 💕 blushbook.app/lashesbyhira</p>
+        <p class="bub sys">New booking: Hybrid full set, Thursday at 2:30pm</p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="band wrap" id="how" aria-labelledby="how-h">
+    <h2 id="how-h">Set up once, then your link does the booking</h2>
+    <ol class="steps">
+      <li>
+        <h3>Add your services and hours</h3>
+        <p>Prices, deposit amounts and the days you work. Done in a few minutes from your phone.</p>
+      </li>
+      <li>
+        <h3>Put your link in your bio</h3>
+        <p>Instagram, TikTok, WhatsApp, wherever clients find you. Answer every “are you free?” with the same link.</p>
+      </li>
+      <li>
+        <h3>Clients book and pay the deposit</h3>
+        <p>Only open slots show, so double bookings can’t happen. Deposits go straight to your own PayPal or Stripe.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="pricing wrap" id="pricing" aria-labelledby="price-h">
+    <div class="plan">
+      <div>
+        <h2 id="price-h">One plan, everything in it</h2>
+        <p class="price">
+          <span class="sr">Regular price</span><s>$47.99</s>
+          <span class="sr">Launch price</span><span class="now">$19.99</span><span class="per">/month</span>
+        </p>
+        <p class="launch">Launch price, locked in for as long as you stay subscribed. The regular price is $47.99 a month.</p>
+      </div>
+      <ul class="includes">
+        <li>Your own booking link and page</li>
+        <li>Unlimited bookings and services</li>
+        <li>Deposits paid straight to you, no cut taken</li>
+        <li>WhatsApp reminders in one tap</li>
+        <li>Your no-show policy shown before clients book</li>
+        <li>A ready-made reply for booking DMs</li>
+      </ul>
+      <a class="btn" id="signup" href="#pricing">Lock in $19.99/month</a>
+      <p class="plan-note">Set up free. You only start paying when your first client books through your link. Cancel anytime.</p>
+    </div>
+  </section>
+
+  <section class="faq wrap narrow" aria-labelledby="faq-h">
+    <h2 id="faq-h">Questions</h2>
+    <details>
+      <summary>When do I start paying?</summary>
+      <p>Once your first client books through your link. Setting up your page and sharing it costs nothing.</p>
+    </details>
+    <details>
+      <summary>Do you take a cut of my deposits?</summary>
+      <p>No. Clients pay through your own PayPal or Stripe link, so the money goes straight to you. Blushbook is one flat monthly price.</p>
+    </details>
+    <details>
+      <summary>Do my clients need to download anything?</summary>
+      <p>No. They tap your link and book in their browser, on any phone.</p>
+    </details>
+    <details>
+      <summary>Will my $19.99 price go up?</summary>
+      <p>Not while you stay subscribed. Your launch price stays the same even after new studios move to $47.99.</p>
+    </details>
+    <details>
+      <summary>Can I cancel?</summary>
+      <p>Yes, anytime. There’s no contract.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <span class="foot-brand"><svg aria-hidden="true"><use href="#bb-mark"></use></svg>© 2026 Blushbook</span>
+  <span>Made for solo beauty pros</span>
+</footer>
+
+<script>
+/* Paste your checkout or signup link between the quotes, e.g. your Paddle checkout link. */
+const SIGNUP_URL = "";
+
+(function(){
+  const signup = document.getElementById("signup");
+  if (SIGNUP_URL) {
+    signup.href = SIGNUP_URL; signup.target = "_blank"; signup.rel = "noopener";
+  } else {
+    signup.removeAttribute("href");
+    signup.setAttribute("aria-disabled", "true");
+    signup.classList.add("soon");
+    signup.textContent = "Signups open soon";
+  }
+})();
+
+(function(){
+  const SERVICES = [
+    {id:"classic", name:"Classic full set", mins:120, price:60, deposit:15, swatch:"#B3123F"},
+    {id:"hybrid",  name:"Hybrid full set",  mins:150, price:75, deposit:20, swatch:"#8E5B9A"},
+    {id:"infill",  name:"Infill",           mins:60,  price:35, deposit:10, swatch:"#E58FA8"}
+  ];
+  const TIMES = ["10:00am","11:30am","1:00pm","2:30pm","4:00pm","5:30pm"];
+  const fmt = (d, o) => d.toLocaleDateString("en-US", o);
+  const DAYS = [1,2,3,4].map(n => {
+    const d = new Date(); d.setDate(d.getDate() + n);
+    return { wd: fmt(d,{weekday:"short"}), num: d.getDate(), full: fmt(d,{weekday:"short", month:"short", day:"numeric"}) };
+  });
+  const screen = document.getElementById("screen");
+  const notif = document.getElementById("notif");
+  const fresh = () => ({ svc:null, day:0, time:null, booked:false });
+  const taken = (i, day) => (i + day) % 3 === 0;
+  let st = fresh(), timer = null;
+
+  function render(){
+    const s = SERVICES.find(x => x.id === st.svc);
+    screen.scrollTop = 0;
+    if (st.booked) {
+      screen.innerHTML = `
+        <div class="ok-screen">
+          <div class="ok-mark" aria-hidden="true">✓</div>
+          <p class="ok-title">You’re booked in</p>
+          <p class="ok-sub">${s.name}<br>${DAYS[st.day].full} at ${st.time}</p>
+          <p class="ok-next">Next, pay the $${s.deposit} deposit to hold your slot.</p>
+          <button class="p-btn ghost" type="button" data-again>Book again</button>
+        </div>`;
+      return;
+    }
+    const label = !s ? "Choose a service" : !st.time ? "Pick a time" : `Book and pay $${s.deposit} deposit`;
+    screen.innerHTML = `
+      <div class="p-head">
+        <span class="p-av" aria-hidden="true">H</span>
+        <div><p class="p-name">Lashes by Hira</p><p class="p-handle">@lashesbyhira</p></div>
+      </div>
+      <p class="p-label">Service</p>
+      ${SERVICES.map(x => `
+        <button class="p-svc" type="button" data-svc="${x.id}" aria-pressed="${st.svc === x.id}">
+          <span class="drop" style="--swatch:${x.swatch}" aria-hidden="true"></span>
+          <span class="p-svc-name">${x.name}<small>${x.mins} min, $${x.deposit} deposit</small></span>
+          <span class="p-price">$${x.price}</span>
+        </button>`).join("")}
+      <p class="p-label">Day</p>
+      <div class="p-days">${DAYS.map((d, i) => `
+        <button class="p-day" type="button" data-day="${i}" aria-pressed="${st.day === i}">${d.wd}<b>${d.num}</b></button>`).join("")}
+      </div>
+      <p class="p-label">Time</p>
+      <div class="p-times">${TIMES.map((t, i) => taken(i, st.day)
+        ? `<button class="p-time" type="button" disabled aria-label="${t}, already booked">${t}</button>`
+        : `<button class="p-time" type="button" data-time="${t}" aria-pressed="${st.time === t}">${t}</button>`).join("")}
+      </div>
+      <button class="p-btn" type="button" data-book ${s && st.time ? "" : "disabled"}>${label}</button>`;
+  }
+
+  screen.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const hadFocus = document.activeElement === b;
+    let focusSel = null;
+    if (b.dataset.svc) {
+      st.svc = b.dataset.svc; focusSel = `[data-svc="${st.svc}"]`;
+    } else if (b.dataset.day) {
+      st.day = Number(b.dataset.day);
+      if (st.time && taken(TIMES.indexOf(st.time), st.day)) st.time = null;
+      focusSel = `[data-day="${st.day}"]`;
+    } else if (b.dataset.time) {
+      st.time = b.dataset.time; focusSel = "[data-book]";
+    } else if ("book" in b.dataset) {
+      st.booked = true; focusSel = "[data-again]";
+      const s = SERVICES.find(x => x.id === st.svc), day = DAYS[st.day].full, time = st.time;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        notif.innerHTML = `<span class="drop" aria-hidden="true"></span><span><strong>New booking</strong><br>${s.name}, ${day} at ${time}. $${s.deposit} deposit requested.</span>`;
+        notif.classList.add("show");
+      }, 700);
+    } else if ("again" in b.dataset) {
+      st = fresh(); clearTimeout(timer); notif.classList.remove("show"); focusSel = "[data-svc]";
+    }
+    render();
+    if (hadFocus && focusSel) {
+      const el = screen.querySelector(focusSel);
+      if (el) el.focus({ preventScroll:true });
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

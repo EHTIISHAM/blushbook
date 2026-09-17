@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Brand palette — ported verbatim from the original landing page.
+   Light is the default. Dark follows the system unless data-theme overrides it.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --bg: #fbf3f5;
+  --paper: #ffffff;
+  --ink: #2a1420;
+  --muted: #76596a;
+  --line: #ebd9e1;
+  --mauve: #ead3e0;
+  --bubble: #f1e4ea;
+  --cherry: #b3123f;
+  --cherry-ink: #ffffff;
+  --butter: #f7e8b5;
+  --frame: #2a1420;
+  --spark: #f0547e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b0f16;
+    --paper: #26161f;
+    --ink: #f7e9ef;
+    --muted: #c3a7b4;
+    --line: #3d2632;
+    --mauve: #33202b;
+    --bubble: #3a2530;
+    --cherry: #f0547e;
+    --cherry-ink: #1b0f16;
+    --butter: #4a3d1c;
+    --frame: #0f080c;
+    --spark: #f7e8b5;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1b0f16;
+  --paper: #26161f;
+  --ink: #f7e9ef;
+  --muted: #c3a7b4;
+  --line: #3d2632;
+  --mauve: #33202b;
+  --bubble: #3a2530;
+  --cherry: #f0547e;
+  --cherry-ink: #1b0f16;
+  --butter: #4a3d1c;
+  --frame: #0f080c;
+  --spark: #f7e8b5;
+}
+
+/* `inline` keeps the var() reference in the generated utility, so every colour
+   utility follows the theme instead of being frozen at build time. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-mauve: var(--mauve);
+  --color-bubble: var(--bubble);
+  --color-cherry: var(--cherry);
+  --color-cherry-ink: var(--cherry-ink);
+  --color-butter: var(--butter);
+  --color-frame: var(--frame);
+  --color-spark: var(--spark);
+
+  --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    background: var(--bg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cherry);
+    outline-offset: 3px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Shared pieces — the dashboard reuses the landing page's button shape
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    text-decoration: none;
+    background: var(--cherry);
+    color: var(--cherry-ink);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+  }
+
+  .btn-sm {
+    padding: 9px 16px;
+    font-size: 14px;
+  }
+
+  .card {
+    background: var(--paper);
+    border-radius: 26px;
+    padding: 22px;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+  }
+
+  .label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .field {
+    width: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 15px;
+  }
+
+  .field::placeholder {
+    color: var(--muted);
+  }
+
+  .field:focus-visible {
+    border-color: var(--cherry);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cherry) 22%, transparent);
+  }
+
+  /* The brand's polish drop, used as a service swatch and a list bullet. */
+  .drop {
+    flex: none;
+    display: inline-block;
+    width: 22px;
+    height: 28px;
+    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+    background: var(--swatch, var(--cherry));
+    position: relative;
+  }
+
+  .drop::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 5px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ffffff80;
+    transform: rotate(-18deg);
+  }
+}

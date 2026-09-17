@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blushbook</title>
+<meta name="theme-color" content="#B3123F">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0iI0IzMTIzRiIvPjxwYXRoIGQ9Ik0xMDAgMjIgQzEwMCAyMiAxNTQgODQgMTU0IDEyNyBDMTU0IDE2MS45OCAxMjMuNzYgMTgwIDEwMCAxODAgQzc2LjI0IDE4MCA0NiAxNjEuOTggNDYgMTI3IEM0NiA4NCAxMDAgMjIgMTAwIDIyIFoiIGZpbGw9IiNGQkYzRjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYuMDggNC41Mikgc2NhbGUoMC4yNTkyNCkiLz48L3N2Zz4=">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF3F5; --paper:#FFFFFF; --ink:#2A1420; --muted:#7A5F6C;
+  --line:#EBD9E1; --mauve:#EAD3E0; --cherry:#B3123F; --cherry-ink:#FFFFFF;
+  --butter:#F7E8B5; --ok:#2E7D5B; --spark:#F0547E;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B0F16; --paper:#26161F; --ink:#F7E9EF; --muted:#C3A7B4;
+    --line:#3D2632; --mauve:#3A2230; --cherry:#F0547E; --cherry-ink:#1B0F16;
+    --butter:#4A3D1C; --ok:#7FD3A9; --spark:#F7E8B5;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B0F16; --paper:#26161F; --ink:#F7E9EF; --muted:#C3A7B4;
+  --line:#3D2632; --mauve:#3A2230; --cherry:#F0547E; --cherry-ink:#1B0F16;
+  --butter:#4A3D1C; --ok:#7FD3A9; --spark:#F7E8B5;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 96px}
+h1,h2,h3{font-family:"Instrument Serif",Georgia,serif;font-weight:400;margin:0;line-height:1.1}
+h1{font-size:44px}
+h2{font-size:28px;margin-bottom:10px}
+h3{font-size:21px}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cherry);outline-offset:2px}
+
+/* mode switch */
+.switch{display:flex;background:var(--mauve);border-radius:999px;padding:4px;margin-bottom:22px}
+.switch button{flex:1;border:0;background:transparent;padding:9px 10px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted)}
+.switch button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
+
+/* profile header */
+.hero{text-align:center;padding:8px 0 22px}
+.avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%, #fff6 0 18%, transparent 19%), var(--cherry);
+  color:var(--cherry-ink);font-family:"Instrument Serif",serif;font-size:38px}
+.hero .handle{color:var(--muted);font-size:14px;margin-top:4px}
+.hero .bio{margin:10px auto 0;max-width:36ch}
+
+/* polish-swatch service picker: the one bold element */
+.services{display:grid;gap:10px}
+.svc{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:12px 14px}
+.svc[aria-pressed="true"]{border-color:var(--cherry)}
+.drop{flex:none;width:38px;height:48px;border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;background:var(--swatch);position:relative}
+.drop::after{content:"";position:absolute;left:9px;top:9px;width:8px;height:14px;border-radius:50%;background:#ffffff80;transform:rotate(-18deg)}
+.svc .meta{flex:1;min-width:0}
+.svc .name{font-weight:600}
+.svc .price{font-family:"Instrument Serif",serif;font-size:24px;white-space:nowrap}
+
+section{margin-top:26px}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.day{flex:none;width:58px;border:1.5px solid var(--line);background:var(--paper);border-radius:14px;padding:8px 0;text-align:center}
+.day b{display:block;font-family:"Instrument Serif",serif;font-weight:400;font-size:24px;line-height:1}
+.day span{font-size:12px;color:var(--muted)}
+.day[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.day[aria-pressed="true"] span{color:inherit;opacity:.75}
+.day:disabled{opacity:.35;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.slot{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:9px 0;font-weight:600;font-size:14px}
+.slot[aria-pressed="true"]{background:var(--cherry);border-color:var(--cherry);color:var(--cherry-ink)}
+.empty{background:var(--paper);border:1.5px dashed var(--line);border-radius:14px;padding:14px;color:var(--muted);font-size:14px}
+
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+input,select,textarea{width:100%;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px}
+textarea{resize:vertical;min-height:70px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+
+.btn{display:block;width:100%;border:0;border-radius:999px;padding:14px;font-weight:700;background:var(--cherry);color:var(--cherry-ink);text-align:center;text-decoration:none}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{display:inline-block;width:auto;padding:8px 14px;font-size:13px}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:26px 16px 16px}
+.sticky .inner{max-width:520px;margin:0 auto}
+.summary{font-size:13px;text-align:center;color:var(--muted);margin-bottom:8px}
+
+.note{background:var(--butter);border-radius:14px;padding:12px 14px;font-size:14px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:14px}
+.list{display:grid;gap:10px}
+.bk{display:grid;gap:8px}
+.bk .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.tag{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--mauve);white-space:nowrap}
+.tag.paid{background:transparent;color:var(--ok);border:1.5px solid currentColor}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.tabs{display:flex;gap:18px;border-bottom:1.5px solid var(--line);margin-bottom:6px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 0;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1.5px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--cherry)}
+.svcrow{display:flex;gap:10px;align-items:center}
+.svcrow .drop{width:28px;height:36px}
+.svcrow .drop::after{left:6px;top:6px;width:6px;height:10px}
+.x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:4px 8px}
+.weekdays{display:flex;gap:6px;flex-wrap:wrap}
+.weekdays button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600}
+.weekdays button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.linkbox{display:flex;gap:8px;align-items:center;background:var(--mauve);border-radius:14px;padding:10px 12px;font-weight:600;word-break:break-all}
+.done{text-align:center;padding:30px 0}
+.done .avatar{background:var(--ok)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.brandbar{display:flex;align-items:center;justify-content:center;gap:9px;margin:2px 0 14px;color:var(--ink)}
+.brand-mark{width:28px;height:31px;flex:none}
+.brand-name{font-family:"Instrument Serif",Georgia,serif;font-size:21px;line-height:1;letter-spacing:.12em;margin-right:-.12em}
+.bm-drop{fill:var(--cherry)}.bm-shine{fill:#fff}.bm-spark{fill:var(--spark)}
+.powered{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:34px;font-size:12px;color:var(--muted)}
+.powered svg{width:14px;height:16px;flex:none}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="bb-mark" viewBox="27 20 146 162">
+    <path class="bm-drop" d="M100 22 C100 22 154 84 154 127 C154 161.98 123.76 180 100 180 C76.24 180 46 161.98 46 127 C46 84 100 22 100 22 Z"/>
+    <path class="bm-shine" d="M75.38 123.62 L74.1 122.63 L72.6 122.01 L71 121.8 L69.4 122.01 L67.9 122.63 L66.62 123.62 L65.63 124.9 L65.01 126.4 L64.8 128 L65.01 129.6 L65.63 131.1 L66.62 132.38 L83.64 153.36 L85.08 154.54 L86.74 155.39 L88.53 155.88 L90.39 155.99 L92.23 155.72 L93.97 155.08 L95.55 154.09 L96.89 152.79 L128.99 104.67 L129.56 103.45 L129.44 102.11 L128.67 101.01 L127.45 100.44 L126.11 100.56 L125.01 101.33 L89.53 135.09 Z"/>
+    <path class="bm-spark" d="M44 37 Q46.4 49.6 59 52 Q46.4 54.4 44 67 Q41.6 54.4 29 52 Q41.6 49.6 44 37 Z"/>
+    <path class="bm-spark" d="M156 37 Q158.4 49.6 171 52 Q158.4 54.4 156 67 Q153.6 54.4 141 52 Q153.6 49.6 156 37 Z"/>
+  </symbol>
+</svg>
+<div class="wrap">
+  <div class="brandbar"><svg class="brand-mark" aria-hidden="true"><use href="#bb-mark"></use></svg><span class="brand-name">BLUSHBOOK</span></div>
+  <div class="switch" role="group" aria-label="View">
+    <button id="m-client" aria-pressed="true">Client booking page</button>
+    <button id="m-tech" aria-pressed="false">Your dashboard</button>
+  </div>
+  <main id="app"></main>
+</div>
+<div id="sticky"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const SWATCHES=["#B3123F","#E58FA8","#8E5B9A","#D9A38B","#6B1E3A","#F2B8C6","#C77B5A"];
+const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DEFAULT={
+  profile:{name:"Lashes by Hira",handle:"@lashesbyhira",bio:"Soft, fluffy sets in a cosy home studio. Deposit holds your slot.",
+    depositLink:"",policy:"Deposit is non-refundable if you cancel within 24 hours or don't show.",currency:"$"},
+  services:[
+    {id:"s1",name:"Classic full set",mins:120,price:60,deposit:15,swatch:"#B3123F"},
+    {id:"s2",name:"Hybrid full set",mins:150,price:75,deposit:20,swatch:"#8E5B9A"},
+    {id:"s3",name:"Infill (2 weeks)",mins:60,price:35,deposit:10,swatch:"#E58FA8"}
+  ],
+  hours:{start:"10:00",end:"19:00",days:[1,2,3,4,5,6],step:30},
+  bookings:[]
+};
+const KEY="blushbook-v1";
+function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return structuredClone(DEFAULT)}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+let mode="client", tab="bookings";
+let pick={svc:null,date:null,time:null,name:"",contact:""}, confirmed=null;
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMin=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};
+const fmtT=m=>{let h=Math.floor(m/60),mm=String(m%60).padStart(2,"0"),ap=h>=12?"pm":"am";h=h%12||12;return `${h}:${mm}${ap}`};
+const iso=d=>d.toISOString().slice(0,10);
+const niceDate=s=>new Date(s+"T12:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+const money=n=>S.profile.currency+Number(n||0);
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800)}
+function copy(text,msg){(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>toast(msg)).catch(()=>toast("Select and copy the text manually"))}
+
+function nextDays(n=14){const out=[],d=new Date();for(let i=0;i<n;i++){const x=new Date(d);x.setDate(d.getDate()+i);out.push(x)}return out}
+function freeSlots(date,svc){
+  const {start,end,step}=S.hours, s=toMin(start), e=toMin(end), dur=svc.mins;
+  const taken=S.bookings.filter(b=>b.date===date&&b.status!=="cancelled").map(b=>[toMin(b.time),toMin(b.time)+b.mins]);
+  const now=new Date(), today=iso(now)===date, nowM=now.getHours()*60+now.getMinutes();
+  const out=[];
+  for(let t=s;t+dur<=e;t+=step){
+    if(today&&t<=nowM)continue;
+    if(taken.some(([a,b])=>t<b&&t+dur>a))continue;
+    out.push(t);
+  }
+  return out;
+}
+
+/* ---------- client view ---------- */
+const POWERED='<p class="powered"><svg aria-hidden="true"><use href="#bb-mark"></use></svg>Booked with Blushbook</p>';
+
+function renderClient(){
+  const p=S.profile;
+  if(confirmed){
+    const b=confirmed, svc=S.services.find(s=>s.id===b.svc)||{name:b.svcName};
+    $("#app").innerHTML=`
+      <div class="done">
+        <div class="avatar" aria-hidden="true">✓</div>
+        <h2>You're booked in</h2>
+        <p>${esc(b.svcName)}<br>${niceDate(b.date)} at ${fmtT(toMin(b.time))}</p>
+      </div>
+      <div class="note"><strong>Pay your ${money(b.deposit)} deposit to hold this slot.</strong> ${esc(p.policy)}</div>
+      <section>${p.depositLink?`<a class="btn" href="${esc(p.depositLink)}" target="_blank" rel="noopener">Pay ${money(b.deposit)} deposit</a>`:`<p class="empty">${esc(p.name)} will send you payment details.</p>`}
+      <p style="margin-top:12px"><button class="btn ghost" id="again">Book another appointment</button></p></section>${POWERED}`;
+    $("#sticky").innerHTML="";
+    $("#again").onclick=()=>{confirmed=null;pick={svc:null,date:null,time:null,name:"",contact:""};render()};
+    return;
+  }
+  const svc=S.services.find(s=>s.id===pick.svc);
+  const days=nextDays();
+  let slotsHtml="";
+  if(svc&&pick.date){
+    const fs=freeSlots(pick.date,svc);
+    slotsHtml=fs.length?`<div class="slots">${fs.map(t=>{const v=`${String(Math.floor(t/60)).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;return `<button class="slot" data-t="${v}" aria-pressed="${pick.time===v}">${fmtT(t)}</button>`}).join("")}</div>`
+      :`<p class="empty">Fully booked this day. Try another date.</p>`;
+  }
+  $("#app").innerHTML=`
+    <header class="hero">
+      <div class="avatar" aria-hidden="true">${esc((p.name||"B").trim()[0])}</div>
+      <h1>${esc(p.name)}</h1>
+      <p class="handle">${esc(p.handle)}</p>
+      <p class="bio">${esc(p.bio)}</p>
+    </header>
+    <section style="margin-top:0">
+      <h2>Choose a service</h2>
+      <div class="services">${S.services.map(s=>`
+        <button class="svc" data-svc="${s.id}" aria-pressed="${pick.svc===s.id}" style="--swatch:${s.swatch}">
+          <span class="drop" aria-hidden="true"></span>
+          <span class="meta"><span class="name">${esc(s.name)}</span><br><span class="small muted">${s.mins} min, ${money(s.deposit)} deposit</span></span>
+          <span class="price">${money(s.price)}</span>
+        </button>`).join("")||`<p class="empty">No services yet.</p>`}</div>
+    </section>
+    ${svc?`<section><h2>Pick a day</h2><div class="days">${days.map(d=>{const v=iso(d),off=!S.hours.days.includes(d.getDay());return `<button class="day" data-d="${v}" aria-pressed="${pick.date===v}" ${off?"disabled":""}><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b></button>`}).join("")}</div></section>`:""}
+    ${svc&&pick.date?`<section><h2>Pick a time</h2>${slotsHtml}</section>`:""}
+    ${pick.time?`<section><h2>Your details</h2>
+      <label for="cn">Name</label><input id="cn" autocomplete="name" value="${esc(pick.name)}">
+      <label for="cc">WhatsApp number or Instagram</label><input id="cc" value="${esc(pick.contact)}" placeholder="+44 7… or @yourname">
+    </section>`:""}${POWERED}`;
+  document.querySelectorAll("[data-svc]").forEach(b=>b.onclick=()=>{pick.svc=b.dataset.svc;pick.time=null;render()});
+  document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{pick.date=b.dataset.d;pick.time=null;render()});
+  document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{pick.time=b.dataset.t;render();$("#cn")?.scrollIntoView({behavior:"smooth",block:"center"})});
+  const cn=$("#cn"),cc=$("#cc");
+  const upd=()=>{pick.name=cn.value;pick.contact=cc.value;const ok=$("#book");if(ok)ok.disabled=!(pick.name.trim()&&pick.contact.trim())};
+  if(cn){cn.oninput=upd;cc.oninput=upd}
+  if(pick.time){
+    $("#sticky").innerHTML=`<div class="sticky"><div class="inner">
+      <p class="summary">${esc(svc.name)}, ${niceDate(pick.date)} at ${fmtT(toMin(pick.time))}</p>
+      <button class="btn" id="book" ${pick.name.trim()&&pick.contact.trim()?"":"disabled"}>Book and pay ${money(svc.deposit)} deposit</button></div></div>`;
+    $("#book").onclick=()=>{
+      const b={id:"b"+Date.now(),svc:svc.id,svcName:svc.name,mins:svc.mins,price:svc.price,deposit:svc.deposit,date:pick.date,time:pick.time,
+        name:pick.name.trim(),contact:pick.contact.trim(),paid:false,status:"booked",created:Date.now()};
+      S.bookings.push(b);save();confirmed=b;render();window.scrollTo(0,0);
+    };
+  } else $("#sticky").innerHTML="";
+}
+
+/* ---------- tech dashboard ---------- */
+function waLink(b){
+  const num=b.contact.replace(/[^\d]/g,"");
+  const msg=`Hi ${b.name}! Reminder of your ${b.svcName} with ${S.profile.name} on ${niceDate(b.date)} at ${fmtT(toMin(b.time))}.${b.paid?"":" Your "+money(b.deposit)+" deposit holds the slot"+(S.profile.depositLink?": "+S.profile.depositLink:".")} See you soon!`;
+  return num.length>=8?`https://wa.me/${num}?text=${encodeURIComponent(msg)}`:null;
+}
+function renderTech(){
+  $("#sticky").innerHTML="";
+  const tabs=[["bookings","Bookings"],["services","Services"],["hours","Hours"],["profile","Profile"],["share","Share"]];
+  let body="";
+  if(tab==="bookings"){
+    const list=[...S.bookings].filter(b=>b.status!=="cancelled").sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+    const upcoming=list.filter(b=>b.date>=iso(new Date()));
+    const unpaid=upcoming.filter(b=>!b.paid).reduce((n,b)=>n+b.deposit,0);
+    body=`<p class="muted" style="margin:14px 0">${upcoming.length} upcoming${unpaid?`, ${money(unpaid)} in deposits still to collect`:""}</p>
+      <div class="list">${list.map(b=>{const wa=waLink(b);return `<div class="card bk">
+        <div class="top"><h3>${esc(b.name)}</h3><span class="tag ${b.paid?"paid":""}">${b.paid?"Deposit paid":"Deposit due"}</span></div>
+        <p class="small">${esc(b.svcName)}, ${niceDate(b.date)} at ${fmtT(toMin(b.time))}<br><span class="muted">${esc(b.contact)}${b.status==="noshow"?" — marked no-show":""}</span></p>
+        <div class="actions">
+          <button class="btn sm ${b.paid?"ghost":""}" data-paid="${b.id}">${b.paid?"Mark unpaid":"Mark deposit paid"}</button>
+          ${wa?`<a class="btn sm ghost" href="${wa}" target="_blank" rel="noopener">Send WhatsApp reminder</a>`:""}
+          <button class="btn sm ghost" data-noshow="${b.id}">No-show</button>
+          <button class="btn sm ghost" data-cancel="${b.id}">Cancel</button>
+        </div></div>`}).join("")||`<p class="empty">No bookings yet. Add your link to your Instagram bio from the Share tab.</p>`}</div>`;
+  }
+  if(tab==="services"){
+    body=`<div class="list" style="margin-top:14px">${S.services.map(s=>`<div class="card svcrow">
+        <span class="drop" style="--swatch:${s.swatch}" aria-hidden="true"></span>
+        <div style="flex:1"><strong>${esc(s.name)}</strong><br><span class="small muted">${s.mins} min, ${money(s.price)}, ${money(s.deposit)} deposit</span></div>
+        <button class="x" data-del="${s.id}" aria-label="Remove ${esc(s.name)}">×</button></div>`).join("")}</div>
+      <section><h2>Add a service</h2>
+      <label for="sn">Service name</label><input id="sn" placeholder="e.g. Gel manicure">
+      <div class="row"><div><label for="sm">Minutes</label><input id="sm" type="number" min="15" step="15" value="60"></div>
+      <div><label for="sp">Price</label><input id="sp" type="number" min="0" value="40"></div>
+      <div><label for="sd">Deposit</label><input id="sd" type="number" min="0" value="10"></div></div>
+      <p style="margin-top:14px"><button class="btn" id="addsvc">Add service</button></p></section>`;
+  }
+  if(tab==="hours"){
+    const h=S.hours;
+    body=`<section style="margin-top:14px"><h2>When you work</h2>
+      <div class="weekdays" role="group" aria-label="Working days">${WD.map((d,i)=>`<button data-wd="${i}" aria-pressed="${h.days.includes(i)}">${d}</button>`).join("")}</div>
+      <div class="row"><div><label for="hs">Start</label><input id="hs" type="time" value="${h.start}"></div>
+      <div><label for="he">Finish</label><input id="he" type="time" value="${h.end}"></div></div>
+      <label for="hst">Show slots every</label>
+      <select id="hst">${[15,30,60].map(v=>`<option value="${v}" ${h.step==v?"selected":""}>${v} minutes</option>`).join("")}</select>
+      <p style="margin-top:16px"><button class="btn" id="savehours">Save hours</button></p></section>`;
+  }
+  if(tab==="profile"){
+    const p=S.profile;
+    body=`<section style="margin-top:14px">
+      <label for="pn">Business name</label><input id="pn" value="${esc(p.name)}">
+      <label for="ph">Instagram handle</label><input id="ph" value="${esc(p.handle)}">
+      <label for="pb">Short bio</label><textarea id="pb">${esc(p.bio)}</textarea>
+      <label for="pl">Deposit payment link</label><input id="pl" value="${esc(p.depositLink)}" placeholder="Your PayPal.me, Stripe or bank payment link">
+      <p class="small muted" style="margin-top:6px">Clients go straight to this link after booking.</p>
+      <label for="pp">No-show policy</label><textarea id="pp">${esc(p.policy)}</textarea>
+      <label for="pc">Currency symbol</label><input id="pc" value="${esc(p.currency)}" maxlength="4">
+      <p style="margin-top:16px"><button class="btn" id="saveprofile">Save profile</button></p></section>`;
+  }
+  if(tab==="share"){
+    const slug=(S.profile.handle||S.profile.name).replace(/[^a-z0-9]/gi,"").toLowerCase();
+    const link=`blushbook.app/${slug}`;
+    const reply=`Hey babe! 💕 Thanks for reaching out. You can see my prices and grab a slot here: ${link} — a ${money(Math.min(...S.services.map(s=>s.deposit),0)||10)}+ deposit holds your appointment.`;
+    body=`<section style="margin-top:14px"><h2>Your booking link</h2>
+      <div class="linkbox"><span style="flex:1">${link}</span><button class="btn sm" id="cplink">Copy</button></div>
+      <p class="small muted" style="margin-top:8px">Put this in your Instagram and TikTok bio.</p></section>
+      <section><h2>Quick DM reply</h2>
+      <div class="card"><p id="replytxt">${esc(reply)}</p></div>
+      <p style="margin-top:10px"><button class="btn ghost" id="cpreply">Copy reply</button></p></section>
+      <section><button class="btn ghost" id="reset">Reset demo data</button></section>`;
+  }
+  $("#app").innerHTML=`<h1>Hi, ${esc(S.profile.name.split(" ").pop())}</h1>
+    <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${tab===k}">${l}</button>`).join("")}</div>${body}`;
+
+  document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+  const find=id=>S.bookings.find(b=>b.id===id);
+  document.querySelectorAll("[data-paid]").forEach(b=>b.onclick=()=>{const x=find(b.dataset.paid);x.paid=!x.paid;save();render();toast(x.paid?"Deposit marked paid":"Marked unpaid")});
+  document.querySelectorAll("[data-noshow]").forEach(b=>b.onclick=()=>{find(b.dataset.noshow).status="noshow";save();render();toast("Marked no-show, deposit kept")});
+  document.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{if(confirm("Cancel this booking? The slot opens up again.")){find(b.dataset.cancel).status="cancelled";save();render();toast("Booking cancelled")}});
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{S.services=S.services.filter(s=>s.id!==b.dataset.del);save();render();toast("Service removed")});
+  document.querySelectorAll("[data-wd]").forEach(b=>b.onclick=()=>{const i=+b.dataset.wd,d=S.hours.days;S.hours.days=d.includes(i)?d.filter(x=>x!==i):[...d,i];save();render()});
+  $("#addsvc")&&($("#addsvc").onclick=()=>{
+    const n=$("#sn").value.trim();if(!n){toast("Add a service name first");return}
+    S.services.push({id:"s"+Date.now(),name:n,mins:+$("#sm").value||60,price:+$("#sp").value||0,deposit:+$("#sd").value||0,swatch:SWATCHES[S.services.length%SWATCHES.length]});
+    save();render();toast("Service added")});
+  $("#savehours")&&($("#savehours").onclick=()=>{
+    if(toMin($("#he").value)<=toMin($("#hs").value)){toast("Finish time must be after start");return}
+    Object.assign(S.hours,{start:$("#hs").value,end:$("#he").value,step:+$("#hst").value});save();toast("Hours saved")});
+  $("#saveprofile")&&($("#saveprofile").onclick=()=>{
+    Object.assign(S.profile,{name:$("#pn").value.trim()||"My studio",handle:$("#ph").value.trim(),bio:$("#pb").value.trim(),
+      depositLink:$("#pl").value.trim(),policy:$("#pp").value.trim(),currency:$("#pc").value.trim()||"$"});save();render();toast("Profile saved")});
+  $("#cplink")&&($("#cplink").onclick=()=>copy($(".linkbox span").textContent,"Link copied"));
+  $("#cpreply")&&($("#cpreply").onclick=()=>copy($("#replytxt").textContent,"Reply copied"));
+  $("#reset")&&($("#reset").onclick=()=>{if(confirm("Clear all bookings and settings?")){S=structuredClone(DEFAULT);save();render();toast("Demo reset")}});
+}
+
+function render(){
+  $("#m-client").setAttribute("aria-pressed",mode==="client");
+  $("#m-tech").setAttribute("aria-pressed",mode==="tech");
+  mode==="client"?renderClient():renderTech();
+}
+$("#m-client").onclick=()=>{mode="client";render();window.scrollTo(0,0)};
+$("#m-tech").onclick=()=>{mode="tech";confirmed=null;render();window.scrollTo(0,0)};
+render();
+</script>
+</body>
+</html>

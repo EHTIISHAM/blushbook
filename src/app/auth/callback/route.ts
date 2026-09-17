@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { siteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -7,7 +8,8 @@ import { createClient } from "@/lib/supabase/server";
  * then forwards her to wherever she was heading.
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
+  const origin = siteUrl(request.nextUrl.origin);
   const code = searchParams.get("code");
 
   // Only ever redirect inside this site — an open redirect here would hand a

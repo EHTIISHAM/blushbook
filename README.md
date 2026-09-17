@@ -47,6 +47,16 @@ Once a project exists, replace it with the generated version:
 npx supabase gen types typescript --project-id <ref> > src/lib/supabase/database.types.ts
 ```
 
+## Deploying
+
+See [DEPLOY.md](DEPLOY.md) for the full runbook: Supabase project, running the
+migration, Coolify setup and the environment-variable gotcha.
+
+Short version — the app ships as a Docker image built from the `Dockerfile` in
+this repo. `NEXT_PUBLIC_*` values are compiled into the browser bundle at build
+time, so they must be passed as **build arguments** as well as runtime
+environment variables. Changing one means rebuilding, not restarting.
+
 ## How the data model protects a booking
 
 Double bookings are blocked by Postgres itself, not by application code:

@@ -1,0 +1,23 @@
+node_modules
+.next
+.git
+.github
+.vscode
+.idea
+
+# Secrets must never reach the build context.
+.env
+.env.*
+!.env.example
+
+npm-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# Not needed to run the app.
+reference
+README.md
+DEPLOY.md
+AGENTS.md
+CLAUDE.md
+.claude

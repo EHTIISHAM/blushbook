@@ -125,22 +125,39 @@ echo "<your-read-packages-token>" | docker login ghcr.io -u <your-github-usernam
 This is stored in `~/.docker/config.json`, so the deploy script never needs a
 registry token of its own.
 
-**Create the directory and config:**
+**Create the directory.** The `chown` is not optional — without it the
+directory belongs to root, and the deploy fails writing `.env`:
 
 ```bash
 sudo mkdir -p /opt/blushbook
-sudo chown "$USER":"$USER" /opt/blushbook
+sudo chown -R "$USER":"$USER" /opt/blushbook
 cd /opt/blushbook
 ```
 
-Copy `docker-compose.yml`, `Caddyfile` and `.env.production.example` from the
-repo into it, then:
+**Create `.env`.** This is the only file you place by hand;
+`docker-compose.yml` and the `Caddyfile` are copied from the repo on every
+deploy, so they can never drift from the commit that built the image.
+
+Paste this, filling in the four real values:
 
 ```bash
-mv .env.production.example .env
-chmod 600 .env
-nano .env    # fill in every value
+cat > /opt/blushbook/.env <<'EOF'
+APP_IMAGE=ghcr.io/<owner>/<repo>:latest
+SITE_DOMAIN=yourdomain.com
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+EOF
+chmod 600 /opt/blushbook/.env
 ```
+
+`APP_IMAGE` is a placeholder — the deploy overwrites it with the exact commit
+tag each run. The other four must be real. `SITE_DOMAIN` is the bare hostname
+with no scheme; `NEXT_PUBLIC_SITE_URL` is the full `https://` URL with no
+trailing slash.
+
+The deploy checks all of this before touching anything and tells you exactly
+what is wrong, so you do not have to get it right blind.
 
 `SITE_DOMAIN` is the bare hostname, no scheme. `NEXT_PUBLIC_SITE_URL` is the
 full `https://` URL. They must describe the same host, and that host must

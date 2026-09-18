@@ -126,13 +126,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy over SSH
+      # docker-compose.yml and the Caddyfile are copied to the VM from here, so
+      # the running stack always matches the commit that built the image.
+      - uses: actions/checkout@v5
+
+      - name: Set up SSH
         env:
           SSH_KEY: ${{ secrets.VM_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
           VM_HOST: ${{ secrets.VM_HOST }}
-          VM_USER: ${{ secrets.VM_USER }}
-          IMAGE: ${{ needs.build.outputs.image }}
         run: |
           set -euo pipefail
 
@@ -150,21 +152,85 @@ jobs:
           fi
           chmod 600 ~/.ssh/known_hosts
 
+      # Everything the deploy assumes about the VM, checked up front and
+      # reported in plain language. Without this, a missing bootstrap step
+      # surfaces as "Permission denied" on a redirect eight lines into a
+      # script, which says nothing about what to actually do.
+      - name: Check the VM is ready
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_deploy "$VM_USER@$VM_HOST" 'bash -s' <<'REMOTE'
+          fail() {
+            echo "::error::$1"
+            echo "  -> $2"
+            exit 1
+          }
+
+          [ -d /opt/blushbook ] || fail \
+            "/opt/blushbook does not exist on the VM." \
+            "Run the one-time bootstrap in DEPLOY.md section 3."
+
+          cd /opt/blushbook
+
+          [ -w . ] || fail \
+            "/opt/blushbook is not writable by $(whoami)." \
+            "sudo chown -R $(whoami):$(whoami) /opt/blushbook"
+
+          [ -f .env ] || fail \
+            "/opt/blushbook/.env is missing." \
+            "Copy .env.production.example from the repo to /opt/blushbook/.env, fill it in, then chmod 600 .env"
+
+          command -v docker >/dev/null 2>&1 || fail \
+            "docker is not installed, or not on PATH for $(whoami)." \
+            "curl -fsSL https://get.docker.com | sh"
+
+          docker compose version >/dev/null 2>&1 || fail \
+            "docker compose is not usable by $(whoami)." \
+            "sudo usermod -aG docker $(whoami) then log out and back in"
+
+          for var in SITE_DOMAIN NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY NEXT_PUBLIC_SITE_URL; do
+            grep -q "^${var}=." .env || fail \
+              "${var} is missing or empty in /opt/blushbook/.env" \
+              "Fill it in; .env.production.example lists every value."
+          done
+
+          echo "VM is ready."
+          REMOTE
+
+      - name: Sync the stack files
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/id_deploy docker-compose.yml Caddyfile \
+            "$VM_USER@$VM_HOST:/opt/blushbook/"
+
+      - name: Deploy
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          IMAGE: ${{ needs.build.outputs.image }}
+        run: |
+          set -euo pipefail
           ssh -i ~/.ssh/id_deploy "$VM_USER@$VM_HOST" \
             APP_IMAGE_TAG="$IMAGE:${{ github.sha }}" 'bash -seuo pipefail' <<'REMOTE'
-            cd /opt/blushbook
+          cd /opt/blushbook
 
-            # Pin this release to the exact commit, so a rollback is just
-            # re-running an older workflow rather than guessing what "latest" was.
-            if grep -q '^APP_IMAGE=' .env; then
-              sed -i "s|^APP_IMAGE=.*|APP_IMAGE=${APP_IMAGE_TAG}|" .env
-            else
-              echo "APP_IMAGE=${APP_IMAGE_TAG}" >> .env
-            fi
+          # Pin this release to the exact commit, so a rollback is just
+          # re-running an older workflow rather than guessing what "latest" was.
+          if grep -q '^APP_IMAGE=' .env; then
+            sed -i "s|^APP_IMAGE=.*|APP_IMAGE=${APP_IMAGE_TAG}|" .env
+          else
+            echo "APP_IMAGE=${APP_IMAGE_TAG}" >> .env
+          fi
 
-            docker compose pull app
-            docker compose up -d
-            docker image prune -f
+          docker compose pull app
+          docker compose up -d
+          docker image prune -f
           REMOTE
 
       - name: Verify the new container answers

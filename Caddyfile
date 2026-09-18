@@ -1,10 +1,16 @@
-# Caddy requests and renews the TLS certificate for SITE_DOMAIN by itself.
-# Nothing to configure beyond the domain, and nothing installed on the host.
+# Caddy requests and renews TLS certificates for every site listed here.
+#
+# This runs on the host network (see docker-compose.yml), so 127.0.0.1 refers
+# to the VM itself. That is what lets it proxy both the Blushbook container and
+# anything else already listening on a local port.
+
+# --- Blushbook --------------------------------------------------------------
 
 {$SITE_DOMAIN} {
 	encode zstd gzip
 
-	reverse_proxy app:3000 {
+	# The app container publishes 3000 on loopback only.
+	reverse_proxy 127.0.0.1:3000 {
 		# Next needs these to build correct absolute URLs behind a proxy.
 		header_up X-Forwarded-Proto {scheme}
 		header_up X-Forwarded-Host {host}
@@ -19,6 +25,24 @@
 		X-Frame-Options "SAMEORIGIN"
 		-Server
 	}
+
+	log {
+		output stdout
+		format console
+	}
+}
+
+# --- Other app on this server -----------------------------------------------
+# Kept deliberately minimal: it mirrors the standalone Caddyfile this replaced,
+# and does not impose Blushbook's headers on an app that did not ask for them.
+#
+# If this server ever stops hosting a second app, delete this whole block.
+# The defaults below are used when the variables are not set in .env.
+
+{$OTHER_SITE_DOMAIN:emailautobahn.duckdns.org} {
+	encode zstd gzip
+
+	reverse_proxy {$OTHER_SITE_UPSTREAM:127.0.0.1:5000}
 
 	log {
 		output stdout

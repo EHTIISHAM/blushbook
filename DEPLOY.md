@@ -166,6 +166,36 @@ match the redirect URL in Supabase exactly.
 Make sure ports 80 and 443 are open, or Caddy cannot complete the ACME
 challenge and you get no certificate.
 
+### Sharing the server with another app
+
+This VM also serves `emailautobahn.duckdns.org` from a process on
+`127.0.0.1:5000`. One machine can only have one thing bound to ports 80 and
+443, so the Caddy in this compose file is now *the* proxy for the whole server,
+not just for Blushbook.
+
+It runs with `network_mode: host` specifically so that `127.0.0.1` inside the
+Caddyfile still means the VM, exactly as it did when Caddy was installed
+directly on the box. The other app needs no changes: it keeps listening on
+loopback and never has to be rebuilt, rebound or containerised.
+
+**Stop and disable the old Caddy**, or it will fight for port 80 on the next
+reboot even if you stopped it by hand once:
+
+```bash
+sudo systemctl stop caddy
+sudo systemctl disable caddy
+```
+
+Check nothing else holds the ports before deploying:
+
+```bash
+sudo ss -tlnp | grep -E ':80\s|:443\s'
+```
+
+Both domains need an A record pointing at this VM, since Caddy now requests a
+certificate for each. If you drop the second app later, delete its block from
+the `Caddyfile` and redeploy.
+
 ## 4. Supabase redirect URLs
 
 **Authentication → URL Configuration:**
@@ -207,6 +237,8 @@ In order, because each depends on the one before:
    created by the signup trigger.
 6. Add a service, reload, and it is still there. That exercises the whole
    chain: session cookie, RLS policy, and write path.
+7. `https://emailautobahn.duckdns.org` still loads. The same Caddy now serves
+   it, so a Blushbook deploy that restarts Caddy briefly restarts that too.
 
 If step 4 loops back to `/login`, it is nearly always the Supabase redirect
 list, or a `NEXT_PUBLIC_SITE_URL` that disagrees with the host you actually

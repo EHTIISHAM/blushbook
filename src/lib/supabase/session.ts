@@ -47,7 +47,10 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (!user && pathname.startsWith("/dashboard")) {
+  const isPrivate =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/welcome");
+
+  if (!user && isPrivate) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getSessionProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
@@ -30,6 +31,13 @@ export default async function BookingsPage() {
         </p>
       </div>
     );
+  }
+
+  // A brand-new account lands here straight from its first magic link. Send it
+  // through setup once; naming the studio is what marks that as done, so this
+  // cannot bounce her back after she has started.
+  if (!profile.business_name.trim()) {
+    redirect("/welcome");
   }
 
   const supabase = await createClient();

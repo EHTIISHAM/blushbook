@@ -20,22 +20,13 @@
   --spark: #f0547e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1b0f16;
-    --paper: #26161f;
-    --ink: #f7e9ef;
-    --muted: #c3a7b4;
-    --line: #3d2632;
-    --mauve: #33202b;
-    --bubble: #3a2530;
-    --cherry: #f0547e;
-    --cherry-ink: #1b0f16;
-    --butter: #4a3d1c;
-    --frame: #0f080c;
-    --spark: #f7e8b5;
-  }
-}
+/* Light is the brand, so it is what everyone sees. Blushbook deliberately does
+   not follow prefers-color-scheme: most phones are set to dark, which would
+   mean most clients opening a booking link land on the gloomy version of a
+   blush-pink brand.
+
+   The dark palette below is kept and still works — it is opt-in through
+   <html data-theme="dark"> if a toggle is ever wanted. */
 
 :root[data-theme="dark"] {
   --bg: #1b0f16;

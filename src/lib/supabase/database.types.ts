@@ -182,6 +182,41 @@ export type Database = {
         Args: { p_slug: string };
         Returns: string;
       };
+      page_status: {
+        Args: { p_slug: string };
+        Returns: "missing" | "paused" | "live";
+      };
+      get_available_slots: {
+        Args: {
+          p_slug: string;
+          p_service_id: string;
+          p_from: string;
+          p_days: number;
+        };
+        Returns: { slot_start: string }[];
+      };
+      create_booking: {
+        Args: {
+          p_slug: string;
+          p_service_id: string;
+          p_starts_at: string;
+          p_client_name: string;
+          p_client_contact: string;
+          p_contact_kind: ContactKind;
+          p_ip_hash: string;
+        };
+        Returns: {
+          booking_id: string;
+          business_name: string;
+          service_name: string;
+          starts_at: string;
+          deposit_cents: number;
+          currency: string;
+          timezone: string;
+          deposit_link: string | null;
+          no_show_policy: string | null;
+        }[];
+      };
       get_busy_times: {
         Args: {
           p_profile_id: string;

@@ -5,7 +5,8 @@ import { useFormStatus } from "react-dom";
 
 import { formatDuration, formatMoney } from "@/lib/format";
 
-import { BOOKING_IDLE, fetchSlots, submitBooking } from "./actions";
+import { fetchSlots, submitBooking } from "./actions";
+import { BOOKING_IDLE } from "./booking-state";
 
 export interface PublicService {
   id: string;

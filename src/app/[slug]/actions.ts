@@ -7,32 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import type { ContactKind } from "@/lib/supabase/database.types";
 
-export interface Slot {
-  startsAt: string;
-}
-
-export type SlotsResult =
-  | { status: "ok"; slots: string[] }
-  | { status: "error"; message: string };
-
-export interface Confirmation {
-  bookingId: string;
-  businessName: string;
-  serviceName: string;
-  startsAt: string;
-  depositCents: number;
-  currency: string;
-  timezone: string;
-  depositLink: string | null;
-  noShowPolicy: string | null;
-}
-
-export type BookingState =
-  | { status: "idle" }
-  | { status: "error"; message: string }
-  | { status: "booked"; confirmation: Confirmation };
-
-export const BOOKING_IDLE: BookingState = { status: "idle" };
+import type { BookingState, SlotsResult } from "./booking-state";
 
 const SLOT_DAYS = 21;
 

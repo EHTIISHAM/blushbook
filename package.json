@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "typecheck": "next typegen && tsc --noEmit"
+    "lint": "eslint && node scripts/check-server-actions.mjs",
+    "typecheck": "next typegen && tsc --noEmit",
+    "check:actions": "node scripts/check-server-actions.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

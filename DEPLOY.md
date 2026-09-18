@@ -43,7 +43,24 @@ The workflow triggers on both `main` and `master`, so either name is fine.
 
 ## 2. Repository secrets
 
-**Settings → Secrets and variables → Actions → New repository secret.**
+**None of these go in the repo.** They live in GitHub's encrypted secret
+store, which only the workflow can read. Nothing below is ever committed.
+
+Navigate: your repo → **Settings** → **Secrets and variables** → **Actions**
+→ the **Secrets** tab → **New repository secret**. Add each one by name.
+
+Three things trip people up here:
+
+- The **Variables** tab next to Secrets is a *different store*. Values added
+  there are invisible to `secrets.*` and read as empty, which produces exactly
+  the "build arg is required" failure with no other clue.
+- **Environment** secrets are also separate. Unless a job declares
+  `environment:`, it cannot see them. Use *repository* secrets.
+- Names are case-sensitive and must match exactly, underscores included.
+
+The workflow now checks all six before doing anything else and names any that
+are missing, so you get the answer in seconds rather than after a failed
+build.
 
 | Secret                          | Value                                             |
 | ------------------------------- | ------------------------------------------------- |

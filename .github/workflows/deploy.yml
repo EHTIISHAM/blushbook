@@ -20,6 +20,50 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # Runs before anything else so a missing secret costs seconds, not a
+      # full image build. Names the offender; the Docker guard cannot, because
+      # by then an unset secret and an empty one look identical.
+      - name: Required secrets are present
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+        run: |
+          missing=""
+          if [ -z "${SUPABASE_URL}" ]; then missing="${missing} NEXT_PUBLIC_SUPABASE_URL"; fi
+          if [ -z "${SUPABASE_ANON_KEY}" ]; then missing="${missing} NEXT_PUBLIC_SUPABASE_ANON_KEY"; fi
+          if [ -z "${SITE_URL}" ]; then missing="${missing} NEXT_PUBLIC_SITE_URL"; fi
+          if [ -z "${VM_HOST}" ]; then missing="${missing} VM_HOST"; fi
+          if [ -z "${VM_USER}" ]; then missing="${missing} VM_USER"; fi
+          if [ -z "${VM_SSH_KEY}" ]; then missing="${missing} VM_SSH_KEY"; fi
+
+          if [ -n "${missing}" ]; then
+            echo "::error::Missing repository secrets:${missing}"
+            echo ""
+            echo "Add each one under:"
+            echo "  Settings -> Secrets and variables -> Actions -> Secrets tab"
+            echo "  -> New repository secret"
+            echo ""
+            echo "The 'Variables' tab is a different store; values added there"
+            echo "are not visible to secrets.* and will read as empty here."
+            exit 1
+          fi
+
+          # A trailing slash here produces '//auth/callback', which Supabase
+          # will not match against its redirect allow-list.
+          case "${SITE_URL}" in
+            https://*) ;;
+            *) echo "::error::NEXT_PUBLIC_SITE_URL must start with https://"; exit 1 ;;
+          esac
+          case "${SITE_URL}" in
+            */) echo "::error::NEXT_PUBLIC_SITE_URL must not end with a slash"; exit 1 ;;
+          esac
+
+          echo "All required secrets are present."
+
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5

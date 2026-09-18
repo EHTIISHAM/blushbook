@@ -69,7 +69,7 @@ export default async function HoursPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <section aria-labelledby="hours-h">
-        <h1 id="hours-h" className="font-serif text-[40px] leading-none">
+        <h1 id="hours-h" className="font-display text-[27px] leading-none">
           Hours
         </h1>
         <p className="mt-2 text-[15px] text-muted">
@@ -88,7 +88,7 @@ export default async function HoursPage() {
       </section>
 
       <section aria-labelledby="blocked-h" className="card lg:sticky lg:top-6">
-        <h2 id="blocked-h" className="font-serif text-[28px] leading-none">
+        <h2 id="blocked-h" className="font-display text-[19px] leading-none">
           Time off
         </h2>
         <p className="mt-2 text-[14px] text-muted">

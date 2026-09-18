@@ -12,7 +12,7 @@ export default function NotFound() {
     <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col justify-center px-5 py-16 text-center">
       <BrandMark className="mx-auto h-14 w-12" />
 
-      <h1 className="mt-6 font-serif text-[44px] leading-none">
+      <h1 className="mt-6 font-display text-[30px] leading-none">
         This link doesn&rsquo;t go anywhere
       </h1>
 

@@ -446,7 +446,7 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
         ✓
       </div>
 
-      <h2 className="mt-5 font-serif text-[36px] leading-none">
+      <h2 className="mt-5 font-display text-[24px] leading-none">
         Your page is ready
       </h2>
       <p className="mx-auto mt-3 max-w-[38ch] text-[15px] text-muted">
@@ -499,7 +499,7 @@ export function SetupWizard({
           <p className="text-[13px] font-bold text-muted">
             Step {step + 1} of {STEPS.length}
           </p>
-          <h1 className="mt-1 font-serif text-[38px] leading-none">
+          <h1 className="mt-1 font-display text-[26px] leading-none">
             {STEPS[step]}
           </h1>
 

@@ -26,7 +26,7 @@ export default async function ServicesPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <section aria-labelledby="services-h">
-        <h1 id="services-h" className="font-serif text-[40px] leading-none">
+        <h1 id="services-h" className="font-display text-[27px] leading-none">
           Services
         </h1>
         <p className="mt-2 text-[15px] text-muted">
@@ -71,7 +71,7 @@ export default async function ServicesPage() {
                   </p>
                 </div>
 
-                <span className="font-serif text-[22px] leading-none">
+                <span className="font-display text-[15px] leading-none">
                   {formatMoney(service.price_cents, profile.currency)}
                 </span>
 
@@ -136,7 +136,7 @@ export default async function ServicesPage() {
       </section>
 
       <section aria-labelledby="add-h" className="card lg:sticky lg:top-6">
-        <h2 id="add-h" className="font-serif text-[28px] leading-none">
+        <h2 id="add-h" className="font-display text-[19px] leading-none">
           Add a service
         </h2>
 

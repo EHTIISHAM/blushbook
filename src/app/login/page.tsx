@@ -18,7 +18,7 @@ export default function LoginPage() {
       </div>
 
       <div className="card">
-        <h1 className="font-serif text-[38px] leading-none">Welcome back</h1>
+        <h1 className="font-display text-[26px] leading-none">Welcome back</h1>
         <p className="mt-3 text-[15px] text-muted">
           We&rsquo;ll email you a link that logs you straight in. No password to
           remember.

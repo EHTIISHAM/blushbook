@@ -66,7 +66,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
     return (
       <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col justify-center px-5 py-16 text-center">
         <BrandMark className="mx-auto h-14 w-12" />
-        <h1 className="mt-6 font-serif text-[40px] leading-none">
+        <h1 className="mt-6 font-display text-[27px] leading-none">
           Bookings are paused
         </h1>
         <p className="mt-4 text-[16px] text-muted">
@@ -102,7 +102,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
           />
         ) : (
           <span
-            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-serif text-[30px] text-cherry-ink"
+            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-display text-[20px] text-cherry-ink"
             aria-hidden
           >
             {initial}
@@ -110,7 +110,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
         )}
 
         <div className="min-w-0">
-          <h1 className="font-serif text-[32px] leading-none">
+          <h1 className="font-display text-[22px] leading-none">
             {profile.business_name}
           </h1>
           {profile.instagram_handle && (

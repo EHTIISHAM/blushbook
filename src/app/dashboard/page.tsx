@@ -17,7 +17,7 @@ export default async function BookingsPage() {
   if (!profile) {
     return (
       <div className="card max-w-[640px]">
-        <h1 className="font-serif text-[32px] leading-none">
+        <h1 className="font-display text-[22px] leading-none">
           Your studio isn&rsquo;t set up yet
         </h1>
         <p className="mt-3 text-[15px] text-muted">
@@ -92,7 +92,7 @@ export default async function BookingsPage() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <section aria-labelledby="bookings-h">
-        <h1 id="bookings-h" className="font-serif text-[40px] leading-none">
+        <h1 id="bookings-h" className="font-display text-[27px] leading-none">
           Bookings
         </h1>
         <p className="mt-2 text-[15px] text-muted">
@@ -100,7 +100,7 @@ export default async function BookingsPage() {
         </p>
 
         <div className="mt-6 rounded-[26px] bg-mauve px-6 py-10 text-center">
-          <p className="font-serif text-[26px] leading-tight">
+          <p className="font-display text-[18px] leading-tight">
             No bookings yet
           </p>
           <p className="mx-auto mt-2 max-w-[38ch] text-[15px] text-muted">
@@ -111,7 +111,7 @@ export default async function BookingsPage() {
       </section>
 
       <section aria-labelledby="setup-h" className="card lg:sticky lg:top-6">
-        <h2 id="setup-h" className="font-serif text-[28px] leading-none">
+        <h2 id="setup-h" className="font-display text-[19px] leading-none">
           Get set up
         </h2>
         <p className="mt-2 text-[14px] text-muted">

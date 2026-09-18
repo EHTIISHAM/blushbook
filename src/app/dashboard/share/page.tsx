@@ -21,7 +21,7 @@ export default async function SharePage() {
 
   return (
     <div className="max-w-[640px]">
-      <h1 className="font-serif text-[40px] leading-none">Share</h1>
+      <h1 className="font-display text-[27px] leading-none">Share</h1>
       <p className="mt-2 text-[15px] text-muted">
         One link for {studio}. Put it in your bio and send it to anyone who
         asks.

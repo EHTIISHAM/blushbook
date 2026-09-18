@@ -61,7 +61,16 @@
 
   --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
-  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+}
+
+/* Tailwind's generated .font-display only sets the family. The display face is
+   never used in mixed case in this brand, so the casing rides along with it
+   rather than every call site having to remember `uppercase`. */
+.font-display {
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
 
 /* ---------------------------------------------------------------------------
@@ -89,9 +98,12 @@
 
   h1,
   h2 {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-weight: 400;
+    /* Mono is already wide; uppercase wants tighter tracking than the serif
+       did, not looser. */
     letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   :focus-visible {

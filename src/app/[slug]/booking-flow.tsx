@@ -119,7 +119,7 @@ export function BookingFlow({
           ✓
         </div>
 
-        <h2 className="mt-5 font-serif text-[36px] leading-none">
+        <h2 className="mt-5 font-display text-[24px] leading-none">
           You&rsquo;re booked in
         </h2>
 
@@ -214,7 +214,7 @@ export function BookingFlow({
                   )}
                 </span>
               </span>
-              <span className="font-serif text-[22px] leading-none">
+              <span className="font-display text-[15px] leading-none">
                 {formatMoney(item.price_cents, currency)}
               </span>
             </button>
@@ -271,7 +271,7 @@ export function BookingFlow({
                         {partsIn(first, timezone, { weekday: "short" })}
                       </span>
                       <span
-                        className={`block font-serif text-[19px] leading-none ${on ? "text-bg" : "text-ink"}`}
+                        className={`block font-display text-[14px] leading-none ${on ? "text-bg" : "text-ink"}`}
                       >
                         {partsIn(first, timezone, { day: "numeric" })}
                       </span>

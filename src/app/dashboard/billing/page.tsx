@@ -17,11 +17,11 @@ export default async function BillingPage() {
 
   return (
     <div className="max-w-[640px]">
-      <h1 className="font-serif text-[40px] leading-none">Billing</h1>
+      <h1 className="font-display text-[27px] leading-none">Billing</h1>
 
       <div className="card mt-6">
         <p className="text-[13px] font-bold text-muted">Current status</p>
-        <p className="mt-1 font-serif text-[30px] leading-none capitalize">
+        <p className="mt-1 font-display text-[20px] leading-none capitalize">
           {profile.subscription_status.replace("_", " ")}
         </p>
         <p className="mt-2 text-[15px] text-muted">
@@ -30,7 +30,7 @@ export default async function BillingPage() {
 
         <div className="mt-6 border-t border-line pt-5">
           <p className="flex items-baseline gap-2">
-            <span className="font-serif text-[44px] leading-none">
+            <span className="font-display text-[30px] leading-none">
               {formatMoney(1999, "USD")}
             </span>
             <span className="text-[15px] text-muted">/month</span>

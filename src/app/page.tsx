@@ -34,7 +34,7 @@ export default function HomePage() {
       <header className="masthead wrap" id="top">
         <Link href="#top" className="brand flex items-center gap-[10px] no-underline" aria-label="Blushbook home">
           <BrandMark className="h-9 w-8 flex-none" />
-          <span className="font-serif text-[25px] leading-none tracking-[0.12em]">
+          <span className="font-display text-[17px] leading-none tracking-[0.06em]">
             BLUSHBOOK
           </span>
         </Link>

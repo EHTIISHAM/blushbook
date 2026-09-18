@@ -39,7 +39,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-[640px]">
-      <h1 className="font-serif text-[40px] leading-none">Profile</h1>
+      <h1 className="font-display text-[27px] leading-none">Profile</h1>
       <p className="mt-2 text-[15px] text-muted">
         This is what clients see at the top of your booking page.
       </p>

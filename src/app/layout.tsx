@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope } from "next/font/google";
+import { DM_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
+// Display face: set uppercase everywhere it is used. DM Mono has no bold, so
+// 500 is the heaviest available and 300 carries the large hero sizes.
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500"],
   display: "swap",
 });
 
@@ -50,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${manrope.variable} h-full antialiased`}
+      className={`${dmMono.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

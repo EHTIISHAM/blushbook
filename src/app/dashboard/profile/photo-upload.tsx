@@ -135,7 +135,7 @@ export function PhotoUpload({
           />
         ) : (
           <span
-            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-serif text-[30px] text-cherry-ink"
+            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-display text-[20px] text-cherry-ink"
             aria-hidden
           >
             {initial}

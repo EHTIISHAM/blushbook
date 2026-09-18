@@ -21,3 +21,9 @@ DEPLOY.md
 AGENTS.md
 CLAUDE.md
 .claude
+
+# Deployment plumbing: these run on the VM or in CI, never inside the image.
+docker-compose.yml
+Caddyfile
+Dockerfile
+supabase

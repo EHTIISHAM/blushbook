@@ -11,7 +11,8 @@ everything from a dashboard.
 | App       | Next.js 16 (App Router, TypeScript, Tailwind v4) |
 | Backend   | Supabase (Postgres, magic-link auth, RLS, storage) |
 | Billing   | Paddle as merchant of record (not wired yet)    |
-| Hosting   | Coolify on a VPS, or Vercel                     |
+| Hosting   | Docker on a VPS, behind Caddy for HTTPS         |
+| CI/CD     | GitHub Actions building to GHCR                 |
 
 ## Getting started
 
@@ -49,13 +50,16 @@ npx supabase gen types typescript --project-id <ref> > src/lib/supabase/database
 
 ## Deploying
 
-See [DEPLOY.md](DEPLOY.md) for the full runbook: Supabase project, running the
-migration, Coolify setup and the environment-variable gotcha.
+Push to `master` → GitHub Actions builds the image → GHCR → the VM pulls it.
+The build never runs on the server. On the VM it is two containers described by
+`docker-compose.yml`: the app, and Caddy in front for automatic HTTPS.
 
-Short version — the app ships as a Docker image built from the `Dockerfile` in
-this repo. `NEXT_PUBLIC_*` values are compiled into the browser bundle at build
-time, so they must be passed as **build arguments** as well as runtime
-environment variables. Changing one means rebuilding, not restarting.
+See [DEPLOY.md](DEPLOY.md) for the full runbook — repo secrets, the one-time VM
+bootstrap, Supabase redirect URLs, and rolling back.
+
+One thing worth repeating: `NEXT_PUBLIC_*` values are compiled into the browser
+bundle at build time, so they are Docker **build arguments** as well as runtime
+environment variables. Changing your domain means a rebuild, not a restart.
 
 ## How the data model protects a booking
 

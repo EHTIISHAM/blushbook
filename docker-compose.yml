@@ -1,0 +1,54 @@
+# Runs on the VM, not locally. Pulls the image GitHub Actions built.
+#
+# Two containers and nothing else: the app, and Caddy in front of it for
+# automatic HTTPS. Neither touches the host's system configuration.
+#
+# Lives at /opt/blushbook/docker-compose.yml alongside a .env file.
+# See DEPLOY.md.
+
+services:
+  app:
+    image: ${APP_IMAGE:?set APP_IMAGE in .env}
+    restart: unless-stopped
+    env_file: .env
+    # No published ports: only Caddy may reach it, over the internal network.
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Caddy reads this in the Caddyfile and requests a certificate for it.
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  # Holds the TLS certificates. Losing this means re-issuing them, and
+  # Let's Encrypt rate limits how often you may do that.
+  caddy_data:
+  caddy_config:

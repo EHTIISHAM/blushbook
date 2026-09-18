@@ -1,0 +1,137 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Only one deploy at a time, and let a newer push supersede an older one that
+# is still building.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # Cheap gate. The image build runs `next build`, which typechecks, but lint
+  # is not covered there and a failed lint should not cost a full image build.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx eslint .
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.name.outputs.image }}
+    steps:
+      - uses: actions/checkout@v5
+
+      # GHCR rejects uppercase paths, and repository names often contain them.
+      - name: Resolve image name
+        id: name
+        run: echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ steps.name.outputs.image }}:latest
+            ${{ steps.name.outputs.image }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # These are compiled into the browser bundle, so they belong here and
+          # not only in the VM's runtime env. Never pass the service_role key
+          # as a build arg: build args are recoverable from image history.
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          IMAGE: ${{ needs.build.outputs.image }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+
+          # Pin the host key if it was provided. Falling back to keyscan trusts
+          # whatever answers on first contact; see DEPLOY.md for how to pin it.
+          if [ -n "${KNOWN_HOSTS:-}" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            echo "::warning::VM_SSH_KNOWN_HOSTS is not set; trusting the host key on first contact."
+            ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/id_deploy "$VM_USER@$VM_HOST" \
+            APP_IMAGE_TAG="$IMAGE:${{ github.sha }}" 'bash -seuo pipefail' <<'REMOTE'
+            cd /opt/blushbook
+
+            # Pin this release to the exact commit, so a rollback is just
+            # re-running an older workflow rather than guessing what "latest" was.
+            if grep -q '^APP_IMAGE=' .env; then
+              sed -i "s|^APP_IMAGE=.*|APP_IMAGE=${APP_IMAGE_TAG}|" .env
+            else
+              echo "APP_IMAGE=${APP_IMAGE_TAG}" >> .env
+            fi
+
+            docker compose pull app
+            docker compose up -d
+            docker image prune -f
+          REMOTE
+
+      - name: Verify the new container answers
+        env:
+          SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE_URL/api/health" || true)
+            if [ "$code" = "200" ]; then
+              echo "Health check passed."
+              exit 0
+            fi
+            echo "Attempt $attempt: got '$code', retrying in 5s."
+            sleep 5
+          done
+          echo "::error::Health check never returned 200 at $SITE_URL/api/health"
+          exit 1

@@ -1,0 +1,12 @@
+# These files are consumed on Linux — in CI, in the image build, or on the VM.
+# A CRLF checkout on Windows would travel with them, so pin the line endings
+# rather than leaving it to core.autocrlf.
+Dockerfile              text eol=lf
+Caddyfile               text eol=lf
+*.yml                   text eol=lf
+*.yaml                  text eol=lf
+*.sh                    text eol=lf
+*.sql                   text eol=lf
+.env.example            text eol=lf
+.env.production.example text eol=lf
+.dockerignore           text eol=lf

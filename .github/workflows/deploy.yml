@@ -28,8 +28,12 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npx tsc --noEmit
-      - run: npx eslint .
+
+      # `next typegen` first: LayoutProps and friends are generated into
+      # .next/types, which does not exist in a clean checkout. Without it tsc
+      # fails with "Cannot find name 'LayoutProps'".
+      - run: npm run typecheck
+      - run: npm run lint
 
   build:
     needs: check

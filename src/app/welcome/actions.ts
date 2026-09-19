@@ -117,7 +117,7 @@ const firstServiceSchema = z
       .min(5, "Minimum is 5 minutes.")
       .max(1440, "Maximum is 24 hours."),
     price_cents: money,
-    deposit_cents: money,
+    deposit_cents: money.default(0),
     currency: z
       .string()
       .trim()
@@ -137,7 +137,9 @@ export async function addFirstService(
     name: formData.get("name"),
     duration_minutes: formData.get("duration_minutes"),
     price_cents: formData.get("price"),
-    deposit_cents: formData.get("deposit"),
+    // Deposits are not part of setup right now; services start at zero and
+    // she can add one later on the Services tab.
+    deposit_cents: 0,
     currency: formData.get("currency"),
   });
 
@@ -230,54 +232,4 @@ export async function saveSetupHours(
     status: "success",
     message: `Open ${weekdays.length} day${weekdays.length === 1 ? "" : "s"} a week.`,
   };
-}
-
-/* -------------------------------------------------------------------------
-   Step 4 — deposits and her policy
-   ------------------------------------------------------------------------- */
-
-const depositsSchema = z.object({
-  deposit_link: z
-    .string()
-    .trim()
-    .transform((value) => (value ? value : null))
-    .nullable()
-    .refine((value) => value === null || /^https:\/\/\S+$/i.test(value), {
-      message: "Your deposit link needs to start with https://",
-    }),
-  no_show_policy: z
-    .string()
-    .trim()
-    .max(500, "Keep your policy under 500 characters.")
-    .transform((value) => (value ? value : null)),
-});
-
-export async function saveDeposits(
-  _previous: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const parsed = depositsSchema.safeParse({
-    deposit_link: formData.get("deposit_link") ?? "",
-    no_show_policy: formData.get("no_show_policy") ?? "",
-  });
-
-  if (!parsed.success) {
-    return { status: "error", message: firstIssue(parsed.error) };
-  }
-
-  const profile = await requireProfile();
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from("profiles")
-    .update(parsed.data)
-    .eq("id", profile.id);
-
-  if (error) {
-    return { status: "error", message: error.message };
-  }
-
-  revalidatePath("/welcome");
-  revalidatePath("/dashboard", "layout");
-  return { status: "success", message: "All set." };
 }

@@ -73,12 +73,8 @@ export default async function BookingsPage() {
       href: "/dashboard/hours",
       cta: "Hours",
     },
-    {
-      label: "Add your deposit link",
-      done: Boolean(profile.deposit_link),
-      href: "/dashboard/profile",
-      cta: "Profile",
-    },
+    // No deposit item here for now: setup does not ask for deposits, so the
+    // checklist should not be the thing that reintroduces the prompt.
     {
       label: "Write your no-show policy",
       done: Boolean(profile.no_show_policy),

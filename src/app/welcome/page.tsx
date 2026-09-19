@@ -13,13 +13,11 @@ function startingStep(input: {
   hasName: boolean;
   services: number;
   availability: number;
-  hasDepositDetails: boolean;
 }): number {
   if (!input.hasName) return 0;
   if (input.services === 0) return 1;
   if (input.availability === 0) return 2;
-  if (!input.hasDepositDetails) return 3;
-  return 4;
+  return 3; // past the last step: the finished screen
 }
 
 export default async function WelcomePage() {
@@ -47,9 +45,6 @@ export default async function WelcomePage() {
         hasName: profile.business_name.trim().length > 0,
         services: services.count ?? 0,
         availability: availability.count ?? 0,
-        hasDepositDetails: Boolean(
-          profile.deposit_link || profile.no_show_policy,
-        ),
       })}
       bookingHost={base.replace(/^https?:\/\//, "")}
       bookingUrl={`${base}/${profile.slug}`}

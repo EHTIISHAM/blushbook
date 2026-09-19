@@ -17,6 +17,7 @@ create table public.booking_attempts (
   created_at timestamptz not null default now()
 );
 
+
 create index booking_attempts_lookup
   on public.booking_attempts (ip_hash, created_at desc);
 

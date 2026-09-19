@@ -17,12 +17,11 @@ import type { ProfileRow } from "@/lib/supabase/database.types";
 
 import {
   addFirstService,
-  saveDeposits,
   saveSetupHours,
   saveStudio,
 } from "./actions";
 
-const STEPS = ["Your studio", "First service", "Your hours", "Deposits"];
+const STEPS = ["Your studio", "First service", "Your hours"];
 
 const CURRENCIES = [
   "USD",
@@ -199,10 +198,10 @@ function ServiceStep({
         <p className="hint">You can add the rest afterwards.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div>
           <label className="label" htmlFor="duration_minutes">
-            How long does it take?
+            Minutes
           </label>
           <input
             id="duration_minutes"
@@ -216,29 +215,8 @@ function ServiceStep({
             placeholder="120"
             required
           />
-          <p className="hint">Minutes.</p>
         </div>
 
-        <div>
-          <label className="label" htmlFor="currency">
-            Currency
-          </label>
-          <select
-            id="currency"
-            name="currency"
-            className="field"
-            defaultValue={currency}
-          >
-            {CURRENCIES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="price">
             Price
@@ -257,21 +235,21 @@ function ServiceStep({
         </div>
 
         <div>
-          <label className="label" htmlFor="deposit">
-            Deposit to hold the slot
+          <label className="label" htmlFor="currency">
+            Currency
           </label>
-          <input
-            id="deposit"
-            name="deposit"
+          <select
+            id="currency"
+            name="currency"
             className="field"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="0.01"
-            placeholder="15.00"
-            defaultValue="0.00"
-            required
-          />
+            defaultValue={currency}
+          >
+            {CURRENCIES.map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -359,62 +337,6 @@ function HoursStep({ onDone }: { onDone: () => void }) {
         Same hours on every day you picked. You can set different hours per day,
         and block time off, on the Hours tab.
       </p>
-
-      <Feedback state={state} />
-      <Continue />
-    </form>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-function DepositsStep({
-  profile,
-  onDone,
-}: {
-  profile: ProfileRow;
-  onDone: () => void;
-}) {
-  const [state, formAction] = useActionState(saveDeposits, IDLE);
-  useAdvanceOnSuccess(state, onDone);
-
-  return (
-    <form action={formAction} className="grid gap-5">
-      <div>
-        <label className="label" htmlFor="deposit_link">
-          Where should clients pay your deposit?
-        </label>
-        <input
-          id="deposit_link"
-          name="deposit_link"
-          className="field"
-          type="url"
-          inputMode="url"
-          placeholder="https://paypal.me/lashesbyhira"
-          defaultValue={profile.deposit_link ?? ""}
-          autoFocus
-        />
-        <p className="hint">
-          Your own PayPal, Stripe or bank link. The money goes straight to you,
-          we never touch it. Leave blank and add it later if you don&rsquo;t
-          have it handy.
-        </p>
-      </div>
-
-      <div>
-        <label className="label" htmlFor="no_show_policy">
-          Your no-show policy
-        </label>
-        <textarea
-          id="no_show_policy"
-          name="no_show_policy"
-          className="field min-h-[110px] resize-y"
-          maxLength={500}
-          placeholder="Deposits are non-refundable. Reschedule at least 24 hours ahead and your deposit moves with you."
-          defaultValue={profile.no_show_policy ?? ""}
-        />
-        <p className="hint">Clients read this before they confirm a booking.</p>
-      </div>
 
       <Feedback state={state} />
       <Continue label="Finish setup" />
@@ -536,7 +458,6 @@ export function SetupWizard({
         <ServiceStep currency={profile.currency} onDone={next} />
       )}
       {step === 2 && <HoursStep onDone={next} />}
-      {step === 3 && <DepositsStep profile={profile} onDone={next} />}
       {isDone && <DoneStep bookingUrl={bookingUrl} />}
 
       {!isDone && step > 0 && (

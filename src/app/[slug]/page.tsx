@@ -65,7 +65,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
 
     return (
       <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col justify-center px-5 py-16 text-center">
-        <BrandMark className="mx-auto h-14 w-12" />
+        <BrandMark className="mx-auto h-14 w-14" />
         <h1 className="mt-6 font-display text-[27px] leading-none">
           Bookings are paused
         </h1>
@@ -102,7 +102,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
           />
         ) : (
           <span
-            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-display text-[20px] text-cherry-ink"
+            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-rose font-display text-[20px] text-rose-ink"
             aria-hidden
           >
             {initial}
@@ -149,8 +149,8 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
           href="/"
           className="inline-flex items-center gap-2 text-[13px] text-muted no-underline"
         >
-          <BrandMark className="h-4 w-3.5" />
-          Booked with Blushbook
+          <BrandMark className="h-4 w-4" />
+          Booked with BooknBloom
         </Link>
       </footer>
     </main>

@@ -7,7 +7,7 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Log in to your Blushbook dashboard.",
+  description: "Log in to your BooknBloom dashboard.",
 };
 
 export default function LoginPage() {

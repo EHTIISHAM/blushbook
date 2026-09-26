@@ -1,46 +1,51 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Brand palette — ported verbatim from the original landing page.
+   Brand palette — from the BooknBloom logo concept (design_book.jpeg):
+   Midnight #1F2A44, Blush #D4A5A5, Petal #F6E7E7, Champagne #D4B483,
+   Ivory #F9F7F4. Blush itself is too pale to carry white text, so buttons and
+   selected states use --rose, a deeper shade of it (5.1:1 on white).
    Light is the default. Dark follows the system unless data-theme overrides it.
    --------------------------------------------------------------------------- */
 
 :root {
-  --bg: #fbf3f5;
+  --bg: #f9f7f4;
   --paper: #ffffff;
-  --ink: #2a1420;
-  --muted: #76596a;
-  --line: #ebd9e1;
-  --mauve: #ead3e0;
-  --bubble: #f1e4ea;
-  --cherry: #b3123f;
-  --cherry-ink: #ffffff;
-  --butter: #f7e8b5;
-  --frame: #2a1420;
-  --spark: #f0547e;
+  --ink: #1f2a44;
+  --muted: #5f6678;
+  --line: #ecdfdc;
+  --petal: #f6e7e7;
+  --bubble: #f2ebe8;
+  --blush: #d4a5a5;
+  --rose: #9e5a60;
+  --rose-ink: #ffffff;
+  --champagne: #f3e8d3;
+  --gold: #d4b483;
+  --frame: #1f2a44;
 }
 
-/* Light is the brand, so it is what everyone sees. Blushbook deliberately does
-   not follow prefers-color-scheme: most phones are set to dark, which would
-   mean most clients opening a booking link land on the gloomy version of a
-   blush-pink brand.
+/* Light is the brand, so it is what everyone sees. BooknBloom deliberately
+   does not follow prefers-color-scheme: most phones are set to dark, which
+   would mean most clients opening a booking link land on a gloomy version of
+   an ivory-and-blush brand.
 
    The dark palette below is kept and still works — it is opt-in through
    <html data-theme="dark"> if a toggle is ever wanted. */
 
 :root[data-theme="dark"] {
-  --bg: #1b0f16;
-  --paper: #26161f;
-  --ink: #f7e9ef;
-  --muted: #c3a7b4;
-  --line: #3d2632;
-  --mauve: #33202b;
-  --bubble: #3a2530;
-  --cherry: #f0547e;
-  --cherry-ink: #1b0f16;
-  --butter: #4a3d1c;
-  --frame: #0f080c;
-  --spark: #f7e8b5;
+  --bg: #141b2d;
+  --paper: #1f2a44;
+  --ink: #f9f7f4;
+  --muted: #b7bccb;
+  --line: #313d5c;
+  --petal: #3a3342;
+  --bubble: #2a3552;
+  --blush: #d4a5a5;
+  --rose: #d4a5a5;
+  --rose-ink: #1f2a44;
+  --champagne: #4a3f2c;
+  --gold: #d4b483;
+  --frame: #0d121f;
 }
 
 /* `inline` keeps the var() reference in the generated utility, so every colour
@@ -51,26 +56,33 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-mauve: var(--mauve);
+  --color-petal: var(--petal);
+  --color-blush: var(--blush);
   --color-bubble: var(--bubble);
-  --color-cherry: var(--cherry);
-  --color-cherry-ink: var(--cherry-ink);
-  --color-butter: var(--butter);
+  --color-rose: var(--rose);
+  --color-rose-ink: var(--rose-ink);
+  --color-champagne: var(--champagne);
   --color-frame: var(--frame);
-  --color-spark: var(--spark);
+  --color-gold: var(--gold);
 
   --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
-  --font-display: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo,
-    monospace;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
 }
 
-/* Tailwind's generated .font-display only sets the family. The display face is
-   never used in mixed case in this brand, so the casing rides along with it
-   rather than every call site having to remember `uppercase`. */
+/* The logo's serif wordmark sits tight; the display face follows it. */
 .font-display {
-  text-transform: uppercase;
   letter-spacing: -0.01em;
+}
+
+/* The logo's "BOOK. BEAUTY. GROW." line: small, spaced-out capitals. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 /* ---------------------------------------------------------------------------
@@ -99,15 +111,12 @@
   h1,
   h2 {
     font-family: var(--font-display);
-    font-weight: 400;
-    /* Mono is already wide; uppercase wants tighter tracking than the serif
-       did, not looser. */
+    font-weight: 500;
     letter-spacing: -0.01em;
-    text-transform: uppercase;
   }
 
   :focus-visible {
-    outline: 2px solid var(--cherry);
+    outline: 2px solid var(--rose);
     outline-offset: 3px;
   }
 
@@ -137,8 +146,8 @@
     font-size: 15px;
     text-align: center;
     text-decoration: none;
-    background: var(--cherry);
-    color: var(--cherry-ink);
+    background: var(--rose);
+    color: var(--rose-ink);
   }
 
   .btn:disabled {
@@ -192,31 +201,20 @@
   }
 
   .field:focus-visible {
-    border-color: var(--cherry);
+    border-color: var(--rose);
     outline: none;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cherry) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rose) 22%, transparent);
   }
 
-  /* The brand's polish drop, used as a service swatch and a list bullet. */
+  /* A service's colour swatch, shaped like the palette chips in the logo kit.
+     Also used as a list bullet. */
   .drop {
     flex: none;
     display: inline-block;
     width: 22px;
-    height: 28px;
-    border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
-    background: var(--swatch, var(--cherry));
-    position: relative;
-  }
-
-  .drop::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    width: 5px;
-    height: 9px;
+    height: 22px;
     border-radius: 50%;
-    background: #ffffff80;
-    transform: rotate(-18deg);
+    background: var(--swatch, var(--rose));
+    box-shadow: inset 0 0 0 1px #00000014;
   }
 }

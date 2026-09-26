@@ -1,31 +1,75 @@
 import Link from "next/link";
+import { useId } from "react";
 
-/** The Blushbook polish-drop mark, lifted from the logo kit. */
+/**
+ * The BooknBloom mark: a calendar whose right edge is a "B", with a
+ * champagne check on its face. Drawn from the logo concept in design_book.jpeg.
+ */
 export function BrandMark({ className }: { className?: string }) {
+  // A page can show the mark more than once, so each copy needs its own id.
+  const gradient = `bnb-mark-${useId()}`;
+
   return (
     <svg
-      viewBox="27 20 146 162"
+      viewBox="8 4 86 92"
       className={className}
       aria-hidden="true"
       focusable="false"
     >
+      <defs>
+        <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#E4B7B2" />
+          <stop offset="1" stopColor="#B7777A" />
+        </linearGradient>
+      </defs>
       <path
-        fill="var(--cherry)"
-        d="M100 22 C100 22 154 84 154 127 C154 161.98 123.76 180 100 180 C76.24 180 46 161.98 46 127 C46 84 100 22 100 22 Z"
+        fill={`url(#${gradient})`}
+        d="M22 16H60C76 16 84 24 84 34C84 42 79.5 47 73 50C82 53 88 60 88 69C88 81 79 90 64 90H22C17.6 90 14 86.4 14 82V24C14 19.6 17.6 16 22 16Z"
       />
+      <rect x="22" y="30" width="42" height="44" rx="5" fill="#fff" />
       <path
         fill="#fff"
-        d="M75.38 123.62 L74.1 122.63 L72.6 122.01 L71 121.8 L69.4 122.01 L67.9 122.63 L66.62 123.62 L65.63 124.9 L65.01 126.4 L64.8 128 L65.01 129.6 L65.63 131.1 L66.62 132.38 L83.64 153.36 L85.08 154.54 L86.74 155.39 L88.53 155.88 L90.39 155.99 L92.23 155.72 L93.97 155.08 L95.55 154.09 L96.89 152.79 L128.99 104.67 L129.56 103.45 L129.44 102.11 L128.67 101.01 L127.45 100.44 L126.11 100.56 L125.01 101.33 L89.53 135.09 Z"
+        fillOpacity=".55"
+        d="M14 71C32 85 58 86 84 76C68 90 38 93 14 84Z"
       />
       <path
-        fill="var(--spark)"
-        d="M44 37 Q46.4 49.6 59 52 Q46.4 54.4 44 67 Q41.6 54.4 29 52 Q41.6 49.6 44 37 Z"
+        fill="none"
+        stroke="#D4B483"
+        strokeWidth="6.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M31 52L40 61L56 41"
       />
-      <path
-        fill="var(--spark)"
-        d="M156 37 Q158.4 49.6 171 52 Q158.4 54.4 156 67 Q153.6 54.4 141 52 Q153.6 49.6 156 37 Z"
+      <rect
+        x="28"
+        y="7"
+        width="7"
+        height="17"
+        rx="3.5"
+        fill="#F9F7F4"
+        stroke="#B7777A"
+        strokeWidth="2"
+      />
+      <rect
+        x="47"
+        y="7"
+        width="7"
+        height="17"
+        rx="3.5"
+        fill="#F9F7F4"
+        stroke="#B7777A"
+        strokeWidth="2"
       />
     </svg>
+  );
+}
+
+/** "BooknBloom" set as in the logo: midnight "Bookn", blush "Bloom". */
+export function Wordmark({ className = "" }: { className?: string }) {
+  return (
+    <span className={`font-display leading-none ${className}`}>
+      Bookn<span className="text-rose">Bloom</span>
+    </span>
   );
 }
 
@@ -35,12 +79,10 @@ export function BrandLock({ href = "/" }: { href?: string }) {
     <Link
       href={href}
       className="flex items-center gap-[10px] text-ink no-underline"
-      aria-label="Blushbook home"
+      aria-label="BooknBloom home"
     >
-      <BrandMark className="h-9 w-8 flex-none" />
-      <span className="font-display text-[17px] leading-none tracking-[0.06em]">
-        BLUSHBOOK
-      </span>
+      <BrandMark className="h-9 w-9 flex-none" />
+      <Wordmark className="text-[22px] font-medium" />
     </Link>
   );
 }

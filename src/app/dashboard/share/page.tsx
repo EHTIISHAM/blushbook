@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Share" };
 export default async function SharePage() {
   const profile = await requireProfile();
 
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blushbook.app")
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://booknbloom.app")
     .replace(/\/$/, "");
   const bookingUrl = `${base}/${profile.slug}`;
 

@@ -62,7 +62,7 @@ export function HoursForm({
                     [weekday]: event.target.checked,
                   }))
                 }
-                className="h-5 w-5 accent-[var(--cherry)]"
+                className="h-5 w-5 accent-[var(--rose)]"
               />
               {WEEKDAYS[weekday]}
             </label>
@@ -99,7 +99,7 @@ export function HoursForm({
       })}
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-cherry" role="alert">
+        <p className="text-[14px] font-semibold text-rose" role="alert">
           {state.message}
         </p>
       )}

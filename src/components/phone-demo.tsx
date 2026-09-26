@@ -24,7 +24,7 @@ const SERVICES: DemoService[] = [
     mins: 120,
     price: 60,
     deposit: 15,
-    swatch: "#B3123F",
+    swatch: "#9E5A60",
   },
   {
     id: "hybrid",
@@ -32,7 +32,7 @@ const SERVICES: DemoService[] = [
     mins: 150,
     price: 75,
     deposit: 20,
-    swatch: "#8E5B9A",
+    swatch: "#D4B483",
   },
   {
     id: "infill",
@@ -40,7 +40,7 @@ const SERVICES: DemoService[] = [
     mins: 60,
     price: 35,
     deposit: 10,
-    swatch: "#E58FA8",
+    swatch: "#D4A5A5",
   },
 ];
 
@@ -124,7 +124,7 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
 
   return (
     <>
-      <div className="phone" aria-label="Demo of a Blushbook booking page">
+      <div className="phone" aria-label="Demo of a BooknBloom booking page">
         <div className="notch" aria-hidden />
 
         <div

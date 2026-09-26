@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col justify-center px-5 py-16 text-center">
-      <BrandMark className="mx-auto h-14 w-12" />
+      <BrandMark className="mx-auto h-14 w-14" />
 
       <h1 className="mt-6 font-display text-[30px] leading-none">
         This link doesn&rsquo;t go anywhere
@@ -23,7 +23,7 @@ export default function NotFound() {
 
       <div className="mt-8">
         <Link href="/" className="btn">
-          Go to Blushbook
+          Go to BooknBloom
         </Link>
       </div>
     </main>

@@ -114,7 +114,7 @@ export function BookingFlow({
     return (
       <section className="card mt-8 text-center" aria-live="polite">
         <div
-          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-cherry text-[30px] text-cherry-ink"
+          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-rose text-[30px] text-rose-ink"
           aria-hidden
         >
           ✓
@@ -140,7 +140,7 @@ export function BookingFlow({
         </p>
 
         {confirmation.depositCents > 0 && (
-          <div className="mt-5 rounded-[14px] bg-butter px-4 py-3 text-[15px]">
+          <div className="mt-5 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
             Next, pay the{" "}
             <strong>
               {formatMoney(confirmation.depositCents, confirmation.currency)}
@@ -193,7 +193,7 @@ export function BookingFlow({
               onClick={() => chooseService(item.id)}
               aria-pressed={serviceId === item.id}
               className={`flex w-full items-center gap-3 rounded-[16px] border-[1.5px] bg-paper p-3 text-left ${
-                serviceId === item.id ? "border-cherry" : "border-line"
+                serviceId === item.id ? "border-rose" : "border-line"
               }`}
             >
               <span
@@ -238,7 +238,7 @@ export function BookingFlow({
           )}
 
           {slotError && (
-            <p className="mt-3 text-[15px] font-semibold text-cherry" role="alert">
+            <p className="mt-3 text-[15px] font-semibold text-rose" role="alert">
               {slotError}
             </p>
           )}
@@ -292,7 +292,7 @@ export function BookingFlow({
                       aria-pressed={on}
                       className={`rounded-full border-[1.5px] py-2 text-[13px] font-semibold ${
                         on
-                          ? "border-cherry bg-cherry text-cherry-ink"
+                          ? "border-rose bg-rose text-rose-ink"
                           : "border-line bg-paper"
                       }`}
                     >
@@ -341,7 +341,7 @@ export function BookingFlow({
               ).map(([value, label], index) => (
                 <label
                   key={value}
-                  className="flex-1 cursor-pointer rounded-full border-[1.5px] border-line bg-paper py-2 text-center text-[14px] font-semibold has-checked:border-cherry has-checked:bg-cherry has-checked:text-cherry-ink"
+                  className="flex-1 cursor-pointer rounded-full border-[1.5px] border-line bg-paper py-2 text-center text-[14px] font-semibold has-checked:border-rose has-checked:bg-rose has-checked:text-rose-ink"
                 >
                   <input
                     type="radio"
@@ -371,14 +371,14 @@ export function BookingFlow({
           </div>
 
           {noShowPolicy && (
-            <div className="rounded-[14px] bg-butter px-4 py-3 text-[14px]">
+            <div className="rounded-[14px] bg-champagne px-4 py-3 text-[14px]">
               <strong className="block">Before you book</strong>
               <span className="mt-1 block">{noShowPolicy}</span>
             </div>
           )}
 
           {state.status === "error" && (
-            <p className="text-[14px] font-semibold text-cherry" role="alert">
+            <p className="text-[14px] font-semibold text-rose" role="alert">
               {state.message}
             </p>
           )}

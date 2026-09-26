@@ -49,7 +49,7 @@ export function ProfileForm({
         <label className="label" htmlFor="slug">
           Your booking link
         </label>
-        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-cherry">
+        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-rose">
           <span className="flex select-none items-center whitespace-nowrap bg-bubble px-3 text-[14px] text-muted">
             {siteHost}/
           </span>
@@ -199,7 +199,7 @@ export function ProfileForm({
       </div>
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-cherry" role="alert">
+        <p className="text-[14px] font-semibold text-rose" role="alert">
           {state.message}
         </p>
       )}

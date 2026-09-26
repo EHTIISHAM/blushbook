@@ -95,7 +95,7 @@ export default async function BookingsPage() {
           Every booking made through your link lands here.
         </p>
 
-        <div className="mt-6 rounded-[26px] bg-mauve px-6 py-10 text-center">
+        <div className="mt-6 rounded-[26px] bg-petal px-6 py-10 text-center">
           <p className="font-display text-[18px] leading-tight">
             No bookings yet
           </p>
@@ -123,7 +123,7 @@ export default async function BookingsPage() {
                 aria-hidden
                 className={`mt-0.5 grid h-5 w-5 flex-none place-items-center rounded-full text-[12px] font-bold ${
                   item.done
-                    ? "bg-cherry text-cherry-ink"
+                    ? "bg-rose text-rose-ink"
                     : "bg-bubble text-muted"
                 }`}
               >
@@ -137,7 +137,7 @@ export default async function BookingsPage() {
                 {!item.done && (
                   <Link
                     href={item.href}
-                    className="ml-2 whitespace-nowrap text-[14px] font-semibold text-cherry underline underline-offset-4"
+                    className="ml-2 whitespace-nowrap text-[14px] font-semibold text-rose underline underline-offset-4"
                   >
                     {item.cta}
                   </Link>

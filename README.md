@@ -1,4 +1,4 @@
-# Blushbook
+# BooknBloom
 
 One booking link for solo lash, nail and brow techs. Clients pick a service and
 a time on the tech's page, then get sent to her own deposit link; she runs

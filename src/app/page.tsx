@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { BrandMark } from "@/components/brand";
+import { BrandLock, BrandMark } from "@/components/brand";
 import { PhoneDemo, type DemoDay } from "@/components/phone-demo";
 
 import "./landing.css";
@@ -32,12 +32,7 @@ export default function HomePage() {
   return (
     <div className="landing">
       <header className="masthead wrap" id="top">
-        <Link href="#top" className="brand flex items-center gap-[10px] no-underline" aria-label="Blushbook home">
-          <BrandMark className="h-9 w-8 flex-none" />
-          <span className="font-display text-[17px] leading-none tracking-[0.06em]">
-            BLUSHBOOK
-          </span>
-        </Link>
+        <BrandLock href="#top" />
         <Link className="btn sm" href="/login">
           Start free
         </Link>
@@ -46,6 +41,7 @@ export default function HomePage() {
       <main>
         <section className="hero wrap">
           <div>
+            <p className="eyebrow mb-5">Book. Beauty. Grow.</p>
             <h1>
               Fully booked,
               <br />
@@ -90,11 +86,11 @@ export default function HomePage() {
             </figure>
 
             <figure className="thread better">
-              <figcaption>Your DMs with Blushbook</figcaption>
+              <figcaption>Your DMs with BooknBloom</figcaption>
               <p className="bub in">hiii are you free thursday?</p>
               <p className="bub out">
                 Hey babe, all my open times are here 💕
-                blushbook.app/lashesbyhira
+                booknbloom.app/lashesbyhira
               </p>
               <p className="bub sys">
                 New booking: Hybrid full set, Thursday at 2:30pm
@@ -181,7 +177,7 @@ export default function HomePage() {
             <summary>Do you take a cut of my deposits?</summary>
             <p>
               No. Clients pay through your own PayPal or Stripe link, so the
-              money goes straight to you. Blushbook is one flat monthly price.
+              money goes straight to you. BooknBloom is one flat monthly price.
             </p>
           </details>
 
@@ -207,7 +203,7 @@ export default function HomePage() {
 
       <footer className="foot wrap">
         <span className="foot-brand">
-          <BrandMark />© 2026 Blushbook
+          <BrandMark />© 2026 BooknBloom
         </span>
         <span>Made for solo beauty pros</span>
       </footer>

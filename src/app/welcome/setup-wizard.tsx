@@ -50,7 +50,7 @@ function Continue({ label = "Continue" }: { label?: string }) {
 function Feedback({ state }: { state: ActionState }) {
   if (state.status !== "error") return null;
   return (
-    <p className="text-[14px] font-semibold text-cherry" role="alert">
+    <p className="text-[14px] font-semibold text-rose" role="alert">
       {state.message}
     </p>
   );
@@ -132,7 +132,7 @@ function StudioStep({
         <label className="label" htmlFor="slug">
           Your booking link
         </label>
-        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-cherry">
+        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-rose">
           <span className="flex select-none items-center whitespace-nowrap bg-bubble px-3 text-[14px] text-muted">
             {bookingHost}/
           </span>
@@ -290,7 +290,7 @@ function HoursStep({ onDone }: { onDone: () => void }) {
                 aria-pressed={on}
                 className={`rounded-full px-4 py-2 text-[14px] font-semibold ${
                   on
-                    ? "bg-cherry text-cherry-ink"
+                    ? "bg-rose text-rose-ink"
                     : "bg-paper text-muted shadow-[inset_0_0_0_1.5px_var(--line)]"
                 }`}
               >
@@ -362,7 +362,7 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
   return (
     <div className="text-center">
       <div
-        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-cherry text-[30px] text-cherry-ink"
+        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-rose text-[30px] text-rose-ink"
         aria-hidden
       >
         ✓
@@ -430,7 +430,7 @@ export function SetupWizard({
               <li
                 key={label}
                 className={`h-1.5 flex-1 rounded-full ${
-                  index <= step ? "bg-cherry" : "bg-line"
+                  index <= step ? "bg-rose" : "bg-line"
                 }`}
               >
                 <span className="sr-only">

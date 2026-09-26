@@ -33,7 +33,7 @@ function timezoneOptions(current: string): string[] {
 export default async function ProfilePage() {
   const profile = await requireProfile();
 
-  const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "blushbook.app")
+  const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "booknbloom.app")
     .replace(/^https?:\/\//, "")
     .replace(/\/$/, "");
 

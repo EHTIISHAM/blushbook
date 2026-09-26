@@ -135,7 +135,7 @@ export function PhotoUpload({
           />
         ) : (
           <span
-            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-cherry font-display text-[20px] text-cherry-ink"
+            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-rose font-display text-[20px] text-rose-ink"
             aria-hidden
           >
             {initial}
@@ -175,7 +175,7 @@ export function PhotoUpload({
       />
 
       {error && (
-        <p className="hint font-semibold text-cherry" role="alert">
+        <p className="hint font-semibold text-rose" role="alert">
           {error}
         </p>
       )}

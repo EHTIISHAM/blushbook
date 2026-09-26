@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Mono, Manrope } from "next/font/google";
+import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-// Display face: set uppercase everywhere it is used. DM Mono has no bold, so
-// 500 is the heaviest available and 300 carries the large hero sizes.
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+// Display face: a high-contrast serif in the spirit of the BooknBloom wordmark.
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -23,13 +23,13 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: "Blushbook: one booking link for beauty pros",
-    template: "%s · Blushbook",
+    default: "BooknBloom: one booking link for beauty pros",
+    template: "%s · BooknBloom",
   },
   description:
     "One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.",
   openGraph: {
-    title: "Blushbook: one booking link for beauty pros",
+    title: "BooknBloom: one booking link for beauty pros",
     description:
       "One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.",
     images: ["/og-image.png"],
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#B3123F",
+  themeColor: "#F9F7F4",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${dmMono.variable} ${manrope.variable} h-full antialiased`}
+      className={`${playfair.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

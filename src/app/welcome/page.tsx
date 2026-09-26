@@ -35,7 +35,7 @@ export default async function WelcomePage() {
       .eq("profile_id", profile.id),
   ]);
 
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://blushbook.app")
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://booknbloom.app")
     .replace(/\/$/, "");
 
   return (

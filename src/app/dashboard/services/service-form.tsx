@@ -9,12 +9,12 @@ import type { ServiceRow } from "@/lib/supabase/database.types";
 
 /** Swatches drawn from the brand palette, plus room to go off-script. */
 const SWATCHES = [
-  "#B3123F",
-  "#F0547E",
-  "#8E5B9A",
-  "#E58FA8",
-  "#C77D3A",
-  "#5B8C7B",
+  "#9E5A60",
+  "#D4A5A5",
+  "#D4B483",
+  "#1F2A44",
+  "#8E7A9E",
+  "#7F9A86",
 ];
 
 function SubmitButton({ label }: { label: string }) {
@@ -152,7 +152,7 @@ export function ServiceForm({
                 />
                 <label
                   htmlFor={id}
-                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full peer-checked:shadow-[inset_0_0_0_2px_var(--ink)] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cherry"
+                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full peer-checked:shadow-[inset_0_0_0_2px_var(--ink)] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-rose"
                 >
                   <span
                     className="drop"
@@ -171,13 +171,13 @@ export function ServiceForm({
           type="checkbox"
           name="is_active"
           defaultChecked={service?.is_active ?? true}
-          className="h-5 w-5 accent-[var(--cherry)]"
+          className="h-5 w-5 accent-[var(--rose)]"
         />
         Show this service on my booking page
       </label>
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-cherry" role="alert">
+        <p className="text-[14px] font-semibold text-rose" role="alert">
           {state.message}
         </p>
       )}

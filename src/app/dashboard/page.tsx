@@ -1,8 +1,98 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { formatMoney } from "@/lib/format";
 import { getSessionProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
+import type { BookingRow } from "@/lib/supabase/database.types";
+
+import { BookingStatusButtons } from "./booking-status";
+
+/** How far back the Past list reaches. Older bookings still count in analytics. */
+const PAST_DAYS = 90;
+
+type ListedBooking = Pick<
+  BookingRow,
+  | "id"
+  | "client_name"
+  | "client_contact"
+  | "contact_kind"
+  | "starts_at"
+  | "status"
+  | "service_name"
+  | "price_cents"
+>;
+
+const STATUS_LABELS: Partial<Record<BookingRow["status"], string>> = {
+  cancelled: "Cancelled",
+  no_show: "No-show",
+};
+
+function formatWhen(iso: string, timezone: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: timezone,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
+function BookingList({
+  bookings,
+  isPast,
+  timezone,
+  currency,
+}: {
+  bookings: ListedBooking[];
+  isPast: boolean;
+  timezone: string;
+  currency: string;
+}) {
+  return (
+    <ul className="mt-3 grid gap-2">
+      {bookings.map((booking) => {
+        const when = formatWhen(booking.starts_at, timezone);
+        const flag = STATUS_LABELS[booking.status];
+
+        return (
+          <li
+            key={booking.id}
+            className={`card flex flex-wrap items-center justify-between gap-3 !py-4 ${
+              flag ? "opacity-70" : ""
+            }`}
+          >
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold text-muted">{when}</p>
+              <p className="mt-0.5 text-[16px] font-bold">
+                {booking.client_name}
+                {flag && (
+                  <span className="ml-2 rounded-full bg-champagne px-2 py-0.5 align-middle text-[12px] font-semibold">
+                    {flag}
+                  </span>
+                )}
+              </p>
+              <p className="text-[14px] text-muted">
+                {booking.service_name} &middot;{" "}
+                {formatMoney(booking.price_cents, currency)} &middot;{" "}
+                {booking.contact_kind === "whatsapp" ? "WhatsApp" : "Instagram"}{" "}
+                {booking.client_contact}
+              </p>
+            </div>
+
+            <BookingStatusButtons
+              id={booking.id}
+              status={booking.status}
+              isPast={isPast}
+              description={`${booking.client_name}, ${when}`}
+            />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 interface ChecklistItem {
   label: string;
@@ -42,7 +132,12 @@ export default async function BookingsPage() {
 
   const supabase = await createClient();
 
-  const [services, availability] = await Promise.all([
+  const now = new Date();
+  const pastFrom = new Date(now.getTime() - PAST_DAYS * 24 * 60 * 60 * 1000);
+  const bookingColumns =
+    "id, client_name, client_contact, contact_kind, starts_at, status, service_name, price_cents";
+
+  const [services, availability, upcomingResult, pastResult] = await Promise.all([
     supabase
       .from("services")
       .select("id", { count: "exact", head: true })
@@ -52,7 +147,26 @@ export default async function BookingsPage() {
       .from("availability")
       .select("id", { count: "exact", head: true })
       .eq("profile_id", profile.id),
+    supabase
+      .from("bookings")
+      .select(bookingColumns)
+      .eq("profile_id", profile.id)
+      .gte("starts_at", now.toISOString())
+      .order("starts_at", { ascending: true })
+      .limit(200),
+    supabase
+      .from("bookings")
+      .select(bookingColumns)
+      .eq("profile_id", profile.id)
+      .lt("starts_at", now.toISOString())
+      .gte("starts_at", pastFrom.toISOString())
+      .order("starts_at", { ascending: false })
+      .limit(200),
   ]);
+
+  const upcoming: ListedBooking[] = upcomingResult.data ?? [];
+  const past: ListedBooking[] = pastResult.data ?? [];
+  const loadError = upcomingResult.error ?? pastResult.error;
 
   const checklist: ChecklistItem[] = [
     {
@@ -95,15 +209,56 @@ export default async function BookingsPage() {
           Every booking made through your link lands here.
         </p>
 
-        <div className="mt-6 rounded-[26px] bg-petal px-6 py-10 text-center">
-          <p className="font-display text-[18px] leading-tight">
-            No bookings yet
+        {loadError && (
+          <p className="mt-6 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+            Couldn&rsquo;t load your bookings: {loadError.message}
           </p>
-          <p className="mx-auto mt-2 max-w-[38ch] text-[15px] text-muted">
-            The booking page and this list are next up in the build. Finish the
-            checklist so everything is ready when they switch on.
-          </p>
-        </div>
+        )}
+
+        {!loadError && upcoming.length === 0 && past.length === 0 && (
+          <div className="mt-6 rounded-[26px] bg-petal px-6 py-10 text-center">
+            <p className="font-display text-[18px] leading-tight">
+              No bookings yet
+            </p>
+            <p className="mx-auto mt-2 max-w-[38ch] text-[15px] text-muted">
+              Share your link and new bookings will show up here.
+            </p>
+          </div>
+        )}
+
+        {upcoming.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-[15px] font-bold">Coming up</h2>
+            <p className="hint">
+              Cancelling frees the time on your page. The client isn&rsquo;t
+              told, so message them yourself.
+            </p>
+            <BookingList
+              bookings={upcoming}
+              isPast={false}
+              timezone={profile.timezone}
+              currency={profile.currency}
+            />
+          </div>
+        )}
+
+        {past.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-[15px] font-bold">
+              Past {PAST_DAYS} days
+            </h2>
+            <p className="hint">
+              These count as done. Mark any that didn&rsquo;t happen so your
+              numbers stay right.
+            </p>
+            <BookingList
+              bookings={past}
+              isPast
+              timezone={profile.timezone}
+              currency={profile.currency}
+            />
+          </div>
+        )}
       </section>
 
       <section aria-labelledby="setup-h" className="card lg:sticky lg:top-6">

@@ -11,8 +11,7 @@
     "check:actions": "node scripts/check-server-actions.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.128.0",
-    "@anthropic-ai/vertex-sdk": "^0.19.11",
+    "@google/genai": "^2.24.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
     "next": "16.3.5",

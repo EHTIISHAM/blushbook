@@ -1,20 +1,18 @@
 import "server-only";
 
-import Anthropic from "@anthropic-ai/sdk";
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { AnthropicVertex } from "@anthropic-ai/vertex-sdk";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { z } from "zod";
 
 /**
  * Reads a photo of a price list and returns the services on it.
  *
- * Claude is called through Vertex AI so usage bills to the GCP project the app
+ * Gemini is called through Vertex AI so usage bills to the GCP project the app
  * already runs in. On the VM the client authenticates as the instance's service
  * account (Application Default Credentials), so there is no key to store. See
  * DEPLOY.md → "Menu scanning".
  */
 
-const MODEL = "claude-opus-5";
+const MODEL = "gemini-3.8-flash";
 
 const menuSchema = z.object({
   currency: z
@@ -51,18 +49,19 @@ const INSTRUCTIONS = `These are photos of a beauty salon's price list. List ever
 - Skip anything that isn't a single bookable service: slogans, "we offer packages" banners, contact details.
 - If the photos show no price list at all, return an empty items list.`;
 
-let client: AnthropicVertex | null = null;
+let client: GoogleGenAI | null = null;
 
-function getClient(): AnthropicVertex {
-  const projectId = process.env.ANTHROPIC_VERTEX_PROJECT_ID;
+function getClient(): GoogleGenAI {
+  const projectId = process.env.GOOGLE_PROJECT_ID;
   if (!projectId) {
     throw new MenuScanUnavailable(
       "Menu scanning isn't set up on this server yet.",
     );
   }
-  client ??= new AnthropicVertex({
-    projectId,
-    region: process.env.CLOUD_ML_REGION || "global",
+  client ??= new GoogleGenAI({
+    vertexai: true,
+    project: projectId,
+    location: process.env.CLOUD_ML_REGION || "global",
   });
   return client;
 }
@@ -76,35 +75,34 @@ export interface MenuPhoto {
 }
 
 export async function scanMenuPhotos(photos: MenuPhoto[]): Promise<ScannedMenu> {
-  const response = await getClient().messages.parse({
+  const response = await getClient().models.generateContent({
     model: MODEL,
-    max_tokens: 16000,
-    thinking: { type: "adaptive" },
-    // Transcription more than reasoning; medium keeps the wait short.
-    output_config: { effort: "medium", format: zodOutputFormat(menuSchema) },
-    messages: [
+    contents: [
       {
         role: "user",
-        content: [
-          ...photos.map(
-            (photo): Anthropic.ImageBlockParam => ({
-              type: "image",
-              source: {
-                type: "base64",
-                media_type: photo.mediaType,
-                data: photo.base64,
-              },
-            }),
-          ),
-          { type: "text", text: INSTRUCTIONS },
+        parts: [
+          ...photos.map((photo) => ({
+            inlineData: { mimeType: photo.mediaType, data: photo.base64 },
+          })),
+          { text: INSTRUCTIONS },
         ],
       },
     ],
+    config: {
+      maxOutputTokens: 16000,
+      // Transcription more than reasoning; low keeps the wait short.
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+      responseMimeType: "application/json",
+      responseJsonSchema: z.toJSONSchema(menuSchema),
+    },
   });
 
-  if (response.stop_reason === "refusal" || !response.parsed_output) {
-    throw new Error(`Menu scan returned no result (${response.stop_reason}).`);
+  const text = response.text;
+  const parsed = text ? menuSchema.safeParse(JSON.parse(text)) : null;
+  if (!parsed?.success) {
+    const reason = response.candidates?.[0]?.finishReason ?? "empty";
+    throw new Error(`Menu scan returned no result (${reason}).`);
   }
 
-  return response.parsed_output;
+  return parsed.data;
 }

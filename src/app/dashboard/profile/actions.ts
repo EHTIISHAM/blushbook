@@ -42,6 +42,13 @@ const profileSchema = z.object({
     .trim()
     .toUpperCase()
     .regex(/^[A-Z]{3}$/, "Use a 3 letter currency code, like USD."),
+  // Services without their own minutes follow this; a trigger keeps them in
+  // step when it changes.
+  default_duration_minutes: z.coerce
+    .number<number>()
+    .int("Use whole minutes.")
+    .min(5, "Your usual length must be at least 5 minutes.")
+    .max(1440, "Your usual length can't be more than 24 hours."),
   deposit_link: z
     .string()
     .trim()
@@ -73,6 +80,7 @@ export async function saveProfile(
     bio: formData.get("bio") ?? "",
     timezone: formData.get("timezone"),
     currency: formData.get("currency"),
+    default_duration_minutes: formData.get("default_duration_minutes"),
     deposit_link: formData.get("deposit_link") ?? "",
     no_show_policy: formData.get("no_show_policy") ?? "",
   });
@@ -117,6 +125,7 @@ export async function saveProfile(
 
   revalidatePath("/dashboard/profile");
   revalidatePath("/dashboard/share");
+  revalidatePath("/dashboard/services");
   return { status: "success", message: "Profile saved." };
 }
 

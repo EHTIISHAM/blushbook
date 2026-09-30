@@ -4,18 +4,9 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { IDLE, type ActionState } from "@/lib/action-state";
-import { centsToInput } from "@/lib/format";
+import { centsToInput, formatDuration } from "@/lib/format";
+import { SWATCHES } from "@/lib/swatches";
 import type { ServiceRow } from "@/lib/supabase/database.types";
-
-/** Swatches drawn from the brand palette, plus room to go off-script. */
-const SWATCHES = [
-  "#9E5A60",
-  "#D4A5A5",
-  "#D4B483",
-  "#1F2A44",
-  "#8E7A9E",
-  "#7F9A86",
-];
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -30,6 +21,8 @@ interface ServiceFormProps {
   action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   service?: ServiceRow;
   currency: string;
+  /** Her usual appointment length, used when Minutes is left blank. */
+  usualMinutes: number;
   submitLabel: string;
   /** Clears the fields after a successful add. */
   resetOnSuccess?: boolean;
@@ -39,6 +32,7 @@ export function ServiceForm({
   action,
   service,
   currency,
+  usualMinutes,
   submitLabel,
   resetOnSuccess = false,
 }: ServiceFormProps) {
@@ -85,9 +79,13 @@ export function ServiceForm({
             min={5}
             max={1440}
             step={5}
-            placeholder="120"
-            defaultValue={service?.duration_minutes ?? ""}
-            required
+            placeholder={String(usualMinutes)}
+            defaultValue={
+              service && !service.duration_is_default
+                ? service.duration_minutes
+                : ""
+            }
+            aria-describedby={`duration-hint-${service?.id ?? "new"}`}
           />
         </div>
 
@@ -130,6 +128,14 @@ export function ServiceForm({
           />
         </div>
       </div>
+
+      <p
+        id={`duration-hint-${service?.id ?? "new"}`}
+        className="hint -mt-2"
+      >
+        Leave minutes blank to use your usual length (
+        {formatDuration(usualMinutes)}).
+      </p>
 
       <fieldset className="border-0 p-0">
         <legend className="label">Swatch</legend>

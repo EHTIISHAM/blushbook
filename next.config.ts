@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   output: "standalone",
 
   poweredByHeader: false,
+
+  experimental: {
+    serverActions: {
+      // Menu scanning uploads up to four photos. The browser shrinks each one
+      // to a few hundred KB first, so this is headroom rather than the norm.
+      bodySizeLimit: "8mb",
+    },
+  },
 };
 
 export default nextConfig;

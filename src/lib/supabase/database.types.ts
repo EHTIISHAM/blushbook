@@ -31,6 +31,8 @@ export type ProfileRow = {
   currency: string;
   deposit_link: string | null;
   no_show_policy: string | null;
+  /** Length used by every service that has duration_is_default set. */
+  default_duration_minutes: number;
   subscription_status: SubscriptionStatus;
   paddle_customer_id: string | null;
   paddle_subscription_id: string | null;
@@ -59,6 +61,8 @@ export type ServiceRow = {
   profile_id: string;
   name: string;
   duration_minutes: number;
+  /** Follows the profile's usual length; kept in step by a trigger. */
+  duration_is_default: boolean;
   price_cents: number;
   deposit_cents: number;
   swatch: string;

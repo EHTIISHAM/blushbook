@@ -111,8 +111,10 @@ const firstServiceSchema = z
       .trim()
       .min(1, "Give the service a name.")
       .max(80, "Keep the name under 80 characters."),
-    duration_minutes: z.coerce
-      .number<number>()
+    // Asked once as her usual length rather than per service; most price
+    // lists don't print a time. Her first service follows it.
+    default_duration_minutes: z.coerce
+      .number<number>({ error: "Pick how long a usual appointment takes." })
       .int("Use whole minutes.")
       .min(5, "Minimum is 5 minutes.")
       .max(1440, "Maximum is 24 hours."),
@@ -135,7 +137,7 @@ export async function addFirstService(
 ): Promise<ActionState> {
   const parsed = firstServiceSchema.safeParse({
     name: formData.get("name"),
-    duration_minutes: formData.get("duration_minutes"),
+    default_duration_minutes: formData.get("default_duration_minutes"),
     price_cents: formData.get("price"),
     // Deposits are not part of setup right now; services start at zero and
     // she can add one later on the Services tab.
@@ -149,13 +151,17 @@ export async function addFirstService(
 
   const profile = await requireProfile();
   const supabase = await createClient();
-  const { currency, ...service } = parsed.data;
+  const { currency, default_duration_minutes, ...service } = parsed.data;
 
-  if (currency !== profile.currency) {
-    await supabase
-      .from("profiles")
-      .update({ currency })
-      .eq("id", profile.id);
+  // Before the insert: the service picks up the usual length from her
+  // profile as it is written.
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .update({ currency, default_duration_minutes })
+    .eq("id", profile.id);
+
+  if (profileError) {
+    return { status: "error", message: profileError.message };
   }
 
   const { data: last } = await supabase
@@ -168,6 +174,8 @@ export async function addFirstService(
 
   const { error } = await supabase.from("services").insert({
     ...service,
+    duration_minutes: default_duration_minutes,
+    duration_is_default: true,
     profile_id: profile.id,
     sort_order: (last?.sort_order ?? -1) + 1,
   });

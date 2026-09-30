@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
+import { UsualDurationPicker } from "@/components/usual-duration-picker";
 import { IDLE, type ActionState } from "@/lib/action-state";
 import { WEEKDAYS } from "@/lib/format";
 import { normalizeSlug } from "@/lib/slug";
@@ -172,9 +173,11 @@ function StudioStep({
 
 function ServiceStep({
   currency,
+  usualMinutes,
   onDone,
 }: {
   currency: string;
+  usualMinutes: number;
   onDone: () => void;
 }) {
   const [state, formAction] = useActionState(addFirstService, IDLE);
@@ -182,6 +185,14 @@ function ServiceStep({
 
   return (
     <form action={formAction} className="grid gap-5">
+      <fieldset className="border-0 p-0">
+        <legend className="label">How long is a usual appointment?</legend>
+        <UsualDurationPicker value={usualMinutes} idPrefix="setup-usual" />
+        <p className="hint">
+          Every service uses this unless you give it its own time.
+        </p>
+      </fieldset>
+
       <div>
         <label className="label" htmlFor="name">
           Your most booked service
@@ -195,28 +206,12 @@ function ServiceStep({
           autoFocus
           required
         />
-        <p className="hint">You can add the rest afterwards.</p>
+        <p className="hint">
+          Add the rest afterwards, or scan your price list on the Services tab.
+        </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label className="label" htmlFor="duration_minutes">
-            Minutes
-          </label>
-          <input
-            id="duration_minutes"
-            name="duration_minutes"
-            className="field"
-            type="number"
-            inputMode="numeric"
-            min={5}
-            max={1440}
-            step={5}
-            placeholder="120"
-            required
-          />
-        </div>
-
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="price">
             Price
@@ -455,7 +450,11 @@ export function SetupWizard({
         />
       )}
       {step === 1 && (
-        <ServiceStep currency={profile.currency} onDone={next} />
+        <ServiceStep
+          currency={profile.currency}
+          usualMinutes={profile.default_duration_minutes}
+          onDone={next}
+        />
       )}
       {step === 2 && <HoursStep onDone={next} />}
       {isDone && <DoneStep bookingUrl={bookingUrl} />}

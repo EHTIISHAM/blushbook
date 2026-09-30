@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { UsualDurationPicker } from "@/components/usual-duration-picker";
 import { IDLE } from "@/lib/action-state";
 import { normalizeSlug } from "@/lib/slug";
 import type { ProfileRow } from "@/lib/supabase/database.types";
@@ -163,6 +164,18 @@ export function ProfileForm({
           <p className="hint">Used for your prices and deposits.</p>
         </div>
       </div>
+
+      <fieldset className="border-0 p-0">
+        <legend className="label">Usual appointment length</legend>
+        <UsualDurationPicker
+          value={profile.default_duration_minutes}
+          idPrefix="profile-usual"
+        />
+        <p className="hint">
+          Services without their own minutes use this. You can set a different
+          length on any service.
+        </p>
+      </fieldset>
 
       <div>
         <label className="label" htmlFor="deposit_link">

@@ -6,7 +6,9 @@ import { createClient } from "@/lib/supabase/server";
 import type { ServiceRow } from "@/lib/supabase/database.types";
 
 import { createService, deleteService, moveService, updateService } from "./actions";
+import { MenuScanner } from "./menu-scanner";
 import { ServiceForm } from "./service-form";
+import { UsualDurationForm } from "./usual-duration-form";
 
 export const metadata: Metadata = { title: "Services" };
 
@@ -33,6 +35,14 @@ export default async function ServicesPage() {
           These are what clients pick from on your booking page, in this order.
         </p>
 
+        <div className="mt-6 grid gap-4">
+          <UsualDurationForm value={profile.default_duration_minutes} />
+          <MenuScanner
+            currency={profile.currency}
+            usualMinutes={profile.default_duration_minutes}
+          />
+        </div>
+
         {error && (
           <p className="mt-6 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
             Couldn&rsquo;t load your services: {error.message}
@@ -41,7 +51,8 @@ export default async function ServicesPage() {
 
         {!error && services.length === 0 && (
           <p className="mt-6 rounded-[14px] bg-bubble px-4 py-3 text-[15px]">
-            No services yet. Add your first one and it shows up here.
+            No services yet. Scan your price list above, or add them one at a
+            time.
           </p>
         )}
 
@@ -65,7 +76,8 @@ export default async function ServicesPage() {
                     )}
                   </p>
                   <p className="text-[13px] text-muted">
-                    {formatDuration(service.duration_minutes)} ·{" "}
+                    {formatDuration(service.duration_minutes)}
+                    {service.duration_is_default && " (usual)"} ·{" "}
                     {formatMoney(service.deposit_cents, profile.currency)}{" "}
                     deposit
                   </p>
@@ -113,6 +125,7 @@ export default async function ServicesPage() {
                     action={updateService}
                     service={service}
                     currency={profile.currency}
+                    usualMinutes={profile.default_duration_minutes}
                     submitLabel="Save changes"
                   />
 
@@ -144,6 +157,7 @@ export default async function ServicesPage() {
           <ServiceForm
             action={createService}
             currency={profile.currency}
+            usualMinutes={profile.default_duration_minutes}
             submitLabel="Add service"
             resetOnSuccess
           />

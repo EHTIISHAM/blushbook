@@ -223,6 +223,37 @@ the deploy is red even though the container started — which is the point.
 
 ---
 
+## 6. Menu scanning (Claude on Vertex AI)
+
+The Services tab can read a photo of a tech's price list. It calls Claude
+through Vertex AI in the same GCP project as the VM, so usage bills to that
+project and the VM signs in as its own service account — there is no API key
+to store. Until this is set up the rest of the app works; the scanner just
+says it isn't available.
+
+1. **Enable the model.** In the GCP console open **Vertex AI → Model Garden**,
+   find **Claude Opus 5** and click **Enable** (accept the terms). Enable the
+   **Vertex AI API** if it asks.
+2. **Let the VM call it.** Give the VM's service account the
+   **Vertex AI User** role (`roles/aiplatform.user`) under **IAM**. Then check
+   the VM's **access scopes**: the default scopes don't cover Vertex AI. Stop
+   the VM, edit it, set **Allow full access to all Cloud APIs** (IAM still
+   limits what it can do), and start it again.
+3. **Tell the app which project.** Add to `/opt/blushbook/.env`:
+   ```
+   ANTHROPIC_VERTEX_PROJECT_ID=<gcp project id>
+   CLOUD_ML_REGION=global
+   ```
+   then `docker compose up -d app`. No rebuild needed — these are server-only.
+
+**Billing and credits.** Claude on Vertex is a partner model. Check under
+**Billing → Credits** that your credits apply to it; some credit programs
+exclude partner and Marketplace models, in which case scans bill to the card.
+
+**Running it locally** — install the gcloud CLI, run
+`gcloud auth application-default login`, and set the same two variables in
+`.env.local`.
+
 ## Check it worked
 
 In order, because each depends on the one before:

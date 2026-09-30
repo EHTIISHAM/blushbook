@@ -33,6 +33,9 @@ export function formatDuration(minutes: number): string {
   return `${hours} hr ${rest} min`;
 }
 
+/** Choices offered for her usual appointment length, in minutes. */
+export const USUAL_DURATIONS = [15, 30, 45, 60, 90, 120];
+
 /** Minutes from midnight to a 24 hour value an <input type="time"> accepts. */
 export function minutesToTimeValue(minutes: number): string {
   const hours = Math.floor(minutes / 60);

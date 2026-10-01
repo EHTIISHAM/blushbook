@@ -75,11 +75,11 @@ export function TrendChart({
                 vectorEffect="non-scaling-stroke"
               />
             ))}
-            <path d={area} fill="color-mix(in srgb, var(--rose) 12%, transparent)" />
+            <path d={area} fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
             <path
               d={line}
               fill="none"
-              stroke="var(--rose)"
+              stroke="var(--accent)"
               strokeWidth="2"
               strokeLinejoin="round"
               vectorEffect="non-scaling-stroke"
@@ -94,7 +94,7 @@ export function TrendChart({
               style={{ left: `${x(index)}%`, top: `${y(point.bookings)}%` }}
             >
               <span
-                className={`block h-2 w-2 rounded-full bg-rose ring-2 ring-paper group-hover:h-3 group-hover:w-3 ${
+                className={`block h-2 w-2 rounded-full bg-accent ring-2 ring-paper group-hover:h-3 group-hover:w-3 ${
                   points.length > 16 ? "opacity-0 group-hover:opacity-100" : ""
                 }`}
               />
@@ -143,7 +143,7 @@ export function TrendChart({
 
 /**
  * Bookings by weekday and two-hour block. One hue, pale to deep: more
- * bookings, deeper rose.
+ * bookings, deeper accent.
  */
 export function DayTimeHeatmap({
   grid,
@@ -202,7 +202,7 @@ export function DayTimeHeatmap({
                       background:
                         count === 0
                           ? "var(--bubble)"
-                          : `color-mix(in srgb, var(--rose) ${Math.round(15 + (count / max) * 85)}%, var(--bubble))`,
+                          : `color-mix(in srgb, var(--accent) ${Math.round(15 + (count / max) * 85)}%, var(--bubble))`,
                     }}
                   >
                     <span className="sr-only">{label}</span>
@@ -220,7 +220,7 @@ export function DayTimeHeatmap({
           className="h-2.5 w-20 rounded-full"
           style={{
             background:
-              "linear-gradient(to right, var(--bubble), color-mix(in srgb, var(--rose) 15%, var(--bubble)), var(--rose))",
+              "linear-gradient(to right, var(--bubble), color-mix(in srgb, var(--accent) 15%, var(--bubble)), var(--accent))",
           }}
         />
         More

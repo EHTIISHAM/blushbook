@@ -79,7 +79,7 @@ export default async function HoursPage() {
         </p>
 
         {availabilityResult.error && (
-          <p className="mt-6 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+          <p className="mt-6 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
             Couldn&rsquo;t load your hours: {availabilityResult.error.message}
           </p>
         )}
@@ -125,7 +125,7 @@ export default async function HoursPage() {
                     <input type="hidden" name="id" value={date.id} />
                     <button
                       type="submit"
-                      className="text-[13px] font-semibold text-rose underline underline-offset-4"
+                      className="text-[13px] font-semibold text-accent underline underline-offset-4"
                     >
                       Unblock
                       <span className="sr-only">

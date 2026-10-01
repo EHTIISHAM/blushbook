@@ -4,7 +4,7 @@ import { BrandLock } from "@/components/brand";
 import { getSessionProfile } from "@/lib/profile";
 
 export const metadata: Metadata = {
-  title: "Set up your studio",
+  title: "Set up your business",
 };
 
 export default async function WelcomeLayout({

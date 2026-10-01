@@ -13,30 +13,35 @@ export default async function SharePage() {
     .replace(/\/$/, "");
   const bookingUrl = `${base}/${profile.slug}`;
 
-  const studio = profile.business_name.trim() || "my studio";
+  const business = profile.business_name.trim() || "us";
 
-  const dmReply = `Hey babe! All my open times are here 💕\n${bookingUrl}\n\nPick your service and time, and the deposit link comes up right after.`;
+  const enquiryReply = `Thanks for getting in touch! You can see all our available times and book here:\n${bookingUrl}`;
 
-  const bioLine = `Book here 💅 ${bookingUrl.replace(/^https?:\/\//, "")}`;
+  const profileLine = `Book an appointment: ${bookingUrl.replace(/^https?:\/\//, "")}`;
+
+  const rebookNudge = `Hi! It's been a while since your last visit to ${business}. You can book your next appointment here:\n${bookingUrl}`;
 
   return (
     <div className="max-w-[640px]">
       <h1 className="font-display text-[27px] leading-none">Share</h1>
       <p className="mt-2 text-[15px] text-muted">
-        One link for {studio}. Put it in your bio and send it to anyone who
-        asks.
+        One link for every client. Add it to your website and profiles, and
+        send it to anyone who asks.
       </p>
 
       <div className="card mt-6 grid gap-7">
         <CopyField label="Your booking link" value={bookingUrl} />
-        <CopyField label="For your Instagram or TikTok bio" value={bioLine} />
-        <CopyField label="A reply for booking DMs" value={dmReply} multiline />
+        <CopyField
+          label="For your website, social profiles or email signature"
+          value={profileLine}
+        />
+        <CopyField label="A reply to booking enquiries" value={enquiryReply} multiline />
+        <CopyField label="A nudge for clients due back" value={rebookNudge} multiline />
       </div>
 
       <p className="mt-5 text-[14px] text-muted">
-        Your link goes live with the public booking page, which is the next
-        piece of the build. Changing your link name is on the{" "}
-        <strong>Profile</strong> tab.
+        Want a different link name? Change it on the <strong>Profile</strong>{" "}
+        tab.
       </p>
     </div>
   );

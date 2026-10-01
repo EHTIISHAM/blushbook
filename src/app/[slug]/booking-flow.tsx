@@ -17,7 +17,7 @@ export interface PublicService {
   swatch: string;
 }
 
-/** YYYY-MM-DD for an instant, as read in the studio's timezone. */
+/** YYYY-MM-DD for an instant, as read in the business's timezone. */
 function dayKey(iso: string, timezone: string): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: timezone,
@@ -87,7 +87,7 @@ export function BookingFlow({
     });
   }
 
-  // Slots grouped by the studio's local day, in order.
+  // Slots grouped by the business's local day, in order.
   const byDay = useMemo(() => {
     const map = new Map<string, string[]>();
     for (const iso of slots) {
@@ -114,7 +114,7 @@ export function BookingFlow({
     return (
       <section className="card mt-8 text-center" aria-live="polite">
         <div
-          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-rose text-[30px] text-rose-ink"
+          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-accent text-[30px] text-accent-ink"
           aria-hidden
         >
           ✓
@@ -139,8 +139,13 @@ export function BookingFlow({
           })}
         </p>
 
+        <p className="mt-5 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
+          Payment is made at {confirmation.businessName}.
+        </p>
+
+        {/* Deposits are switched off for now: clients pay at the business.
         {confirmation.depositCents > 0 && (
-          <div className="mt-5 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+          <div className="mt-5 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
             Next, pay the{" "}
             <strong>
               {formatMoney(confirmation.depositCents, confirmation.currency)}
@@ -162,7 +167,7 @@ export function BookingFlow({
           <p className="mt-5 text-[15px] text-muted">
             {confirmation.businessName} will message you about the deposit.
           </p>
-        )}
+        )} */}
 
         {confirmation.noShowPolicy && (
           <p className="mt-5 text-left text-[14px] text-muted">
@@ -193,7 +198,7 @@ export function BookingFlow({
               onClick={() => chooseService(item.id)}
               aria-pressed={serviceId === item.id}
               className={`flex w-full items-center gap-3 rounded-[16px] border-[1.5px] bg-paper p-3 text-left ${
-                serviceId === item.id ? "border-rose" : "border-line"
+                serviceId === item.id ? "border-accent" : "border-line"
               }`}
             >
               <span
@@ -207,12 +212,13 @@ export function BookingFlow({
                 </span>
                 <span className="block text-[13px] text-muted">
                   {formatDuration(item.duration_minutes)}
+                  {/* Deposits are switched off for now: clients pay at the business.
                   {item.deposit_cents > 0 && (
                     <>
                       {" · "}
                       {formatMoney(item.deposit_cents, currency)} deposit
                     </>
-                  )}
+                  )} */}
                 </span>
               </span>
               <span className="font-display text-[15px] leading-none">
@@ -238,7 +244,7 @@ export function BookingFlow({
           )}
 
           {slotError && (
-            <p className="mt-3 text-[15px] font-semibold text-rose" role="alert">
+            <p className="mt-3 text-[15px] font-semibold text-accent" role="alert">
               {slotError}
             </p>
           )}
@@ -292,7 +298,7 @@ export function BookingFlow({
                       aria-pressed={on}
                       className={`rounded-full border-[1.5px] py-2 text-[13px] font-semibold ${
                         on
-                          ? "border-rose bg-rose text-rose-ink"
+                          ? "border-accent bg-accent text-accent-ink"
                           : "border-line bg-paper"
                       }`}
                     >
@@ -330,66 +336,63 @@ export function BookingFlow({
             />
           </div>
 
-          <fieldset className="border-0 p-0">
-            <legend className="label">How should she reach you?</legend>
-            <div className="flex gap-2">
-              {(
-                [
-                  ["whatsapp", "WhatsApp"],
-                  ["instagram", "Instagram"],
-                ] as const
-              ).map(([value, label], index) => (
-                <label
-                  key={value}
-                  className="flex-1 cursor-pointer rounded-full border-[1.5px] border-line bg-paper py-2 text-center text-[14px] font-semibold has-checked:border-rose has-checked:bg-rose has-checked:text-rose-ink"
-                >
-                  <input
-                    type="radio"
-                    name="contactKind"
-                    value={value}
-                    defaultChecked={index === 0}
-                    className="sr-only"
-                  />
-                  {label}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
           <div>
             <label className="label" htmlFor="clientContact">
-              Number or handle
+              Phone number
             </label>
             <input
               id="clientContact"
               name="clientContact"
               className="field"
-              maxLength={120}
-              placeholder="+44 7700 900000 or @yourhandle"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              maxLength={30}
+              placeholder="+44 7700 900000"
+              aria-describedby="clientContact-hint"
               required
+            />
+            <p id="clientContact-hint" className="hint">
+              With your country code. Used for appointment messages on
+              WhatsApp.
+            </p>
+          </div>
+
+          <div>
+            <label className="label" htmlFor="clientEmail">
+              Email <span className="font-normal text-muted">(optional)</span>
+            </label>
+            <input
+              id="clientEmail"
+              name="clientEmail"
+              className="field"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              maxLength={254}
             />
           </div>
 
           {noShowPolicy && (
-            <div className="rounded-[14px] bg-champagne px-4 py-3 text-[14px]">
+            <div className="rounded-[14px] bg-notice px-4 py-3 text-[14px]">
               <strong className="block">Before you book</strong>
               <span className="mt-1 block">{noShowPolicy}</span>
             </div>
           )}
 
           {state.status === "error" && (
-            <p className="text-[14px] font-semibold text-rose" role="alert">
+            <p className="text-[14px] font-semibold text-accent" role="alert">
               {state.message}
             </p>
           )}
 
-          <BookButton
-            label={
-              service && service.deposit_cents > 0
-                ? `Book and pay ${formatMoney(service.deposit_cents, currency)} deposit`
-                : "Confirm booking"
-            }
-          />
+          {/* Deposits are switched off for now: clients pay at the business.
+          label={
+            service && service.deposit_cents > 0
+              ? `Book and pay ${formatMoney(service.deposit_cents, currency)} deposit`
+              : "Confirm booking"
+          } */}
+          <BookButton label="Confirm booking" />
         </section>
       )}
     </form>

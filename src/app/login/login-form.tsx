@@ -60,7 +60,7 @@ export function LoginForm() {
   if (status.kind === "sent") {
     return (
       <div className="mt-6" role="status">
-        <p className="rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+        <p className="rounded-[14px] bg-notice px-4 py-3 text-[15px]">
           Check your inbox. We sent a login link to{" "}
           <strong>{status.email}</strong>.
         </p>
@@ -97,7 +97,7 @@ export function LoginForm() {
       />
 
       {status.kind === "error" && (
-        <p id="email-error" className="hint text-rose" role="alert">
+        <p id="email-error" className="hint text-accent" role="alert">
           {status.message}
         </p>
       )}

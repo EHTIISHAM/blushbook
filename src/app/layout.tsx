@@ -2,12 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-// Display face: a high-contrast serif in the spirit of the BooknBloom wordmark.
+// The logo's serif, used only for the BooknBloom wordmark.
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["500"],
   display: "swap",
 });
 
@@ -23,15 +22,15 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: "BooknBloom: one booking link for beauty pros",
+    default: "BooknBloom: booking and analytics for appointment-based businesses",
     template: "%s · BooknBloom",
   },
   description:
-    "One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.",
+    "Take bookings from one link, manage your availability and understand your business through simple analytics.",
   openGraph: {
-    title: "BooknBloom: one booking link for beauty pros",
+    title: "BooknBloom: booking and analytics for appointment-based businesses",
     description:
-      "One link for your Instagram bio. Clients pick a service, choose a time and pay your deposit.",
+      "Take bookings from one link, manage your availability and understand your business through simple analytics.",
     images: ["/og-image.png"],
     type: "website",
   },
@@ -45,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F9F7F4",
+  themeColor: "#F6F7F9",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

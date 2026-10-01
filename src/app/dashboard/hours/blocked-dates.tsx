@@ -54,7 +54,7 @@ export function BlockDateForm({ today }: { today: string }) {
       </div>
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-rose" role="alert">
+        <p className="text-[14px] font-semibold text-accent" role="alert">
           {state.message}
         </p>
       )}

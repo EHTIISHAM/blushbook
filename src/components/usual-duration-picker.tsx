@@ -32,7 +32,7 @@ export function UsualDurationPicker({
             />
             <label
               htmlFor={id}
-              className="cursor-pointer rounded-full bg-paper px-4 py-2 text-[14px] font-semibold text-muted shadow-[inset_0_0_0_1.5px_var(--line)] peer-checked:bg-rose peer-checked:text-rose-ink peer-checked:shadow-none peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-rose"
+              className="cursor-pointer rounded-full bg-paper px-4 py-2 text-[14px] font-semibold text-muted shadow-[inset_0_0_0_1.5px_var(--line)] peer-checked:bg-accent peer-checked:text-accent-ink peer-checked:shadow-none peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"
             >
               {formatDuration(minutes)}
             </label>

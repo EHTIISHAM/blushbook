@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import type { ContactKind } from "@/lib/supabase/database.types";
 
 import type { BookingState, SlotsResult } from "./booking-state";
 
@@ -74,12 +73,28 @@ const bookingSchema = z.object({
     .trim()
     .min(1, "Please add your name.")
     .max(80, "That name is too long."),
+  // The number is used for WhatsApp, which needs the country code.
   clientContact: z
     .string()
     .trim()
-    .min(2, "Please add a WhatsApp number or Instagram handle.")
-    .max(120, "That's too long."),
-  contactKind: z.enum(["whatsapp", "instagram"]),
+    .min(1, "Please add your phone number.")
+    .max(30, "That number is too long.")
+    .refine((value) => /^(\+|00)/.test(value), {
+      message: "Please start your number with your country code, like +44.",
+    })
+    .refine((value) => /^(\+|00)[\d\s().-]+$/.test(value), {
+      message: "Please use only digits in your phone number.",
+    })
+    .refine(
+      (value) => {
+        const digits = value.replace(/\D/g, "").replace(/^00/, "");
+        return digits.length >= 8 && digits.length <= 15;
+      },
+      { message: "That phone number doesn't look complete." },
+    ),
+  clientEmail: z
+    .union([z.literal(""), z.email("That email address doesn't look right.")])
+    .optional(),
 });
 
 export async function submitBooking(
@@ -92,7 +107,7 @@ export async function submitBooking(
     startsAt: formData.get("startsAt"),
     clientName: formData.get("clientName"),
     clientContact: formData.get("clientContact"),
-    contactKind: formData.get("contactKind"),
+    clientEmail: String(formData.get("clientEmail") ?? "").trim(),
   });
 
   if (!parsed.success) {
@@ -110,8 +125,11 @@ export async function submitBooking(
     p_starts_at: parsed.data.startsAt,
     p_client_name: parsed.data.clientName,
     p_client_contact: parsed.data.clientContact,
-    p_contact_kind: parsed.data.contactKind as ContactKind,
+    // Phone numbers are stored under the WhatsApp kind; see the
+    // client_phone_email migration.
+    p_contact_kind: "whatsapp",
     p_ip_hash: await ipHash(),
+    p_client_email: parsed.data.clientEmail || null,
   });
 
   if (error) {

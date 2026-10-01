@@ -1,12 +1,20 @@
 import Link from "next/link";
 
 import { BrandLock, BrandMark } from "@/components/brand";
+import {
+  AnalyticsScene,
+  FollowUpScene,
+  LinkScene,
+  RateCardScene,
+} from "@/components/feature-scenes";
 import { PhoneDemo, type DemoDay } from "@/components/phone-demo";
+import { formatMoney } from "@/lib/format";
+import { ANNUAL_SAVING_CENTS, GRACE_DAYS, PLANS } from "@/lib/plans";
 
 import "./landing.css";
 
-// The demo shows the next four days, so regenerate the page hourly rather
-// than freezing the dates at build time.
+// The demos show the coming days and recent weeks, so regenerate the page
+// hourly rather than freezing the dates at build time.
 export const revalidate = 3600;
 
 /** Dates are built here so the server and the client render the same ones. */
@@ -26,43 +34,125 @@ function nextFourDays(): DemoDay[] {
   });
 }
 
+const SECTORS = [
+  "Clinics",
+  "Dentists",
+  "Salons",
+  "Tutors",
+  "Coaches",
+  "Consultants",
+  "Pet services",
+  "Local services",
+];
+
+const FEATURES = [
+  {
+    id: "rate-card",
+    Scene: RateCardScene,
+    eyebrow: "Setup shortcut",
+    title: "Upload your rate card. Skip the typing.",
+    body: "Upload a photo or screenshot of your rate card and BooknBloom helps fill in your services.",
+    points: [
+      "Prices and durations read for you",
+      "Check everything before it's added",
+      "Live in minutes, not an afternoon",
+    ],
+  },
+  {
+    id: "one-link",
+    Scene: LinkScene,
+    eyebrow: "One booking link",
+    title: "Stop the back-and-forth",
+    body: "Answer every “are you free?” with the same link. Clients see only open times, pick one and book.",
+    points: [
+      "Share by WhatsApp, email, your website or social profiles",
+      "No double bookings, ever",
+      "Every booking lands in your dashboard",
+    ],
+  },
+  {
+    id: "analytics",
+    Scene: AnalyticsScene,
+    eyebrow: "Analytics",
+    title: "See what's working, not just charts",
+    body: "See bookings, revenue, quiet times, no-shows and clients due to rebook from one simple dashboard.",
+    points: [
+      "Revenue, bookings and trends at a glance",
+      "Busy and quiet times, popular services",
+      "New and returning clients",
+    ],
+  },
+  {
+    id: "follow-ups",
+    Scene: FollowUpScene,
+    eyebrow: "Follow-ups",
+    title: "Win back missed appointments in one tap",
+    body: "When a client doesn't show, or a regular is overdue, your dashboard tells you. One tap opens WhatsApp with a polite message already written.",
+    points: [
+      "No-shows flagged automatically",
+      "Spots regulars who are overdue",
+      "You can edit the message before sending",
+    ],
+  },
+] as const;
+
+const INCLUDES = [
+  "Your own booking page and shareable link",
+  "Unlimited bookings and services",
+  "Prices and durations for every service",
+  "Rate card upload from a photo or screenshot",
+  "Working hours and time off",
+  "Your no-show and cancellation policy, shown before booking",
+  "Ready-made messages for sharing your link",
+  "One-tap WhatsApp follow-ups for no-shows and clients due back",
+  "Revenue, bookings and booking trends",
+  "Popular services, busy and quiet times",
+  "No-show, cancellation and returning client tracking",
+  "Currency and timezone settings",
+  "Works on any phone",
+];
+
 export default function HomePage() {
   const days = nextFourDays();
+  const monthly = PLANS.monthly;
+  const annual = PLANS.annual;
 
   return (
     <div className="landing">
       <header className="masthead wrap" id="top">
         <BrandLock href="#top" />
-        <Link className="btn sm" href="/login">
-          Start free
-        </Link>
+        <nav className="flex items-center gap-2">
+          <Link className="btn ghost sm hidden whitespace-nowrap min-[420px]:inline-flex" href="/login">
+            Log in
+          </Link>
+          <Link className="btn sm whitespace-nowrap" href="/login">
+            Get started
+          </Link>
+        </nav>
       </header>
 
       <main>
         <section className="hero wrap">
           <div>
-            <p className="eyebrow mb-5">Book. Beauty. Grow.</p>
             <h1>
-              Fully booked,
+              One booking link.
               <br />
-              zero DMs.
+              Clearer business insights.
             </h1>
             <p className="lede">
-              One link for your Instagram bio. Clients pick a service, choose a
-              time and pay your deposit, so you can stop answering &ldquo;what
-              times do you have?&rdquo; at midnight.
+              Clients book your services and choose a time. You track revenue,
+              no-shows, busy hours and repeat customers.
             </p>
             <div className="cta-row">
               <Link className="btn" href="/login">
-                Start free
+                Get started
               </Link>
-              <a className="btn ghost" href="#how">
-                How it works
+              <a className="btn ghost" href="#features">
+                See how it works
               </a>
             </div>
             <p className="fine">
-              Made for lash, nail and brow techs. Free until your first booking
-              comes in.
+              Set up in minutes. No commission and no booking fees.
             </p>
           </div>
 
@@ -71,93 +161,122 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="band wrap" aria-labelledby="dm-h">
-          <h2 id="dm-h">DM bookings eat your evenings</h2>
-          <div className="dm-grid">
-            <figure className="thread">
-              <figcaption>Your DMs now</figcaption>
-              <p className="bub in">hiii are you free thursday?</p>
-              <p className="bub out">I have 11am or 2:30!</p>
-              <p className="bub in">how much is hybrid again</p>
-              <p className="bub out">$75, and a $20 deposit holds it</p>
-              <p className="bub in">can u do 4 instead 🥺</p>
-              <p className="bub out">4 is taken, is 5:30 ok?</p>
-              <p className="seen">Seen 11:52pm</p>
-            </figure>
-
-            <figure className="thread better">
-              <figcaption>Your DMs with BooknBloom</figcaption>
-              <p className="bub in">hiii are you free thursday?</p>
-              <p className="bub out">
-                Hey babe, all my open times are here 💕
-                booknbloom.app/lashesbyhira
-              </p>
-              <p className="bub sys">
-                New booking: Hybrid full set, Thursday at 2:30pm
-              </p>
-            </figure>
-          </div>
+        <section className="band wrap" aria-labelledby="who-h">
+          <h2 id="who-h">Built for businesses that run on appointments</h2>
+          <ul className="sectors">
+            {SECTORS.map((sector) => (
+              <li key={sector}>{sector}</li>
+            ))}
+          </ul>
         </section>
 
         <section className="band wrap" id="how" aria-labelledby="how-h">
-          <h2 id="how-h">Set up once, then your link does the booking</h2>
+          <h2 id="how-h">Live in minutes, then your link does the booking</h2>
           <ol className="steps">
             <li>
-              <h3>Add your services and hours</h3>
+              <h3>Add your services</h3>
               <p>
-                Prices, deposit amounts and the days you work. Done in a few
-                minutes from your phone.
+                Photograph your rate card and the services fill in, or type
+                them yourself.
               </p>
             </li>
             <li>
-              <h3>Put your link in your bio</h3>
+              <h3>Set your hours and share</h3>
               <p>
-                Instagram, TikTok, WhatsApp, wherever clients find you. Answer
-                every &ldquo;are you free?&rdquo; with the same link.
+                Pick the days you work, then send your link by WhatsApp, email,
+                your website or social profiles.
               </p>
             </li>
             <li>
-              <h3>Clients book and pay the deposit</h3>
+              <h3>Clients book, you see the numbers</h3>
               <p>
-                Only open slots show, so double bookings can&rsquo;t happen.
-                Deposits go straight to your own PayPal or Stripe.
+                Only open times show, so double bookings can&rsquo;t happen.
+                Every booking feeds your dashboard.
               </p>
             </li>
           </ol>
         </section>
 
+        <section className="band wrap" id="features" aria-labelledby="features-h">
+          <h2 id="features-h" className="features-h">
+            Everything you need to take bookings and grow, in one place
+          </h2>
+
+          {FEATURES.map((feature, index) => {
+            const side = index % 2 === 0 ? "left" : "right";
+            return (
+              <div
+                key={feature.id}
+                id={feature.id}
+                className={`feature feature-${side}`}
+              >
+                <feature.Scene side={side} />
+                <div className="feature-copy">
+                  <p className="eyebrow mb-3">{feature.eyebrow}</p>
+                  <h3>{feature.title}</h3>
+                  <p className="lede">{feature.body}</p>
+                  <ul className="ticks">
+                    {feature.points.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </section>
+
         <section className="pricing wrap" id="pricing" aria-labelledby="price-h">
-          <div className="plan">
-            <div>
-              <h2 id="price-h">One plan, everything in it</h2>
-              <p className="price">
-                <span className="sr">Regular price</span>
-                <s>$47.99</s>
-                <span className="sr">Launch price</span>
-                <span className="now">$19.99</span>
-                <span className="per">/month</span>
-              </p>
-              <p className="launch">
-                Launch price, locked in for as long as you stay subscribed. The
-                regular price is $47.99 a month.
-              </p>
-            </div>
+          <div className="text-center">
+            <h2 id="price-h" className="mx-auto">
+              One plan. Everything included.
+            </h2>
+            <p className="lede mx-auto">
+              No commission. No booking fees. Clients pay you directly.
+            </p>
+          </div>
 
+          <div className="plans">
+            {[monthly, annual].map((plan) => (
+              <div
+                key={plan.key}
+                className={`plan-card${plan.key === "annual" ? " best" : ""}`}
+              >
+                <p className="plan-name">
+                  {plan.label}
+                  {plan.key === "annual" && <span className="badge">Best value</span>}
+                </p>
+                <p className="price">
+                  <span className="sr">Regular price</span>
+                  <s>{formatMoney(plan.regularCents, "USD")}</s>
+                  <span className="sr">Launch price</span>
+                  <span className="now">{formatMoney(plan.priceCents, "USD")}</span>
+                  <span className="per">/{plan.per}</span>
+                </p>
+                <p className="launch">
+                  {plan.key === "annual"
+                    ? `Save ${formatMoney(ANNUAL_SAVING_CENTS, "USD")} against paying monthly, about a month and a half free.`
+                    : "Flexible. Cancel anytime."}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="includes-box">
+            <h3>Everything in the plan</h3>
             <ul className="includes">
-              <li>Your own booking link and page</li>
-              <li>Unlimited bookings and services</li>
-              <li>Deposits paid straight to you, no cut taken</li>
-              <li>WhatsApp reminders in one tap</li>
-              <li>Your no-show policy shown before clients book</li>
-              <li>A ready-made reply for booking DMs</li>
+              {INCLUDES.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
+          </div>
 
+          <div className="mt-8 text-center">
             <Link className="btn" href="/login">
-              Lock in $19.99/month
+              Get started
             </Link>
             <p className="plan-note">
-              Set up free. You only start paying when your first client books
-              through your link. Cancel anytime.
+              Launch prices stay locked in for as long as you stay subscribed.
             </p>
           </div>
         </section>
@@ -168,16 +287,25 @@ export default function HomePage() {
           <details>
             <summary>When do I start paying?</summary>
             <p>
-              Once your first client books through your link. Setting up your
-              page and sharing it costs nothing.
+              Setting up your page and sharing your link costs nothing. Once
+              bookings start coming in, you have {GRACE_DAYS} days to choose
+              monthly or annual and keep your dashboard open.
             </p>
           </details>
 
           <details>
-            <summary>Do you take a cut of my deposits?</summary>
+            <summary>Do you take a cut of my bookings?</summary>
             <p>
-              No. Clients pay through your own PayPal or Stripe link, so the
-              money goes straight to you. BooknBloom is one flat monthly price.
+              No. Clients pay you directly, the way they do now. BooknBloom is
+              one flat subscription with no commission and no booking fees.
+            </p>
+          </details>
+
+          <details>
+            <summary>Is it only for one kind of business?</summary>
+            <p>
+              No. If clients book time with you, it fits: clinics, dentists,
+              salons, tutors, coaches, consultants and more.
             </p>
           </details>
 
@@ -187,10 +315,10 @@ export default function HomePage() {
           </details>
 
           <details>
-            <summary>Will my $19.99 price go up?</summary>
+            <summary>Will my price go up?</summary>
             <p>
               Not while you stay subscribed. Your launch price stays the same
-              even after new studios move to $47.99.
+              even after the regular price applies to new subscribers.
             </p>
           </details>
 
@@ -205,7 +333,7 @@ export default function HomePage() {
         <span className="foot-brand">
           <BrandMark />© 2026 BooknBloom
         </span>
-        <span>Made for solo beauty pros</span>
+        <span>Booking and analytics for appointment-based businesses</span>
       </footer>
     </div>
   );

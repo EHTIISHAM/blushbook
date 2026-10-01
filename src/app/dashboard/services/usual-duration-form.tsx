@@ -38,7 +38,7 @@ export function UsualDurationForm({ value }: { value: number }) {
       {state.status !== "idle" && (
         <p
           className={`mt-2 text-[14px] ${
-            state.status === "error" ? "font-semibold text-rose" : "text-muted"
+            state.status === "error" ? "font-semibold text-accent" : "text-muted"
           }`}
           role={state.status === "error" ? "alert" : "status"}
         >

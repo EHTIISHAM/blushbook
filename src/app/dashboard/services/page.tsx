@@ -44,14 +44,14 @@ export default async function ServicesPage() {
         </div>
 
         {error && (
-          <p className="mt-6 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+          <p className="mt-6 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
             Couldn&rsquo;t load your services: {error.message}
           </p>
         )}
 
         {!error && services.length === 0 && (
           <p className="mt-6 rounded-[14px] bg-bubble px-4 py-3 text-[15px]">
-            No services yet. Scan your price list above, or add them one at a
+            No services yet. Upload your rate card above, or add them one at a
             time.
           </p>
         )}
@@ -77,9 +77,11 @@ export default async function ServicesPage() {
                   </p>
                   <p className="text-[13px] text-muted">
                     {formatDuration(service.duration_minutes)}
-                    {service.duration_is_default && " (usual)"} ·{" "}
+                    {service.duration_is_default && " (usual)"}
+                    {/* Deposits are switched off for now: clients pay at the business.
+                    {" · "}
                     {formatMoney(service.deposit_cents, profile.currency)}{" "}
-                    deposit
+                    deposit */}
                   </p>
                 </div>
 
@@ -133,7 +135,7 @@ export default async function ServicesPage() {
                     <input type="hidden" name="id" value={service.id} />
                     <button
                       type="submit"
-                      className="text-[14px] font-semibold text-rose underline underline-offset-4"
+                      className="text-[14px] font-semibold text-accent underline underline-offset-4"
                     >
                       Delete this service
                     </button>

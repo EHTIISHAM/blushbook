@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
+import { MenuScanner } from "@/app/dashboard/services/menu-scanner";
 import { UsualDurationPicker } from "@/components/usual-duration-picker";
 import { IDLE, type ActionState } from "@/lib/action-state";
 import { WEEKDAYS } from "@/lib/format";
@@ -22,7 +23,7 @@ import {
   saveStudio,
 } from "./actions";
 
-const STEPS = ["Your studio", "First service", "Your hours"];
+const STEPS = ["Your business", "Your services", "Your hours"];
 
 const CURRENCIES = [
   "USD",
@@ -51,7 +52,7 @@ function Continue({ label = "Continue" }: { label?: string }) {
 function Feedback({ state }: { state: ActionState }) {
   if (state.status !== "error") return null;
   return (
-    <p className="text-[14px] font-semibold text-rose" role="alert">
+    <p className="text-[14px] font-semibold text-accent" role="alert">
       {state.message}
     </p>
   );
@@ -87,7 +88,7 @@ const serverTimezone = () => "";
 
 /* ------------------------------------------------------------------ */
 
-function StudioStep({
+function BusinessStep({
   profile,
   bookingHost,
   onDone,
@@ -99,7 +100,7 @@ function StudioStep({
   const [state, formAction] = useActionState(saveStudio, IDLE);
   const [slug, setSlug] = useState(profile.slug);
 
-  // Detected rather than asked for, so she never hunts through a dropdown.
+  // Detected rather than asked for, so nobody hunts through a dropdown.
   const timezone = useSyncExternalStore(
     subscribeToNothing,
     browserTimezone,
@@ -114,14 +115,14 @@ function StudioStep({
 
       <div>
         <label className="label" htmlFor="business_name">
-          What&rsquo;s your studio called?
+          What&rsquo;s your business called?
         </label>
         <input
           id="business_name"
           name="business_name"
           className="field"
           maxLength={80}
-          placeholder="Lashes by Hira"
+          placeholder="Harbour Clinic"
           defaultValue={profile.business_name}
           autoFocus
           required
@@ -133,7 +134,7 @@ function StudioStep({
         <label className="label" htmlFor="slug">
           Your booking link
         </label>
-        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-rose">
+        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-accent">
           <span className="flex select-none items-center whitespace-nowrap bg-bubble px-3 text-[14px] text-muted">
             {bookingHost}/
           </span>
@@ -152,7 +153,7 @@ function StudioStep({
           />
         </div>
         <p className="hint">
-          This is what goes in your Instagram bio. You can change it later.
+          The link you send to clients. You can change it later.
         </p>
       </div>
 
@@ -181,7 +182,26 @@ function ServiceStep({
   onDone: () => void;
 }) {
   const [state, formAction] = useActionState(addFirstService, IDLE);
+  const [mode, setMode] = useState<"scan" | "manual">("scan");
   useAdvanceOnSuccess(state, onDone);
+
+  if (mode === "scan") {
+    return (
+      <div className="grid gap-5">
+        <MenuScanner currency={currency} usualMinutes={usualMinutes} />
+        <button type="button" className="btn w-full" onClick={onDone}>
+          Continue
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("manual")}
+          className="text-[14px] font-semibold text-accent underline underline-offset-4"
+        >
+          No rate card? Add a service by hand
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form action={formAction} className="grid gap-5">
@@ -202,12 +222,12 @@ function ServiceStep({
           name="name"
           className="field"
           maxLength={80}
-          placeholder="Classic full set"
+          placeholder="Initial consultation"
           autoFocus
           required
         />
         <p className="hint">
-          Add the rest afterwards, or scan your price list on the Services tab.
+          Add the rest afterwards on the Services tab.
         </p>
       </div>
 
@@ -285,7 +305,7 @@ function HoursStep({ onDone }: { onDone: () => void }) {
                 aria-pressed={on}
                 className={`rounded-full px-4 py-2 text-[14px] font-semibold ${
                   on
-                    ? "bg-rose text-rose-ink"
+                    ? "bg-accent text-accent-ink"
                     : "bg-paper text-muted shadow-[inset_0_0_0_1.5px_var(--line)]"
                 }`}
               >
@@ -357,7 +377,7 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
   return (
     <div className="text-center">
       <div
-        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-rose text-[30px] text-rose-ink"
+        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-accent text-[30px] text-accent-ink"
         aria-hidden
       >
         ✓
@@ -367,8 +387,8 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
         Your page is ready
       </h2>
       <p className="mx-auto mt-3 max-w-[38ch] text-[15px] text-muted">
-        This is the link that goes in your bio. Everything else you can change
-        from your dashboard whenever you like.
+        Send this link to clients, or add it to your website and profiles.
+        Everything else you can change from your dashboard.
       </p>
 
       <div className="mt-6 flex items-stretch gap-2">
@@ -425,7 +445,7 @@ export function SetupWizard({
               <li
                 key={label}
                 className={`h-1.5 flex-1 rounded-full ${
-                  index <= step ? "bg-rose" : "bg-line"
+                  index <= step ? "bg-accent" : "bg-line"
                 }`}
               >
                 <span className="sr-only">
@@ -443,7 +463,7 @@ export function SetupWizard({
       )}
 
       {step === 0 && (
-        <StudioStep
+        <BusinessStep
           profile={profile}
           bookingHost={bookingHost}
           onDone={next}

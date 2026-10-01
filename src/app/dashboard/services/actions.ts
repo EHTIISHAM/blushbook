@@ -36,16 +36,17 @@ const serviceSchema = z
     // Blank means "my usual length"; the database fills in the number.
     duration_minutes: minutes.nullable(),
     price_cents: money,
-    deposit_cents: money,
+    // Deposits are switched off for now: clients pay at the business.
+    // deposit_cents: money,
     swatch: z
       .string()
       .regex(/^#[0-9a-fA-F]{6}$/, "Pick a colour."),
     is_active: z.boolean(),
-  })
-  .refine((value) => value.deposit_cents <= value.price_cents, {
-    message: "The deposit can't be more than the price.",
-    path: ["deposit_cents"],
   });
+// .refine((value) => value.deposit_cents <= value.price_cents, {
+//   message: "The deposit can't be more than the price.",
+//   path: ["deposit_cents"],
+// });
 
 function parseService(formData: FormData) {
   const duration = String(formData.get("duration_minutes") ?? "").trim();
@@ -54,7 +55,7 @@ function parseService(formData: FormData) {
     name: formData.get("name"),
     duration_minutes: duration || null,
     price_cents: formData.get("price"),
-    deposit_cents: formData.get("deposit"),
+    // deposit_cents: formData.get("deposit"),
     swatch: formData.get("swatch"),
     is_active: formData.get("is_active") === "on",
   });

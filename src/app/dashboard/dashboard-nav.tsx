@@ -33,7 +33,7 @@ export function DashboardNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={`-mb-px inline-block whitespace-nowrap border-b-2 px-3 py-3 text-[15px] font-semibold no-underline ${
                   isActive
-                    ? "border-rose text-ink"
+                    ? "border-accent text-ink"
                     : "border-transparent text-muted hover:text-ink"
                 }`}
               >

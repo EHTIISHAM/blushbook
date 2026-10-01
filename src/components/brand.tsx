@@ -2,8 +2,8 @@ import Link from "next/link";
 import { useId } from "react";
 
 /**
- * The BooknBloom mark: a calendar whose right edge is a "B", with a
- * champagne check on its face. Drawn from the logo concept in design_book.jpeg.
+ * The BooknBloom mark: a calendar whose right edge is a "B", with an
+ * amber check on its face. Shape from the logo concept in design_book.jpeg.
  */
 export function BrandMark({ className }: { className?: string }) {
   // A page can show the mark more than once, so each copy needs its own id.
@@ -18,8 +18,8 @@ export function BrandMark({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#E4B7B2" />
-          <stop offset="1" stopColor="#B7777A" />
+          <stop offset="0" stopColor="#4FB3A6" />
+          <stop offset="1" stopColor="#0F766E" />
         </linearGradient>
       </defs>
       <path
@@ -34,7 +34,7 @@ export function BrandMark({ className }: { className?: string }) {
       />
       <path
         fill="none"
-        stroke="#D4B483"
+        stroke="#E0A43B"
         strokeWidth="6.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -46,8 +46,8 @@ export function BrandMark({ className }: { className?: string }) {
         width="7"
         height="17"
         rx="3.5"
-        fill="#F9F7F4"
-        stroke="#B7777A"
+        fill="#F6F7F9"
+        stroke="#0F766E"
         strokeWidth="2"
       />
       <rect
@@ -56,19 +56,19 @@ export function BrandMark({ className }: { className?: string }) {
         width="7"
         height="17"
         rx="3.5"
-        fill="#F9F7F4"
-        stroke="#B7777A"
+        fill="#F6F7F9"
+        stroke="#0F766E"
         strokeWidth="2"
       />
     </svg>
   );
 }
 
-/** "BooknBloom" set as in the logo: midnight "Bookn", blush "Bloom". */
+/** "BooknBloom" set as in the logo: ink "Bookn", teal "Bloom". */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`font-display leading-none ${className}`}>
-      Bookn<span className="text-rose">Bloom</span>
+    <span className={`font-brand leading-none ${className}`}>
+      Bookn<span className="text-accent">Bloom</span>
     </span>
   );
 }

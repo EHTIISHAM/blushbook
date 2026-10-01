@@ -87,11 +87,11 @@ export function MenuScanner({
   return (
     <section aria-labelledby="scan-h" className="card">
       <h2 id="scan-h" className="font-display text-[19px] leading-none">
-        Scan your price list
+        Upload your rate card
       </h2>
       <p className="mt-2 text-[14px] text-muted">
-        Take a photo of your menu and we&rsquo;ll fill in your services. You
-        check everything before it&rsquo;s added.
+        Upload a photo or screenshot of your rate card and we&rsquo;ll fill in
+        your services. You check everything before it&rsquo;s added.
       </p>
 
       <label
@@ -100,10 +100,10 @@ export function MenuScanner({
         {preparing
           ? "Preparing photo…"
           : scanning
-            ? "Reading your menu…"
+            ? "Reading your rate card…"
             : scan.status === "success"
-              ? "Scan a different photo"
-              : "Choose or take a photo"}
+              ? "Upload a different photo"
+              : "Upload a photo or screenshot"}
         <input
           type="file"
           accept="image/*"
@@ -114,12 +114,12 @@ export function MenuScanner({
         />
       </label>
       <p className="hint">
-        Up to {MAX_PHOTOS} photos if your menu has more than one side.
+        Up to {MAX_PHOTOS} photos if your rate card has more than one page.
         {scanning && " This usually takes under a minute."}
       </p>
 
       {error && !busy && (
-        <p className="mt-3 text-[14px] font-semibold text-rose" role="alert">
+        <p className="mt-3 text-[14px] font-semibold text-accent" role="alert">
           {error}
         </p>
       )}
@@ -193,7 +193,7 @@ function ReviewList({
       priceNote: service.priceNote,
       minutes: service.minutes === null ? "" : String(service.minutes),
       // Anything already on her list starts unticked so a re-scan
-      // doesn't double her menu.
+      // doesn't double the list.
       include: !service.duplicate,
       duplicate: service.duplicate,
     })),
@@ -261,8 +261,8 @@ function ReviewList({
       </p>
 
       {menuCurrency && (
-        <p className="mt-3 rounded-[14px] bg-champagne px-4 py-3 text-[14px]">
-          Your menu looks like it&rsquo;s priced in {menuCurrency}, but your
+        <p className="mt-3 rounded-[14px] bg-notice px-4 py-3 text-[14px]">
+          Your rate card looks like it&rsquo;s priced in {menuCurrency}, but your
           account uses {currency}. You can change that on the Profile tab.
         </p>
       )}
@@ -289,7 +289,7 @@ function ReviewList({
                       onChange={(event) =>
                         update(row.key, { include: event.target.checked })
                       }
-                      className="mt-3 h-5 w-5 flex-none accent-[var(--rose)]"
+                      className="mt-3 h-5 w-5 flex-none accent-[var(--accent)]"
                       aria-label={`Add ${row.name || "this service"}`}
                     />
 
@@ -336,7 +336,7 @@ function ReviewList({
                   {(row.priceNote || row.duplicate) && (
                     <p className="hint ml-8">
                       {row.duplicate && "Already on your list. "}
-                      {row.priceNote && `Menu says “${row.priceNote}”.`}
+                      {row.priceNote && `Rate card says “${row.priceNote}”.`}
                     </p>
                   )}
                 </li>
@@ -347,7 +347,7 @@ function ReviewList({
       </div>
 
       {state.status === "error" && (
-        <p className="mt-4 text-[14px] font-semibold text-rose" role="alert">
+        <p className="mt-4 text-[14px] font-semibold text-accent" role="alert">
           {state.message}
         </p>
       )}

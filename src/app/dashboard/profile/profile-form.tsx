@@ -50,7 +50,7 @@ export function ProfileForm({
         <label className="label" htmlFor="slug">
           Your booking link
         </label>
-        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-rose">
+        <div className="flex items-stretch overflow-hidden rounded-[14px] border-[1.5px] border-line focus-within:border-accent">
           <span className="flex select-none items-center whitespace-nowrap bg-bubble px-3 text-[14px] text-muted">
             {siteHost}/
           </span>
@@ -83,7 +83,7 @@ export function ProfileForm({
           name="business_name"
           className="field"
           maxLength={80}
-          placeholder="Lashes by Hira"
+          placeholder="Harbour Clinic"
           defaultValue={profile.business_name}
           required
         />
@@ -99,7 +99,7 @@ export function ProfileForm({
           name="instagram_handle"
           className="field"
           maxLength={31}
-          placeholder="@lashesbyhira"
+          placeholder="@harbourclinic"
           defaultValue={
             profile.instagram_handle ? `@${profile.instagram_handle}` : ""
           }
@@ -115,7 +115,7 @@ export function ProfileForm({
           name="bio"
           className="field min-h-[96px] resize-y"
           maxLength={300}
-          placeholder="Lash artist in Birmingham. Hybrid and volume sets."
+          placeholder="Physiotherapy clinic in Leeds. Sports injuries and rehab."
           defaultValue={profile.bio ?? ""}
         />
       </div>
@@ -161,7 +161,7 @@ export function ProfileForm({
               <option key={code} value={code} />
             ))}
           </datalist>
-          <p className="hint">Used for your prices and deposits.</p>
+          <p className="hint">Used for your prices.</p>
         </div>
       </div>
 
@@ -177,6 +177,7 @@ export function ProfileForm({
         </p>
       </fieldset>
 
+      {/* Deposits are switched off for now: clients pay at the business.
       <div>
         <label className="label" htmlFor="deposit_link">
           Deposit link
@@ -195,6 +196,7 @@ export function ProfileForm({
           they book, and the money goes straight to you.
         </p>
       </div>
+      */}
 
       <div>
         <label className="label" htmlFor="no_show_policy">
@@ -205,14 +207,14 @@ export function ProfileForm({
           name="no_show_policy"
           className="field min-h-[96px] resize-y"
           maxLength={500}
-          placeholder="Deposits are non-refundable. Reschedule at least 24 hours ahead and your deposit moves with you."
+          placeholder="Please give at least 24 hours’ notice to cancel or move your appointment. Missed appointments may be charged."
           defaultValue={profile.no_show_policy ?? ""}
         />
         <p className="hint">Clients read this before they confirm.</p>
       </div>
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-rose" role="alert">
+        <p className="text-[14px] font-semibold text-accent" role="alert">
           {state.message}
         </p>
       )}

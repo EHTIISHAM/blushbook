@@ -63,11 +63,11 @@ function Stat({
   delta?: ReturnType<typeof change>;
   /** Which way is good news, so a falling no-show rate reads as good. */
   goodWhen?: "up" | "down";
-  tone?: "paper" | "petal" | "champagne";
+  tone?: "paper" | "tint" | "notice";
 }) {
   const good = delta && delta.direction !== "flat" && delta.direction === goodWhen;
   const bg =
-    tone === "petal" ? "bg-petal" : tone === "champagne" ? "bg-champagne" : "bg-paper";
+    tone === "tint" ? "bg-tint" : tone === "notice" ? "bg-notice" : "bg-paper";
 
   return (
     <div className={`rounded-[22px] p-4 shadow-[inset_0_0_0_1.5px_var(--line)] ${bg}`}>
@@ -131,7 +131,7 @@ function ServiceRows({
           </div>
           <span aria-hidden className="mt-1 block h-2 overflow-hidden rounded-full bg-bubble">
             <span
-              className="block h-full rounded-full bg-rose"
+              className="block h-full rounded-full bg-accent"
               style={{ width: `${(service.bookings / max) * 100}%` }}
             />
           </span>
@@ -168,7 +168,7 @@ export function AnalyticsView({
   const returningShare = (a: Analytics | null) =>
     a && a.clients > 0 ? a.returningClients / a.clients : null;
 
-  // Heatmap rows: the hours she opens, stretched to cover any booking outside them.
+  // Heatmap rows: the open hours, stretched to cover any booking outside them.
   const hours = [
     ...availability.flatMap((w) => [
       Math.floor(w.start_minute / 60),
@@ -212,13 +212,13 @@ export function AnalyticsView({
       </div>
 
       {loadError && (
-        <p className="mt-6 rounded-[14px] bg-champagne px-4 py-3 text-[15px]">
+        <p className="mt-6 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
           Couldn&rsquo;t load everything: {loadError}
         </p>
       )}
 
       {stats.bookings === 0 && !loadError && (
-        <div className="mt-6 rounded-[26px] bg-petal px-6 py-8 text-center">
+        <div className="mt-6 rounded-[26px] bg-tint px-6 py-8 text-center">
           <p className="font-display text-[18px] leading-tight">Nothing to show yet</p>
           <p className="mx-auto mt-2 max-w-[42ch] text-[15px] text-muted">
             Once clients have been in, their bookings fill in these numbers.
@@ -228,26 +228,26 @@ export function AnalyticsView({
 
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat
-          tone="petal"
+          tone="tint"
           label="Revenue"
           value={money(stats.revenueCents)}
           delta={previous && change(stats.revenueCents, previous.revenueCents, "relative")}
         />
         <Stat
-          tone="petal"
+          tone="tint"
           label="Bookings"
           value={String(stats.bookings)}
           delta={previous && change(stats.bookings, previous.bookings, "relative")}
         />
         <Stat
-          tone="champagne"
+          tone="notice"
           label="No-show rate"
           value={percent(stats.noShowRate)}
           goodWhen="down"
           delta={previous && change(stats.noShowRate, previous.noShowRate, "points")}
         />
         <Stat
-          tone="champagne"
+          tone="notice"
           label="Returning clients"
           value={percent(returningShare(stats))}
           delta={
@@ -340,8 +340,7 @@ export function AnalyticsView({
             />
           </div>
           <p className="hint">
-            Clients are matched by the WhatsApp number or Instagram handle they
-            book with.
+            Clients are matched by the phone number they book with.
           </p>
         </Card>
 
@@ -355,7 +354,7 @@ export function AnalyticsView({
             Mark no-shows and cancellations on the{" "}
             <Link
               href="/dashboard"
-              className="font-semibold text-rose underline underline-offset-4"
+              className="font-semibold text-accent underline underline-offset-4"
             >
               Bookings
             </Link>{" "}
@@ -366,7 +365,7 @@ export function AnalyticsView({
 
       <Card id="actions-h" title="Worth acting on" className="mt-6">
         <ul className="mt-4 grid gap-3 md:grid-cols-3">
-          <li className="rounded-[18px] bg-petal p-4">
+          <li className="rounded-[18px] bg-tint p-4">
             <p className="text-[15px] font-bold">
               {stats.lapsed.length} client{stats.lapsed.length === 1 ? "" : "s"} due to
               rebook
@@ -374,13 +373,13 @@ export function AnalyticsView({
             <p className="mt-1 text-[14px] text-muted">
               No visit in {LAPSED_AFTER_DAYS} days and nothing booked.{" "}
               {stats.lapsed.length > 0 && (
-                <a href="#lapsed-h" className="font-semibold text-rose underline underline-offset-4">
+                <a href="#lapsed-h" className="font-semibold text-accent underline underline-offset-4">
                   See who
                 </a>
               )}
             </p>
           </li>
-          <li className="rounded-[18px] bg-petal p-4">
+          <li className="rounded-[18px] bg-tint p-4">
             <p className="text-[15px] font-bold">
               {stats.quietestSlot ? `Quiet ${slotLabel(stats.quietestSlot)}` : "No quiet time found"}
             </p>
@@ -388,7 +387,7 @@ export function AnalyticsView({
               Your emptiest open hour. A good time to offer a deal.
             </p>
           </li>
-          <li className="rounded-[18px] bg-petal p-4">
+          <li className="rounded-[18px] bg-tint p-4">
             <p className="text-[15px] font-bold">
               {money(
                 stats.estimatedLostCents === null
@@ -439,7 +438,7 @@ export function AnalyticsView({
                 <span className="font-semibold">
                   {client.name}{" "}
                   <span className="font-normal text-muted">
-                    {client.contactKind === "whatsapp" ? "WhatsApp" : "Instagram"}{" "}
+                    {client.contactKind === "instagram" && "Instagram "}
                     {client.contact}
                   </span>
                 </span>

@@ -107,6 +107,7 @@ export function ServiceForm({
           />
         </div>
 
+        {/* Deposits are switched off for now: clients pay at the business.
         <div>
           <label
             className="label"
@@ -127,6 +128,7 @@ export function ServiceForm({
             required
           />
         </div>
+        */}
       </div>
 
       <p
@@ -158,7 +160,7 @@ export function ServiceForm({
                 />
                 <label
                   htmlFor={id}
-                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full peer-checked:shadow-[inset_0_0_0_2px_var(--ink)] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-rose"
+                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full peer-checked:shadow-[inset_0_0_0_2px_var(--ink)] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"
                 >
                   <span
                     className="drop"
@@ -177,13 +179,13 @@ export function ServiceForm({
           type="checkbox"
           name="is_active"
           defaultChecked={service?.is_active ?? true}
-          className="h-5 w-5 accent-[var(--rose)]"
+          className="h-5 w-5 accent-[var(--accent)]"
         />
         Show this service on my booking page
       </label>
 
       {state.status === "error" && (
-        <p className="text-[14px] font-semibold text-rose" role="alert">
+        <p className="text-[14px] font-semibold text-accent" role="alert">
           {state.message}
         </p>
       )}

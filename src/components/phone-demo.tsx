@@ -7,7 +7,6 @@ interface DemoService {
   name: string;
   mins: number;
   price: number;
-  deposit: number;
   swatch: string;
 }
 
@@ -19,28 +18,25 @@ export interface DemoDay {
 
 const SERVICES: DemoService[] = [
   {
-    id: "classic",
-    name: "Classic full set",
-    mins: 120,
+    id: "initial",
+    name: "Initial consultation",
+    mins: 45,
     price: 60,
-    deposit: 15,
-    swatch: "#9E5A60",
+    swatch: "#0F766E",
   },
   {
-    id: "hybrid",
-    name: "Hybrid full set",
-    mins: 150,
-    price: 75,
-    deposit: 20,
-    swatch: "#D4B483",
+    id: "follow-up",
+    name: "Follow-up session",
+    mins: 30,
+    price: 40,
+    swatch: "#E0A43B",
   },
   {
-    id: "infill",
-    name: "Infill",
+    id: "extended",
+    name: "Extended appointment",
     mins: 60,
-    price: 35,
-    deposit: 10,
-    swatch: "#D4A5A5",
+    price: 75,
+    swatch: "#5B7FA6",
   },
 ];
 
@@ -120,7 +116,7 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
     ? "Choose a service"
     : !state.time
       ? "Pick a time"
-      : `Book and pay $${service.deposit} deposit`;
+      : "Book appointment";
 
   return (
     <>
@@ -138,8 +134,7 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
               <span>
                 <strong>New booking</strong>
                 <br />
-                {service.name}, {day.full} at {state.time}. ${service.deposit}{" "}
-                deposit requested.
+                {service.name}, {day.full} at {state.time}.
               </span>
             </>
           )}
@@ -158,7 +153,7 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
                 {day.full} at {state.time}
               </p>
               <p className="ok-next">
-                Next, pay the ${service.deposit} deposit to hold your slot.
+                Payment is taken at your appointment.
               </p>
               <button className="p-btn ghost" type="button" onClick={reset}>
                 Book again
@@ -171,8 +166,8 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
                   H
                 </span>
                 <div>
-                  <p className="p-name">Lashes by Hira</p>
-                  <p className="p-handle">@lashesbyhira</p>
+                  <p className="p-name">Harbour Clinic</p>
+                  <p className="p-handle">booknbloom.app/harbour-clinic</p>
                 </div>
               </div>
 
@@ -193,7 +188,7 @@ export function PhoneDemo({ days }: { days: DemoDay[] }) {
                   <span className="p-svc-name">
                     {item.name}
                     <small>
-                      {item.mins} min, ${item.deposit} deposit
+                      {item.mins} min
                     </small>
                   </span>
                   <span className="p-price">${item.price}</span>

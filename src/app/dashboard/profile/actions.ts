@@ -49,14 +49,15 @@ const profileSchema = z.object({
     .int("Use whole minutes.")
     .min(5, "Your usual length must be at least 5 minutes.")
     .max(1440, "Your usual length can't be more than 24 hours."),
-  deposit_link: z
-    .string()
-    .trim()
-    .transform((value) => (value ? value : null))
-    .nullable()
-    .refine((value) => value === null || /^https:\/\/\S+$/i.test(value), {
-      message: "Your deposit link needs to start with https://",
-    }),
+  // Deposits are switched off for now: clients pay at the business.
+  // deposit_link: z
+  //   .string()
+  //   .trim()
+  //   .transform((value) => (value ? value : null))
+  //   .nullable()
+  //   .refine((value) => value === null || /^https:\/\/\S+$/i.test(value), {
+  //     message: "Your deposit link needs to start with https://",
+  //   }),
   no_show_policy: optionalText(500, "your policy"),
 });
 
@@ -81,7 +82,7 @@ export async function saveProfile(
     timezone: formData.get("timezone"),
     currency: formData.get("currency"),
     default_duration_minutes: formData.get("default_duration_minutes"),
-    deposit_link: formData.get("deposit_link") ?? "",
+    // deposit_link: formData.get("deposit_link") ?? "",
     no_show_policy: formData.get("no_show_policy") ?? "",
   });
 

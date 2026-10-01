@@ -102,7 +102,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
           />
         ) : (
           <span
-            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-rose font-display text-[20px] text-rose-ink"
+            className="grid h-[72px] w-[72px] flex-none place-items-center rounded-full bg-accent font-display text-[20px] text-accent-ink"
             aria-hidden
           >
             {initial}

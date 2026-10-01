@@ -61,7 +61,7 @@ export function BookingStatusButtons({
 
       {state.status === "error" && (
         <p
-          className="max-w-[32ch] text-right text-[13px] font-semibold text-rose"
+          className="max-w-[32ch] text-right text-[13px] font-semibold text-accent"
           role="alert"
         >
           {state.message}

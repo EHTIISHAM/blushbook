@@ -96,6 +96,7 @@ export type BookingRow = {
   client_name: string;
   client_contact: string;
   contact_kind: ContactKind;
+  client_email: string | null;
   starts_at: string;
   ends_at: string;
   status: BookingStatus;
@@ -208,6 +209,7 @@ export type Database = {
           p_client_contact: string;
           p_contact_kind: ContactKind;
           p_ip_hash: string;
+          p_client_email?: string | null;
         };
         Returns: {
           booking_id: string;

@@ -32,8 +32,8 @@ export default function LoginPage() {
       </div>
 
       <p className="mt-6 text-center text-[13px] text-muted">
-        New here? Use the same form — your studio is created the first time you
-        log in.
+        New here? Use the same form — your account is created the first time
+        you log in.
       </p>
     </main>
   );

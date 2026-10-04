@@ -4,8 +4,8 @@ import { siteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Where the magic link lands. Trades the one-time code for a session cookie,
- * then forwards her to wherever she was heading.
+ * Where Google sign-in lands, via Supabase. Trades the one-time code for a
+ * session cookie, then forwards her to wherever she was heading.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -19,6 +19,14 @@ export async function GET(request: NextRequest) {
     requestedNext.startsWith("/") && !requestedNext.startsWith("//")
       ? requestedNext
       : "/dashboard";
+
+  // She cancelled on Google's consent screen, or the provider refused.
+  const providerError = searchParams.get("error");
+  if (providerError) {
+    const reason =
+      providerError === "access_denied" ? "access_denied" : "missing_code";
+    return NextResponse.redirect(`${origin}/login?error=${reason}`);
+  }
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=missing_code`);

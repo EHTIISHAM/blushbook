@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 import { BrandLock } from "@/components/brand";
 
-import { LoginForm } from "./login-form";
+import { GoogleButton } from "./google-button";
 
 export const metadata: Metadata = {
   title: "Log in",
@@ -20,20 +20,19 @@ export default function LoginPage() {
       <div className="card">
         <h1 className="font-display text-[26px] leading-none">Welcome back</h1>
         <p className="mt-3 text-[15px] text-muted">
-          We&rsquo;ll email you a link that logs you straight in. No password to
-          remember.
+          Sign in with your Google account. No password to remember.
         </p>
 
         <Suspense
-          fallback={<div className="field mt-6 opacity-40" aria-hidden />}
+          fallback={<div className="btn btn-ghost mt-6 w-full opacity-40" aria-hidden />}
         >
-          <LoginForm />
+          <GoogleButton />
         </Suspense>
       </div>
 
       <p className="mt-6 text-center text-[13px] text-muted">
-        New here? Use the same form — your account is created the first time
-        you log in.
+        New here? Use the same button — your account is created the first time
+        you sign in.
       </p>
     </main>
   );

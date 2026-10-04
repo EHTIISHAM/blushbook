@@ -196,21 +196,50 @@ Both domains need an A record pointing at this VM, since Caddy now requests a
 certificate for each. If you drop the second app later, delete its block from
 the `Caddyfile` and redeploy.
 
-## 4. Supabase redirect URLs
+## 4. Google sign-in
 
-**Authentication → URL Configuration:**
+Sign-in and sign-up are Google only; there is no email login. Supabase runs
+the OAuth flow, so Google needs to know about Supabase and Supabase needs a
+Google client. Use the same GCP project as the VM.
 
-- **Site URL**: `https://<your-domain>`
-- **Redirect URLs**: add both
-  - `https://<your-domain>/auth/callback`
-  - `http://localhost:3000/auth/callback`
+**In GCP — create the OAuth client**
 
-A magic link to a URL not on this list is rejected. This is the single most
-common reason login appears to do nothing after a first deploy.
+1. **APIs & Services → OAuth consent screen** (Google Auth Platform →
+   Branding / Audience). User type **External**. Fill in the app name
+   (BooknBloom), support email, and under **Authorized domains** add
+   `<your-domain>` and `supabase.co`. Scopes: the defaults (`openid`,
+   `email`, `profile`) are all the app needs, so there is no verification
+   review.
+2. While the app is in **Testing**, only the test users you list can sign in.
+   Press **Publish app** to open it to everyone.
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID**,
+   type **Web application**:
+   - **Authorized JavaScript origins**: `https://<your-domain>` and
+     `http://localhost:3000`
+   - **Authorized redirect URIs**:
+     `https://<project-ref>.supabase.co/auth/v1/callback` — Google redirects
+     to Supabase, not to this app. Supabase shows the exact URL on its Google
+     provider page.
+4. Copy the **Client ID** and **Client secret**.
 
-While you are in Supabase: the built-in email sender is rate limited to a few
-messages an hour. Fine for testing yourself, not for real signups. Add your
-own SMTP under **Authentication → Emails → SMTP Settings** before launch.
+**In Supabase**
+
+1. **Authentication → Sign In / Providers → Google**: enable it and paste the
+   client ID and secret. Save.
+2. **Authentication → Sign In / Providers → Email**: disable it, so nobody
+   can sign up or log in with an email link any more.
+3. **Authentication → URL Configuration:**
+   - **Site URL**: `https://<your-domain>`
+   - **Redirect URLs**: add both
+     - `https://<your-domain>/auth/callback`
+     - `http://localhost:3000/auth/callback`
+
+After Google, Supabase sends the browser to `/auth/callback`; a URL not on
+that list falls back to the Site URL and sign-in appears to do nothing. This
+is the most common first-deploy problem.
+
+Existing accounts keep working: Supabase links a Google sign-in to the user
+with the same verified email, so their profile and bookings carry over.
 
 ## 5. Deploy
 

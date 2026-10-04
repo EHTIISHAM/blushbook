@@ -133,7 +133,7 @@ export default async function BookingsPage() {
     );
   }
 
-  // A brand-new account lands here straight from its first magic link. Send it
+  // A brand-new account lands here straight from its first sign-in. Send it
   // through setup once; naming the business is what marks that as done, so
   // this cannot bounce anyone back after they have started.
   if (!profile.business_name.trim()) {

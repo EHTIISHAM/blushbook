@@ -9,7 +9,7 @@ everything from a dashboard.
 | Piece     | Choice                                          |
 | --------- | ----------------------------------------------- |
 | App       | Next.js 16 (App Router, TypeScript, Tailwind v4) |
-| Backend   | Supabase (Postgres, magic-link auth, RLS, storage) |
+| Backend   | Supabase (Postgres, Google sign-in, RLS, storage) |
 | Billing   | Paddle as merchant of record (not wired yet)    |
 | Hosting   | Docker on a VPS, behind Caddy for HTTPS         |
 | CI/CD     | GitHub Actions building to GHCR                 |
@@ -81,7 +81,7 @@ again.
 ```
 src/app/                 routes
   page.tsx               marketing page
-  login/                 magic-link form
+  login/                 Google sign-in button
   auth/                  callback + sign out
   dashboard/             bookings, services, hours, profile, share, billing
 src/components/          brand mark, phone demo

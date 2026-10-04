@@ -44,7 +44,9 @@ export function TrendChart({
   const area = `${line} L100,100 L0,100 Z`;
 
   const per = unit === "day" ? "day" : unit === "week" ? "week" : "month";
-  const labelled = [0, Math.floor((points.length - 1) / 2), points.length - 1];
+  const last = points.length - 1;
+  // Deduped: with one or two points the first, middle and last collide.
+  const labelled = [...new Set([0, Math.floor(last / 2), last])];
 
   return (
     <figure className="mt-4">
@@ -104,18 +106,20 @@ export function TrendChart({
 
         <div />
         <div className="relative h-4 text-[12px] text-muted">
-          {labelled.map((index, position) => (
+          {labelled.map((index) => (
             <span
-              key={`${index}-${position}`}
+              key={index}
               className="absolute whitespace-nowrap"
               style={{
                 left: `${x(index)}%`,
                 transform:
-                  position === 0
-                    ? "none"
-                    : position === 2
-                      ? "translateX(-100%)"
-                      : "translateX(-50%)",
+                  last === 0
+                    ? "translateX(-50%)"
+                    : index === 0
+                      ? "none"
+                      : index === last
+                        ? "translateX(-100%)"
+                        : "translateX(-50%)",
               }}
             >
               {bucketLabel(points[index].start, unit)}

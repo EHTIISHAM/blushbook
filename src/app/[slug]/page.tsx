@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { BrandMark } from "@/components/brand";
 import { createClient } from "@/lib/supabase/server";
 
-import { BookingFlow, type PublicService } from "./booking-flow";
+import { BookingFlow, type PublicService, type PublicStaff } from "./booking-flow";
 
 /** Columns anonymous visitors are granted. Never `select *` here: the grant
  *  is column-level, so asking for everything is refused outright. */
@@ -77,14 +77,27 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
     );
   }
 
-  const { data: services } = await supabase
-    .from("services")
-    .select("id, name, duration_minutes, price_cents, deposit_cents, swatch")
-    .eq("profile_id", profile.id)
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true });
+  const [{ data: services }, { data: staffRows }] = await Promise.all([
+    supabase
+      .from("services")
+      .select("id, name, duration_minutes, price_cents, deposit_cents, swatch")
+      .eq("profile_id", profile.id)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true }),
+    supabase.rpc("get_booking_staff", { p_slug: profile.slug }),
+  ]);
 
-  const list: PublicService[] = services ?? [];
+  const staff: PublicStaff[] = (staffRows ?? []).map((row) => ({
+    id: row.staff_id,
+    name: row.name,
+    swatch: row.swatch,
+    serviceIds: row.service_ids,
+  }));
+  // A service nobody does can't be booked, so it isn't offered.
+  const bookable = new Set(staff.flatMap((member) => member.serviceIds));
+  const list: PublicService[] = (services ?? []).filter((service) =>
+    bookable.has(service.id),
+  );
   const photo = photoUrl(profile.photo_path);
   const initial = profile.business_name.trim().charAt(0).toUpperCase() || "B";
 
@@ -141,6 +154,7 @@ export default async function BookingPage({ params }: PageProps<"/[slug]">) {
           currency={profile.currency}
           noShowPolicy={profile.no_show_policy}
           services={list}
+          staff={staff}
         />
       )}
 

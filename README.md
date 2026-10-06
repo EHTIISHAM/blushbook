@@ -83,7 +83,7 @@ src/app/                 routes
   page.tsx               marketing page
   login/                 Google sign-in button
   auth/                  callback + sign out
-  dashboard/             bookings, services, hours, profile, share, billing
+  dashboard/             bookings, services, hours, staff, profile, share, billing
 src/components/          brand mark, phone demo
 src/lib/                 formatting, slug rules, Supabase clients
 src/proxy.ts             session refresh + dashboard guard

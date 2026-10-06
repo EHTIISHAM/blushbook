@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 
 import { unblockDate } from "./actions";
 import { BlockDateForm } from "./blocked-dates";
-import { HoursForm, type DayWindow } from "./hours-form";
+import { HoursForm } from "./hours-form";
+import { firstWindowPerDay } from "@/lib/week";
 
 export const metadata: Metadata = { title: "Hours" };
 
@@ -53,16 +54,7 @@ export default async function HoursPage() {
       .order("blocked_on", { ascending: true }),
   ]);
 
-  const initial: Record<number, DayWindow | undefined> = {};
-  for (const row of availabilityResult.data ?? []) {
-    // The editor shows one window per day, so keep the earliest.
-    if (!initial[row.weekday]) {
-      initial[row.weekday] = {
-        start_minute: row.start_minute,
-        end_minute: row.end_minute,
-      };
-    }
-  }
+  const initial = firstWindowPerDay(availabilityResult.data ?? []);
 
   const blocked = blockedResult.data ?? [];
 
@@ -73,7 +65,8 @@ export default async function HoursPage() {
           Hours
         </h1>
         <p className="mt-2 text-[15px] text-muted">
-          The days and times clients can book. Shown in{" "}
+          When the business is open. Staff can only be booked inside these
+          hours, even if their own hours run longer. Shown in{" "}
           <strong>{profile.timezone}</strong>, which you can change on the
           Profile tab.
         </p>
@@ -89,11 +82,11 @@ export default async function HoursPage() {
 
       <section aria-labelledby="blocked-h" className="card lg:sticky lg:top-6">
         <h2 id="blocked-h" className="font-display text-[19px] leading-none">
-          Time off
+          Closed days
         </h2>
         <p className="mt-2 text-[14px] text-muted">
-          Block a whole day and nobody can book it, even during your usual
-          hours.
+          Close the whole business for a day and nobody can book it. For one
+          person&rsquo;s day off, use the Staff tab.
         </p>
 
         <BlockDateForm today={today} />

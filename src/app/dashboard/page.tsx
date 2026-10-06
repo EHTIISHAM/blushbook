@@ -7,13 +7,15 @@ import {
   whatsappLink,
   type FollowUpBooking,
 } from "@/lib/follow-ups";
+import { upcomingConflictIds } from "@/lib/conflicts";
 import { formatMoney } from "@/lib/format";
 import { getSessionProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
-import type { BookingRow } from "@/lib/supabase/database.types";
+import type { BookingRow, StaffRow } from "@/lib/supabase/database.types";
 
 import { BookingStatusButtons } from "./booking-status";
 import { FollowUps, type FollowUpItem } from "./follow-ups";
+import { ReassignForm } from "./reassign";
 import { CopyField } from "./share/copy-field";
 
 /** How far back the Past list reaches. Older bookings still count in analytics. */
@@ -27,6 +29,7 @@ const DAY = 24 * 60 * 60 * 1000;
 type ListedBooking = Pick<
   BookingRow,
   | "id"
+  | "staff_id"
   | "client_name"
   | "client_contact"
   | "contact_kind"
@@ -53,22 +56,37 @@ function formatWhen(iso: string, timezone: string): string {
   }).format(new Date(iso));
 }
 
+type StaffSummary = Pick<StaffRow, "id" | "name" | "swatch" | "is_active">;
+
 function BookingList({
   bookings,
   isPast,
   timezone,
   currency,
+  staff,
+  conflicts,
 }: {
   bookings: ListedBooking[];
   isPast: boolean;
   timezone: string;
   currency: string;
+  /** Everyone, including people switched off, so old bookings keep a name. */
+  staff: StaffSummary[];
+  /** Upcoming bookings that no longer fit their staff member. */
+  conflicts: Set<string>;
 }) {
+  // A solo business has nothing to tell apart, so names stay hidden.
+  const showStaff = staff.length > 1;
+  const byId = new Map(staff.map((member) => [member.id, member]));
+  const movable = staff.filter((member) => member.is_active);
+
   return (
     <ul className="mt-3 grid gap-2">
       {bookings.map((booking) => {
         const when = formatWhen(booking.starts_at, timezone);
         const flag = STATUS_LABELS[booking.status];
+        const member = byId.get(booking.staff_id);
+        const stranded = conflicts.has(booking.id);
 
         return (
           <li
@@ -95,14 +113,41 @@ function BookingList({
                 {booking.client_contact}
                 {booking.client_email && <> &middot; {booking.client_email}</>}
               </p>
+              {showStaff && member && (
+                <p className="mt-1 flex items-center gap-2 text-[13px] font-semibold">
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ background: member.swatch }}
+                  />
+                  With {member.name}
+                </p>
+              )}
+              {stranded && (
+                <p className="mt-2 rounded-[10px] bg-notice px-3 py-2 text-[13px]">
+                  <strong>Needs a look:</strong> this no longer fits{" "}
+                  {member?.name ?? "their"}&rsquo;s hours, days off or
+                  services. Move it, or leave it if it&rsquo;s fine.
+                </p>
+              )}
             </div>
 
-            <BookingStatusButtons
-              id={booking.id}
-              status={booking.status}
-              isPast={isPast}
-              description={`${booking.client_name}, ${when}`}
-            />
+            <div className="flex flex-col items-end gap-2">
+              <BookingStatusButtons
+                id={booking.id}
+                status={booking.status}
+                isPast={isPast}
+                description={`${booking.client_name}, ${when}`}
+              />
+              {!isPast && booking.status === "booked" && movable.length > 1 && (
+                <ReassignForm
+                  id={booking.id}
+                  currentStaffId={booking.staff_id}
+                  staff={movable}
+                  description={`${booking.client_name}, ${when}`}
+                />
+              )}
+            </div>
           </li>
         );
       })}
@@ -116,7 +161,9 @@ interface ChecklistItem {
   actions: { href: string; cta: string }[];
 }
 
-export default async function BookingsPage() {
+export default async function BookingsPage({
+  searchParams,
+}: PageProps<"/dashboard">) {
   const { profile } = await getSessionProfile();
 
   if (!profile) {
@@ -146,9 +193,40 @@ export default async function BookingsPage() {
   const pastFrom = new Date(now.getTime() - PAST_DAYS * DAY);
   const patternFrom = new Date(now.getTime() - PATTERN_DAYS * DAY);
   const bookingColumns =
-    "id, client_name, client_contact, contact_kind, client_email, starts_at, status, service_name, price_cents";
+    "id, staff_id, client_name, client_contact, contact_kind, client_email, starts_at, status, service_name, price_cents";
 
-  const [services, availability, upcomingResult, pastResult, historyResult] =
+  const { data: staffRows } = await supabase
+    .from("staff")
+    .select("id, name, swatch, is_active")
+    .eq("profile_id", profile.id)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+  const staff: StaffSummary[] = staffRows ?? [];
+
+  // ?staff=<id> narrows both lists to one person.
+  const requested = (await searchParams).staff;
+  const filterStaff =
+    staff.length > 1
+      ? (staff.find((member) => member.id === requested) ?? null)
+      : null;
+
+  let upcomingQuery = supabase
+    .from("bookings")
+    .select(bookingColumns)
+    .eq("profile_id", profile.id)
+    .gte("starts_at", now.toISOString());
+  let pastQuery = supabase
+    .from("bookings")
+    .select(bookingColumns)
+    .eq("profile_id", profile.id)
+    .lt("starts_at", now.toISOString())
+    .gte("starts_at", pastFrom.toISOString());
+  if (filterStaff) {
+    upcomingQuery = upcomingQuery.eq("staff_id", filterStaff.id);
+    pastQuery = pastQuery.eq("staff_id", filterStaff.id);
+  }
+
+  const [services, availability, upcomingResult, pastResult, historyResult, conflicts] =
     await Promise.all([
       supabase
         .from("services")
@@ -159,21 +237,8 @@ export default async function BookingsPage() {
         .from("availability")
         .select("id", { count: "exact", head: true })
         .eq("profile_id", profile.id),
-      supabase
-        .from("bookings")
-        .select(bookingColumns)
-        .eq("profile_id", profile.id)
-        .gte("starts_at", now.toISOString())
-        .order("starts_at", { ascending: true })
-        .limit(200),
-      supabase
-        .from("bookings")
-        .select(bookingColumns)
-        .eq("profile_id", profile.id)
-        .lt("starts_at", now.toISOString())
-        .gte("starts_at", pastFrom.toISOString())
-        .order("starts_at", { ascending: false })
-        .limit(200),
+      upcomingQuery.order("starts_at", { ascending: true }).limit(200),
+      pastQuery.order("starts_at", { ascending: false }).limit(200),
       supabase
         .from("bookings")
         .select(
@@ -183,6 +248,7 @@ export default async function BookingsPage() {
         .gte("starts_at", patternFrom.toISOString())
         .order("starts_at", { ascending: true })
         .limit(5000),
+      upcomingConflictIds(supabase),
     ]);
 
   const upcoming: ListedBooking[] = upcomingResult.data ?? [];
@@ -268,6 +334,33 @@ export default async function BookingsPage() {
           <FollowUps items={followUps} />
         </div>
 
+        {staff.length > 1 && (
+          <nav aria-label="Filter by staff" className="mb-6 flex flex-wrap gap-2">
+            {[null, ...staff].map((member) => {
+              const on = (member?.id ?? null) === (filterStaff?.id ?? null);
+              return (
+                <Link
+                  key={member?.id ?? "everyone"}
+                  href={member ? `/dashboard?staff=${member.id}` : "/dashboard"}
+                  aria-current={on ? "page" : undefined}
+                  className={`flex items-center gap-2 rounded-full border-[1.5px] px-3 py-1.5 text-[13px] font-semibold no-underline ${
+                    on ? "border-ink bg-ink text-bg" : "border-line bg-paper text-ink"
+                  }`}
+                >
+                  {member && (
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ background: member.swatch }}
+                    />
+                  )}
+                  {member ? member.name : "Everyone"}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
+
         {loadError && (
           <p className="rounded-[14px] bg-notice px-4 py-3 text-[15px]">
             Couldn&rsquo;t load your bookings. Please refresh the page.
@@ -277,10 +370,12 @@ export default async function BookingsPage() {
         {!loadError && upcoming.length === 0 && past.length === 0 && (
           <div className="rounded-[26px] bg-tint px-6 py-10 text-center">
             <p className="font-display text-[18px] leading-tight">
-              No bookings yet
+              {filterStaff ? `No bookings for ${filterStaff.name}` : "No bookings yet"}
             </p>
             <p className="mx-auto mt-2 max-w-[38ch] text-[15px] text-muted">
-              Share your link and new bookings will show up here.
+              {filterStaff
+                ? "Nothing in the last few months or coming up."
+                : "Share your link and new bookings will show up here."}
             </p>
           </div>
         )}
@@ -297,6 +392,8 @@ export default async function BookingsPage() {
               isPast={false}
               timezone={profile.timezone}
               currency={profile.currency}
+              staff={staff}
+              conflicts={conflicts}
             />
           </div>
         )}
@@ -313,6 +410,8 @@ export default async function BookingsPage() {
               isPast
               timezone={profile.timezone}
               currency={profile.currency}
+              staff={staff}
+              conflicts={conflicts}
             />
           </div>
         )}

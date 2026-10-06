@@ -4,9 +4,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import type { ActionState } from "@/lib/action-state";
-import { timeValueToMinutes, WEEKDAYS } from "@/lib/format";
+import { conflictNote } from "@/lib/conflicts";
 import { requireProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
+import { parseWeek } from "@/lib/week";
 
 /**
  * Saves the whole week at once. The RPC does the delete and insert inside one
@@ -16,34 +17,11 @@ export async function saveHours(
   _previous: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const windows: {
-    weekday: number;
-    start_minute: number;
-    end_minute: number;
-  }[] = [];
-
-  for (let weekday = 0; weekday < WEEKDAYS.length; weekday += 1) {
-    if (formData.get(`open-${weekday}`) !== "on") continue;
-
-    const start = timeValueToMinutes(String(formData.get(`start-${weekday}`) ?? ""));
-    const end = timeValueToMinutes(String(formData.get(`end-${weekday}`) ?? ""));
-
-    if (start === null || end === null) {
-      return {
-        status: "error",
-        message: `Add an opening and closing time for ${WEEKDAYS[weekday]}.`,
-      };
-    }
-
-    if (end <= start) {
-      return {
-        status: "error",
-        message: `${WEEKDAYS[weekday]} closes before it opens.`,
-      };
-    }
-
-    windows.push({ weekday, start_minute: start, end_minute: end });
+  const week = parseWeek(formData);
+  if (!week.ok) {
+    return { status: "error", message: week.message };
   }
+  const { windows } = week;
 
   await requireProfile();
   const supabase = await createClient();
@@ -57,11 +35,14 @@ export async function saveHours(
   }
 
   revalidatePath("/dashboard/hours");
+  revalidatePath("/dashboard/staff");
   return {
     status: "success",
-    message: windows.length
-      ? "Hours saved."
-      : "Saved. Your page shows no open days until you set some hours.",
+    message:
+      (windows.length
+        ? "Hours saved."
+        : "Saved. Your page shows no open days until you set some hours.") +
+      (await conflictNote(supabase)),
   };
 }
 
@@ -112,7 +93,10 @@ export async function blockDate(
   }
 
   revalidatePath("/dashboard/hours");
-  return { status: "success", message: "Date blocked." };
+  return {
+    status: "success",
+    message: "Date blocked." + (await conflictNote(supabase)),
+  };
 }
 
 export async function unblockDate(formData: FormData): Promise<void> {

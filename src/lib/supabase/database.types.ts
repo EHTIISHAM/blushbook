@@ -1,5 +1,5 @@
 /**
- * Types for the schema in supabase/migrations/20260917120000_init.sql.
+ * Types for the schema in supabase/migrations.
  *
  * Hand-written for now. Once a Supabase project exists, regenerate with:
  *   npx supabase gen types typescript --project-id <ref> > src/lib/supabase/database.types.ts
@@ -89,9 +89,50 @@ export type BlockedDateRow = {
   created_at: string;
 }
 
+export type StaffRow = {
+  id: string;
+  profile_id: string;
+  name: string;
+  swatch: string;
+  is_active: boolean;
+  /** Use the business's hours instead of staff_hours. */
+  hours_follow_business: boolean;
+  /** Do every service instead of the ones in staff_services. */
+  all_services: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type StaffHoursRow = {
+  id: string;
+  staff_id: string;
+  profile_id: string;
+  weekday: number;
+  start_minute: number;
+  end_minute: number;
+}
+
+export type StaffTimeOffRow = {
+  id: string;
+  staff_id: string;
+  profile_id: string;
+  off_on: string;
+  note: string | null;
+  created_at: string;
+}
+
+export type StaffServiceRow = {
+  staff_id: string;
+  service_id: string;
+  profile_id: string;
+}
+
 export type BookingRow = {
   id: string;
   profile_id: string;
+  /** Who the client is booked with. */
+  staff_id: string;
   service_id: string | null;
   client_name: string;
   client_contact: string;
@@ -158,11 +199,48 @@ export type Database = {
         Update: Partial<BlockedDateRow>;
         Relationships: [];
       };
+      staff: {
+        Row: StaffRow;
+        Insert: Writable<
+          StaffRow,
+          "profile_id" | "name",
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<StaffRow>;
+        Relationships: [];
+      };
+      staff_hours: {
+        Row: StaffHoursRow;
+        Insert: Writable<
+          StaffHoursRow,
+          "staff_id" | "profile_id" | "weekday" | "start_minute" | "end_minute",
+          "id"
+        >;
+        Update: Partial<StaffHoursRow>;
+        Relationships: [];
+      };
+      staff_time_off: {
+        Row: StaffTimeOffRow;
+        Insert: Writable<
+          StaffTimeOffRow,
+          "staff_id" | "profile_id" | "off_on",
+          "id" | "created_at"
+        >;
+        Update: Partial<StaffTimeOffRow>;
+        Relationships: [];
+      };
+      staff_services: {
+        Row: StaffServiceRow;
+        Insert: StaffServiceRow;
+        Update: Partial<StaffServiceRow>;
+        Relationships: [];
+      };
       bookings: {
         Row: BookingRow;
         Insert: Writable<
           BookingRow,
           | "profile_id"
+          | "staff_id"
           | "client_name"
           | "client_contact"
           | "contact_kind"
@@ -197,6 +275,8 @@ export type Database = {
           p_service_id: string;
           p_from: string;
           p_days: number;
+          /** Omit for "anyone available". */
+          p_staff_id?: string | null;
         };
         Returns: { slot_start: string }[];
       };
@@ -210,11 +290,14 @@ export type Database = {
           p_contact_kind: ContactKind;
           p_ip_hash: string;
           p_client_email?: string | null;
+          /** Omit for "anyone available". */
+          p_staff_id?: string | null;
         };
         Returns: {
           booking_id: string;
           business_name: string;
           service_name: string;
+          staff_name: string;
           starts_at: string;
           deposit_cents: number;
           currency: string;
@@ -230,6 +313,40 @@ export type Database = {
           p_to: string;
         };
         Returns: { starts_at: string; ends_at: string }[];
+      };
+      get_booking_staff: {
+        Args: { p_slug: string };
+        Returns: {
+          staff_id: string;
+          name: string;
+          swatch: string;
+          service_ids: string[];
+        }[];
+      };
+      save_staff: {
+        Args: {
+          p_staff_id: string | null;
+          p_name: string;
+          p_swatch: string;
+          p_is_active: boolean;
+          p_hours_follow_business: boolean;
+          p_windows: {
+            weekday: number;
+            start_minute: number;
+            end_minute: number;
+          }[];
+          p_all_services: boolean;
+          p_service_ids: string[];
+        };
+        Returns: string;
+      };
+      reassign_booking: {
+        Args: { p_booking_id: string; p_staff_id: string };
+        Returns: undefined;
+      };
+      upcoming_conflicts: {
+        Args: Record<string, never>;
+        Returns: { booking_id: string }[];
       };
       set_weekly_hours: {
         Args: {

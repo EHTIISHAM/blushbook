@@ -14,6 +14,8 @@ export interface Confirmation {
   bookingId: string;
   businessName: string;
   serviceName: string;
+  /** Who they're booked with; shown only when the business has several. */
+  staffName: string;
   startsAt: string;
   depositCents: number;
   currency: string;

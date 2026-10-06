@@ -17,6 +17,9 @@
 --   AND inside their own hours (staff_hours), unless they follow the business
 --   AND they do the service.
 -- Staff hours never stretch past business hours: the two are intersected.
+--
+-- Safe to run more than once, and safe to re-run after a run that stopped
+-- part way: every step skips what is already in place.
 
 -- ---------------------------------------------------------------------------
 -- Tables
@@ -25,10 +28,36 @@
 -- Children reference (id, profile_id) rather than id alone, so a row can
 -- never point at another business's staff member or service, whatever the
 -- caller sends.
-alter table public.services
-  add constraint services_id_profile_unique unique (id, profile_id);
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'services_id_profile_unique'
+  ) then
+    alter table public.services
+      add constraint services_id_profile_unique unique (id, profile_id);
+  end if;
+end;
+$$;
 
-create table public.staff (
+-- create_booking below records client_email. It arrived in an earlier
+-- migration; make sure it is here even if that one was skipped.
+alter table public.bookings add column if not exists client_email text;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'bookings_client_email_format'
+  ) then
+    alter table public.bookings
+      add constraint bookings_client_email_format check (
+        client_email is null
+        or (length(client_email) <= 254 and client_email ~ '^[^@\s]+@[^@\s]+\.[^@\s]+$')
+      );
+  end if;
+end;
+$$;
+
+create table if not exists public.staff (
   id                    uuid primary key default gen_random_uuid(),
   profile_id            uuid not null references public.profiles (id) on delete cascade,
   name                  text not null,
@@ -45,15 +74,16 @@ create table public.staff (
   constraint staff_id_profile_unique unique (id, profile_id)
 );
 
-create index staff_profile_sort_idx on public.staff (profile_id, sort_order, created_at);
+create index if not exists staff_profile_sort_idx on public.staff (profile_id, sort_order, created_at);
 
+drop trigger if exists staff_touch_updated_at on public.staff;
 create trigger staff_touch_updated_at
   before update on public.staff
   for each row execute function public.touch_updated_at();
 
 -- Weekly hours, used only when hours_follow_business is off. Same shape as
 -- availability: minutes from midnight in the business's timezone.
-create table public.staff_hours (
+create table if not exists public.staff_hours (
   id           uuid primary key default gen_random_uuid(),
   staff_id     uuid not null,
   profile_id   uuid not null,
@@ -75,9 +105,9 @@ create table public.staff_hours (
   )
 );
 
-create index staff_hours_staff_idx on public.staff_hours (staff_id, weekday);
+create index if not exists staff_hours_staff_idx on public.staff_hours (staff_id, weekday);
 
-create table public.staff_time_off (
+create table if not exists public.staff_time_off (
   id         uuid primary key default gen_random_uuid(),
   staff_id   uuid not null,
   profile_id uuid not null,
@@ -92,10 +122,10 @@ create table public.staff_time_off (
   constraint staff_time_off_note_len check (note is null or length(note) <= 120)
 );
 
-create index staff_time_off_profile_idx on public.staff_time_off (profile_id, off_on);
+create index if not exists staff_time_off_profile_idx on public.staff_time_off (profile_id, off_on);
 
 -- Which services a staff member does, used only when all_services is off.
-create table public.staff_services (
+create table if not exists public.staff_services (
   staff_id   uuid not null,
   service_id uuid not null,
   profile_id uuid not null,
@@ -107,7 +137,7 @@ create table public.staff_services (
     references public.services (id, profile_id) on delete cascade
 );
 
-create index staff_services_service_idx on public.staff_services (service_id);
+create index if not exists staff_services_service_idx on public.staff_services (service_id);
 
 -- ---------------------------------------------------------------------------
 -- Every business starts with one staff member
@@ -127,6 +157,7 @@ begin
 end;
 $$;
 
+drop trigger if exists profiles_create_owner_staff on public.profiles;
 create trigger profiles_create_owner_staff
   after insert on public.profiles
   for each row execute function public.profiles_create_owner_staff();
@@ -140,7 +171,7 @@ where not exists (select 1 from public.staff s where s.profile_id = pr.id);
 -- Bookings belong to a staff member
 -- ---------------------------------------------------------------------------
 
-alter table public.bookings add column staff_id uuid;
+alter table public.bookings add column if not exists staff_id uuid;
 
 -- Every business has exactly one staff member at this point, so this hands
 -- all existing bookings to them.
@@ -150,15 +181,23 @@ from public.staff s
 where s.profile_id = b.profile_id
   and b.staff_id is null;
 
-alter table public.bookings
-  alter column staff_id set not null,
-  -- No cascade: a staff member with bookings is switched off, never deleted,
-  -- so the history keeps who did the work.
-  add constraint bookings_staff_fk
-    foreign key (staff_id, profile_id) references public.staff (id, profile_id);
+alter table public.bookings alter column staff_id set not null;
+
+-- No cascade: a staff member with bookings is switched off, never deleted,
+-- so the history keeps who did the work.
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'bookings_staff_fk') then
+    alter table public.bookings
+      add constraint bookings_staff_fk
+        foreign key (staff_id, profile_id) references public.staff (id, profile_id);
+  end if;
+end;
+$$;
 
 -- Double booking is now per person: two staff can each see a client at 2pm.
-alter table public.bookings drop constraint bookings_no_overlap;
+-- Dropped and re-added, so a re-run always ends on the per-person version.
+alter table public.bookings drop constraint if exists bookings_no_overlap;
 
 alter table public.bookings
   add constraint bookings_no_overlap exclude using gist (
@@ -166,7 +205,7 @@ alter table public.bookings
     tstzrange(starts_at, ends_at, '[)') with &&
   ) where (status in ('booked', 'completed'));
 
-create index bookings_staff_start_idx on public.bookings (staff_id, starts_at);
+create index if not exists bookings_staff_start_idx on public.bookings (staff_id, starts_at);
 
 -- ---------------------------------------------------------------------------
 -- Row level security and grants
@@ -179,21 +218,25 @@ alter table public.staff_hours    enable row level security;
 alter table public.staff_time_off enable row level security;
 alter table public.staff_services enable row level security;
 
+drop policy if exists staff_owner_all on public.staff;
 create policy staff_owner_all on public.staff
   for all to authenticated
   using (profile_id = (select auth.uid()))
   with check (profile_id = (select auth.uid()));
 
+drop policy if exists staff_hours_owner_all on public.staff_hours;
 create policy staff_hours_owner_all on public.staff_hours
   for all to authenticated
   using (profile_id = (select auth.uid()))
   with check (profile_id = (select auth.uid()));
 
+drop policy if exists staff_time_off_owner_all on public.staff_time_off;
 create policy staff_time_off_owner_all on public.staff_time_off
   for all to authenticated
   using (profile_id = (select auth.uid()))
   with check (profile_id = (select auth.uid()));
 
+drop policy if exists staff_services_owner_all on public.staff_services;
 create policy staff_services_owner_all on public.staff_services
   for all to authenticated
   using (profile_id = (select auth.uid()))
@@ -334,7 +377,7 @@ $$;
 revoke execute on function public.staff_slot_ok(uuid, uuid, timestamptz, int) from public;
 
 -- Replaced by staff_slot_ok.
-drop function public.slot_within_hours(uuid, timestamptz, int);
+drop function if exists public.slot_within_hours(uuid, timestamptz, int);
 
 -- ---------------------------------------------------------------------------
 -- Booking page: who can be booked
@@ -384,7 +427,23 @@ grant execute on function public.get_booking_staff(text) to anon, authenticated;
 -- Open slots: for one staff member, or for anyone who does the service
 -- ---------------------------------------------------------------------------
 
-drop function public.get_available_slots(text, uuid, date, int);
+-- Every older version goes, whatever its exact argument list, so the
+-- booking page can only ever reach the staff-aware one.
+do $$
+declare
+  v_fn regprocedure;
+begin
+  for v_fn in
+    select p.oid::regprocedure
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname in ('get_available_slots', 'create_booking')
+  loop
+    execute format('drop function %s', v_fn);
+  end loop;
+end;
+$$;
 
 create function public.get_available_slots(
   p_slug text,
@@ -486,10 +545,6 @@ grant execute on function public.get_available_slots(text, uuid, date, int, uuid
 -- so work is shared out. Each candidate is tried in turn: if another client
 -- takes that person in the same instant, the exclusion constraint refuses
 -- the insert and the next free person gets it instead.
-
-drop function public.create_booking(
-  text, uuid, timestamptz, text, text, public.contact_kind, text, text
-);
 
 create function public.create_booking(
   p_slug           text,

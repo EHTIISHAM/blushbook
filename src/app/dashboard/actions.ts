@@ -71,3 +71,42 @@ export async function setBookingStatus(
   revalidatePath("/dashboard");
   return { status: "success" };
 }
+
+const reassignSchema = z.object({ id: z.uuid(), staff_id: z.uuid() });
+
+/** Moves a booking to another staff member. The database checks they work
+ *  then, do the service, and aren't already booked. */
+export async function reassignBooking(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = reassignSchema.safeParse({
+    id: formData.get("id"),
+    staff_id: formData.get("staff_id"),
+  });
+  if (!parsed.success) {
+    return { status: "error", message: "Pick who to move it to." };
+  }
+
+  await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase.rpc("reassign_booking", {
+    p_booking_id: parsed.data.id,
+    p_staff_id: parsed.data.staff_id,
+  });
+
+  if (error) {
+    return {
+      status: "error",
+      message:
+        error.code === "P0001" || error.code === "P0002"
+          ? error.message
+          : "Couldn't move it. Please try again.",
+    };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/staff");
+  return { status: "success", message: "Moved." };
+}

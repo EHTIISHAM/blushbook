@@ -31,14 +31,20 @@ async function ipHash(): Promise<string> {
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }
 
-/** Open slots for one service, as ISO strings. */
+/** Open slots for one service, as ISO strings. A null staff id means
+ *  "anyone available": every time at least one of them is free. */
 export async function fetchSlots(
   slug: string,
   serviceId: string,
+  staffId: string | null = null,
 ): Promise<SlotsResult> {
   const parsed = z
-    .object({ slug: z.string().min(1).max(40), serviceId: z.uuid() })
-    .safeParse({ slug, serviceId });
+    .object({
+      slug: z.string().min(1).max(40),
+      serviceId: z.uuid(),
+      staffId: z.uuid().nullable(),
+    })
+    .safeParse({ slug, serviceId, staffId });
 
   if (!parsed.success) {
     return { status: "error", message: "Couldn't load times for that service." };
@@ -55,6 +61,7 @@ export async function fetchSlots(
     p_service_id: parsed.data.serviceId,
     p_from: from,
     p_days: SLOT_DAYS,
+    p_staff_id: parsed.data.staffId,
   });
 
   if (error) {
@@ -67,6 +74,8 @@ export async function fetchSlots(
 const bookingSchema = z.object({
   slug: z.string().min(1).max(40),
   serviceId: z.uuid("Pick a service."),
+  // Blank is "anyone available".
+  staffId: z.union([z.literal(""), z.uuid()]),
   startsAt: z.iso.datetime({ offset: true }),
   clientName: z
     .string()
@@ -104,6 +113,7 @@ export async function submitBooking(
   const parsed = bookingSchema.safeParse({
     slug: formData.get("slug"),
     serviceId: formData.get("serviceId"),
+    staffId: String(formData.get("staffId") ?? ""),
     startsAt: formData.get("startsAt"),
     clientName: formData.get("clientName"),
     clientContact: formData.get("clientContact"),
@@ -130,6 +140,7 @@ export async function submitBooking(
     p_contact_kind: "whatsapp",
     p_ip_hash: await ipHash(),
     p_client_email: parsed.data.clientEmail || null,
+    p_staff_id: parsed.data.staffId || null,
   });
 
   if (error) {
@@ -153,6 +164,7 @@ export async function submitBooking(
       bookingId: row.booking_id,
       businessName: row.business_name,
       serviceName: row.service_name,
+      staffName: row.staff_name,
       startsAt: row.starts_at,
       depositCents: row.deposit_cents,
       currency: row.currency,

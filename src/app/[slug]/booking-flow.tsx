@@ -17,6 +17,14 @@ export interface PublicService {
   swatch: string;
 }
 
+export interface PublicStaff {
+  id: string;
+  name: string;
+  swatch: string;
+  /** Active services this person does. */
+  serviceIds: string[];
+}
+
 /** YYYY-MM-DD for an instant, as read in the business's timezone. */
 function dayKey(iso: string, timezone: string): string {
   return new Intl.DateTimeFormat("en-CA", {
@@ -49,14 +57,18 @@ export function BookingFlow({
   currency,
   noShowPolicy,
   services,
+  staff,
 }: {
   slug: string;
   timezone: string;
   currency: string;
   noShowPolicy: string | null;
   services: PublicService[];
+  staff: PublicStaff[];
 }) {
   const [serviceId, setServiceId] = useState<string | null>(null);
+  // Null is "anyone available".
+  const [staffId, setStaffId] = useState<string | null>(null);
   const [slots, setSlots] = useState<string[]>([]);
   const [slotError, setSlotError] = useState<string | null>(null);
   const [day, setDay] = useState<string | null>(null);
@@ -67,15 +79,22 @@ export function BookingFlow({
 
   const service = services.find((item) => item.id === serviceId) ?? null;
 
-  function chooseService(id: string) {
-    setServiceId(id);
+  // Staff names only mean anything to a client once there's a choice of
+  // people; a solo business never shows them.
+  const showStaff = staff.length > 1;
+  const candidates = service
+    ? staff.filter((member) => member.serviceIds.includes(service.id))
+    : [];
+  const chosen = staff.find((member) => member.id === staffId) ?? null;
+
+  function loadSlots(nextServiceId: string, nextStaffId: string | null) {
     setSlots([]);
     setDay(null);
     setSlot(null);
     setSlotError(null);
 
     startLoading(async () => {
-      const result = await fetchSlots(slug, id);
+      const result = await fetchSlots(slug, nextServiceId, nextStaffId);
       if (result.status === "error") {
         setSlotError(result.message);
         return;
@@ -85,6 +104,18 @@ export function BookingFlow({
       const first = result.slots[0];
       if (first) setDay(dayKey(first, timezone));
     });
+  }
+
+  function chooseService(id: string) {
+    setServiceId(id);
+    setStaffId(null);
+    loadSlots(id, null);
+  }
+
+  function chooseStaff(id: string | null) {
+    if (!serviceId) return;
+    setStaffId(id);
+    loadSlots(serviceId, id);
   }
 
   // Slots grouped by the business's local day, in order.
@@ -126,6 +157,7 @@ export function BookingFlow({
 
         <p className="mt-3 text-[16px]">
           {confirmation.serviceName}
+          {showStaff && <> with {confirmation.staffName}</>}
           <br />
           {partsIn(confirmation.startsAt, confirmation.timezone, {
             weekday: "long",
@@ -182,6 +214,7 @@ export function BookingFlow({
     <form action={formAction} className="mt-8 grid gap-8">
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="serviceId" value={serviceId ?? ""} />
+      <input type="hidden" name="staffId" value={staffId ?? ""} />
       <input type="hidden" name="startsAt" value={slot ?? ""} />
 
       {/* Service ------------------------------------------------------- */}
@@ -229,6 +262,61 @@ export function BookingFlow({
         </div>
       </section>
 
+      {/* Who ------------------------------------------------------------ */}
+      {service && showStaff && candidates.length > 1 && (
+        <section aria-labelledby="staff-h">
+          <h2 id="staff-h" className="text-[13px] font-bold text-muted">
+            Who would you like?
+          </h2>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[null, ...candidates].map((member) => {
+              const on = (member?.id ?? null) === staffId;
+              return (
+                <button
+                  key={member?.id ?? "anyone"}
+                  type="button"
+                  onClick={() => chooseStaff(member?.id ?? null)}
+                  aria-pressed={on}
+                  className={`flex items-center gap-2 rounded-full border-[1.5px] bg-paper py-2 pl-2 pr-4 text-[14px] font-semibold ${
+                    on ? "border-accent" : "border-line"
+                  }`}
+                >
+                  {member ? (
+                    <span
+                      aria-hidden
+                      className="grid h-7 w-7 place-items-center rounded-full text-[13px] font-bold text-white"
+                      style={{ background: member.swatch }}
+                    >
+                      {member.name.trim().charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="grid h-7 w-7 place-items-center rounded-full bg-bubble text-[13px] font-bold text-muted"
+                    >
+                      ✦
+                    </span>
+                  )}
+                  {member ? member.name : "Anyone available"}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-[13px] text-muted">
+            {chosen
+              ? `Showing ${chosen.name}'s free times.`
+              : "Showing every time someone is free. You'll see who it's with once you book."}
+          </p>
+        </section>
+      )}
+
+      {service && showStaff && candidates.length === 1 && (
+        <p className="-mt-4 text-[14px] text-muted">
+          With <strong className="text-ink">{candidates[0].name}</strong>
+        </p>
+      )}
+
       {/* Day and time --------------------------------------------------- */}
       {service && (
         <section aria-labelledby="time-h">
@@ -251,8 +339,9 @@ export function BookingFlow({
 
           {!loading && !slotError && days.length === 0 && (
             <p className="mt-3 rounded-[14px] bg-bubble px-4 py-3 text-[15px]">
-              Nothing open for this service in the next few weeks. Try another
-              service, or message her directly.
+              {chosen
+                ? `${chosen.name} has nothing open for this in the next few weeks. Try anyone available, or another service.`
+                : "Nothing open for this service in the next few weeks. Try another service, or message the business directly."}
             </p>
           )}
 

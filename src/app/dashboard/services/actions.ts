@@ -235,7 +235,7 @@ export async function saveUsualDuration(
   }
 
   revalidatePath("/dashboard/services");
-  revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard/settings/profile");
   return { status: "success", message: "Saved." };
 }
 

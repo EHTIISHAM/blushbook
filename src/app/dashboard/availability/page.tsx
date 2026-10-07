@@ -8,7 +8,7 @@ import { BlockDateForm } from "./blocked-dates";
 import { HoursForm } from "./hours-form";
 import { firstWindowPerDay } from "@/lib/week";
 
-export const metadata: Metadata = { title: "Hours" };
+export const metadata: Metadata = { title: "Business hours" };
 
 /** Today's date in her timezone, as YYYY-MM-DD. */
 function todayIn(timezone: string): string {
@@ -62,13 +62,13 @@ export default async function HoursPage() {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <section aria-labelledby="hours-h">
         <h1 id="hours-h" className="font-display text-[27px] leading-none">
-          Hours
+          Business hours
         </h1>
         <p className="mt-2 text-[15px] text-muted">
           When the business is open. Staff can only be booked inside these
           hours, even if their own hours run longer. Shown in{" "}
-          <strong>{profile.timezone}</strong>, which you can change on the
-          Profile tab.
+          <strong>{profile.timezone}</strong>, which you can change in
+          Settings.
         </p>
 
         {availabilityResult.error && (
@@ -86,7 +86,7 @@ export default async function HoursPage() {
         </h2>
         <p className="mt-2 text-[14px] text-muted">
           Close the whole business for a day and nobody can book it. For one
-          person&rsquo;s day off, use the Staff tab.
+          person&rsquo;s day off, use Staff above.
         </p>
 
         <BlockDateForm today={today} />

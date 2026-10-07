@@ -32,23 +32,6 @@ const profileSchema = z.object({
     })
     .transform((value) => (value ? value : null)),
   bio: optionalText(300, "your bio"),
-  timezone: z
-    .string()
-    .trim()
-    .min(1, "Pick your timezone.")
-    .refine(isKnownTimezone, { message: "That timezone isn't recognised." }),
-  currency: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{3}$/, "Use a 3 letter currency code, like USD."),
-  // Services without their own minutes follow this; a trigger keeps them in
-  // step when it changes.
-  default_duration_minutes: z.coerce
-    .number<number>()
-    .int("Use whole minutes.")
-    .min(5, "Your usual length must be at least 5 minutes.")
-    .max(1440, "Your usual length can't be more than 24 hours."),
   // Deposits are switched off for now: clients pay at the business.
   // deposit_link: z
   //   .string()
@@ -61,15 +44,6 @@ const profileSchema = z.object({
   no_show_policy: optionalText(500, "your policy"),
 });
 
-function isKnownTimezone(value: string): boolean {
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: value });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export async function saveProfile(
   _previous: ActionState,
   formData: FormData,
@@ -79,9 +53,6 @@ export async function saveProfile(
     business_name: formData.get("business_name"),
     instagram_handle: formData.get("instagram_handle") ?? "",
     bio: formData.get("bio") ?? "",
-    timezone: formData.get("timezone"),
-    currency: formData.get("currency"),
-    default_duration_minutes: formData.get("default_duration_minutes"),
     // deposit_link: formData.get("deposit_link") ?? "",
     no_show_policy: formData.get("no_show_policy") ?? "",
   });
@@ -124,9 +95,7 @@ export async function saveProfile(
     return { status: "error", message: error.message };
   }
 
-  revalidatePath("/dashboard/profile");
-  revalidatePath("/dashboard/share");
-  revalidatePath("/dashboard/services");
+  revalidatePath("/dashboard", "layout");
   return { status: "success", message: "Profile saved." };
 }
 
@@ -155,9 +124,65 @@ export async function savePhotoPath(path: string | null): Promise<ActionState> {
     return { status: "error", message: error.message };
   }
 
-  revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard/settings/profile");
   return {
     status: "success",
     message: parsed.data ? "Photo updated." : "Photo removed.",
   };
+}
+
+const regionalSchema = z.object({
+  timezone: z
+    .string()
+    .trim()
+    .min(1, "Pick your timezone.")
+    .refine(isKnownTimezone, { message: "That timezone isn't recognised." }),
+  currency: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{3}$/, "Use a 3 letter currency code, like USD."),
+});
+
+function isKnownTimezone(value: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Currency and timezone, from their own Settings page. */
+export async function saveRegional(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = regionalSchema.safeParse({
+    timezone: formData.get("timezone"),
+    currency: formData.get("currency"),
+  });
+
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: parsed.error.issues[0]?.message ?? "Check the form.",
+    };
+  }
+
+  const profile = await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("profiles")
+    .update(parsed.data)
+    .eq("id", profile.id);
+
+  if (error) {
+    return { status: "error", message: error.message };
+  }
+
+  // Every tab shows times or prices, so refresh them all.
+  revalidatePath("/dashboard", "layout");
+  return { status: "success", message: "Saved." };
 }

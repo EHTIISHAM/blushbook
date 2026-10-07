@@ -3,25 +3,11 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { UsualDurationPicker } from "@/components/usual-duration-picker";
 import { IDLE } from "@/lib/action-state";
 import { normalizeSlug } from "@/lib/slug";
 import type { ProfileRow } from "@/lib/supabase/database.types";
 
 import { saveProfile } from "./actions";
-
-const COMMON_CURRENCIES = [
-  "USD",
-  "GBP",
-  "EUR",
-  "CAD",
-  "AUD",
-  "AED",
-  "PKR",
-  "INR",
-  "NGN",
-  "ZAR",
-];
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -34,11 +20,9 @@ function SaveButton() {
 
 export function ProfileForm({
   profile,
-  timezones,
   siteHost,
 }: {
   profile: ProfileRow;
-  timezones: string[];
   siteHost: string;
 }) {
   const [state, formAction] = useActionState(saveProfile, IDLE);
@@ -119,63 +103,6 @@ export function ProfileForm({
           defaultValue={profile.bio ?? ""}
         />
       </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label className="label" htmlFor="timezone">
-            Timezone
-          </label>
-          <select
-            id="timezone"
-            name="timezone"
-            className="field"
-            defaultValue={profile.timezone}
-            required
-          >
-            {timezones.map((zone) => (
-              <option key={zone} value={zone}>
-                {zone.replace(/_/g, " ")}
-              </option>
-            ))}
-          </select>
-          <p className="hint">Clients see your times in this zone.</p>
-        </div>
-
-        <div>
-          <label className="label" htmlFor="currency">
-            Currency
-          </label>
-          <input
-            id="currency"
-            name="currency"
-            className="field uppercase"
-            list="currency-options"
-            maxLength={3}
-            minLength={3}
-            pattern="[A-Za-z]{3}"
-            defaultValue={profile.currency}
-            required
-          />
-          <datalist id="currency-options">
-            {COMMON_CURRENCIES.map((code) => (
-              <option key={code} value={code} />
-            ))}
-          </datalist>
-          <p className="hint">Used for your prices.</p>
-        </div>
-      </div>
-
-      <fieldset className="border-0 p-0">
-        <legend className="label">Usual appointment length</legend>
-        <UsualDurationPicker
-          value={profile.default_duration_minutes}
-          idPrefix="profile-usual"
-        />
-        <p className="hint">
-          Services without their own minutes use this. You can set a different
-          length on any service.
-        </p>
-      </fieldset>
 
       {/* Deposits are switched off for now: clients pay at the business.
       <div>

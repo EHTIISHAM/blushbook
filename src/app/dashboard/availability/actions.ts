@@ -34,8 +34,8 @@ export async function saveHours(
     return { status: "error", message: error.message };
   }
 
-  revalidatePath("/dashboard/hours");
-  revalidatePath("/dashboard/staff");
+  revalidatePath("/dashboard/availability");
+  revalidatePath("/dashboard/availability/staff");
   return {
     status: "success",
     message:
@@ -92,7 +92,7 @@ export async function blockDate(
     };
   }
 
-  revalidatePath("/dashboard/hours");
+  revalidatePath("/dashboard/availability");
   return {
     status: "success",
     message: "Date blocked." + (await conflictNote(supabase)),
@@ -112,5 +112,5 @@ export async function unblockDate(formData: FormData): Promise<void> {
     .eq("id", id.data)
     .eq("profile_id", profile.id);
 
-  revalidatePath("/dashboard/hours");
+  revalidatePath("/dashboard/availability");
 }

@@ -23,7 +23,7 @@ export default async function BillingPage() {
 
   return (
     <div className="max-w-[720px]">
-      <h1 className="font-display text-[27px] leading-none">Billing</h1>
+      <h1 className="font-display text-[27px] leading-none">Billing &amp; subscription</h1>
 
       <div className="card mt-6">
         <p className="text-[13px] font-bold text-muted">Your plan</p>

@@ -23,7 +23,7 @@ export default async function SharePage() {
 
   return (
     <div className="max-w-[640px]">
-      <h1 className="font-display text-[27px] leading-none">Share</h1>
+      <h1 className="font-display text-[27px] leading-none">Share booking link</h1>
       <p className="mt-2 text-[15px] text-muted">
         One link for every client. Add it to your website and profiles, and
         send it to anyone who asks.

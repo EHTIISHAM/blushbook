@@ -145,7 +145,7 @@ export function BookingFlow({
     return (
       <section className="card mt-8 text-center" aria-live="polite">
         <div
-          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-accent text-[30px] text-accent-ink"
+          className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-leaf-soft text-[30px] text-leaf"
           aria-hidden
         >
           ✓
@@ -231,7 +231,7 @@ export function BookingFlow({
               onClick={() => chooseService(item.id)}
               aria-pressed={serviceId === item.id}
               className={`flex w-full items-center gap-3 rounded-[16px] border-[1.5px] bg-paper p-3 text-left ${
-                serviceId === item.id ? "border-accent" : "border-line"
+                serviceId === item.id ? "border-accent bg-tint" : "border-line"
               }`}
             >
               <span

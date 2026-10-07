@@ -100,7 +100,11 @@ function BookingList({
               <p className="mt-0.5 text-[16px] font-bold">
                 {booking.client_name}
                 {flag && (
-                  <span className="ml-2 rounded-full bg-notice px-2 py-0.5 align-middle text-[12px] font-semibold">
+                  <span
+                    className={`ml-2 rounded-full px-2 py-0.5 align-middle text-[12px] font-semibold ${
+                      booking.status === "no_show" ? "bg-paper text-miss shadow-[inset_0_0_0_1.5px_var(--miss)]" : "bg-notice"
+                    }`}
+                  >
                     {flag}
                   </span>
                 )}
@@ -434,7 +438,7 @@ export default async function BookingsPage({
                 <span
                   aria-hidden
                   className={`mt-0.5 grid h-5 w-5 flex-none place-items-center rounded-full text-[12px] font-bold ${
-                    item.done ? "bg-accent text-accent-ink" : "bg-bubble text-muted"
+                    item.done ? "bg-leaf text-white" : "bg-bubble text-muted"
                   }`}
                 >
                   {item.done ? "✓" : ""}

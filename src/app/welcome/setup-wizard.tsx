@@ -377,7 +377,7 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
   return (
     <div className="text-center">
       <div
-        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-accent text-[30px] text-accent-ink"
+        className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-leaf-soft text-[30px] text-leaf"
         aria-hidden
       >
         ✓

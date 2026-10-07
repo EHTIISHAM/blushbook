@@ -138,7 +138,7 @@
 .demo-tab[aria-selected="true"] {
   background: var(--paper);
   color: var(--ink);
-  box-shadow: 0 1px 3px rgba(27, 36, 48, 0.12);
+  box-shadow: 0 1px 3px rgba(28, 20, 36, 0.12);
 }
 /* The autoplay's finger: glides to each target, then presses. */
 .tap {
@@ -148,7 +148,7 @@
   height: 34px;
   margin: -17px 0 0 -17px;
   border-radius: 50%;
-  background: rgba(27, 36, 48, 0.22);
+  background: rgba(28, 20, 36, 0.22);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
   pointer-events: none;
   opacity: 0;
@@ -165,7 +165,7 @@
 }
 .tap.pressed {
   transform: scale(0.75);
-  background: rgba(27, 36, 48, 0.35);
+  background: rgba(28, 20, 36, 0.35);
 }
 .phone {
   position: relative;
@@ -175,7 +175,7 @@
   background: var(--frame);
   padding: 11px;
   overflow: hidden;
-  box-shadow: 0 34px 60px -32px rgba(27, 36, 48, 0.5);
+  box-shadow: 0 34px 60px -32px rgba(28, 20, 36, 0.5);
 }
 .notch {
   position: absolute;
@@ -276,6 +276,7 @@
 }
 .p-svc[aria-pressed="true"] {
   border-color: var(--accent);
+  background: var(--tint);
 }
 .p-svc-name {
   flex: 1;
@@ -381,8 +382,8 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: var(--tint);
-  color: var(--accent);
+  background: var(--leaf-soft);
+  color: var(--leaf);
   font-size: 28px;
 }
 .ok-title {
@@ -435,14 +436,21 @@
   gap: 6px 16px;
   align-items: start;
 }
+/* Step numbers in Bloom deep, inside a Bloom soft circle. */
 .steps li::before {
   content: counter(step);
   grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--tint);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 40px;
-  line-height: 0.8;
-  color: var(--accent);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--accent-deep);
 }
 .steps p {
   color: var(--muted);
@@ -522,8 +530,8 @@
   height: 20px;
   margin-top: 1px;
   border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--leaf);
+  color: #ffffff;
   font-size: 11px;
   font-weight: 800;
 }
@@ -553,7 +561,7 @@
   border-radius: 18px 0 0 0;
   border-top: 7px solid var(--frame);
   border-left: 7px solid var(--frame);
-  box-shadow: 0 30px 50px -30px rgba(10, 30, 28, 0.6);
+  box-shadow: 0 30px 50px -30px rgba(28, 20, 36, 0.6);
   overflow: hidden;
   color: var(--ink);
 }
@@ -672,7 +680,7 @@
   color: #2a2a2a;
   border-radius: 6px;
   padding: 1.08em 0.923em;
-  box-shadow: 0 14px 26px -16px rgba(27, 36, 48, 0.5);
+  box-shadow: 0 14px 26px -16px rgba(28, 20, 36, 0.5);
   font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
   font-size: 0.808em;
   display: grid;
@@ -759,8 +767,8 @@
   width: 1.38em;
   height: 1.38em;
   border-radius: 50%;
-  background: var(--tint);
-  color: var(--accent);
+  background: var(--leaf-soft);
+  color: var(--leaf);
   font-size: 0.769em;
   font-weight: 800;
 }
@@ -786,7 +794,8 @@
   font-weight: 700;
 }
 .sc-wa {
-  background: #d9fdd3;
+  background: var(--leaf-soft);
+  color: var(--leaf);
 }
 .sc-chat {
   display: flex;
@@ -794,8 +803,14 @@
   gap: 0.615em;
   background: var(--bg);
 }
+/* The WhatsApp scene's chat panel, in Night 2. */
 .sc-wa-bg {
-  background: #efeae2;
+  background: var(--night-2);
+}
+.sc-wa-bg .sc-in {
+  background: var(--night-3);
+  color: var(--night-text);
+  box-shadow: none;
 }
 .sc-bub {
   max-width: 82%;
@@ -816,14 +831,14 @@
   border-bottom-right-radius: 5px;
 }
 .sc-wa-out {
-  background: #d9fdd3;
-  color: #111b21;
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 .sc-ticks {
   display: block;
   text-align: right;
   font-size: 0.846em;
-  color: #53bdeb;
+  color: var(--accent-soft);
   margin-top: 0.154em;
 }
 .sc-link {
@@ -1002,6 +1017,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--miss);
 }
 .sc-quote {
   margin-top: 0.462em;
@@ -1011,6 +1027,8 @@
   line-height: 1.35;
 }
 .sc-wa-btn {
+  background: var(--leaf);
+  color: #ffffff;
   justify-self: start;
   margin-top: 0.615em;
 }
@@ -1051,8 +1069,19 @@
   padding: 24px;
   box-shadow: inset 0 0 0 1.5px var(--line);
 }
+/* The recommended plan as a Night tile. */
 .plan-card.best {
-  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--night);
+  color: var(--night-text);
+  box-shadow: none;
+}
+.plan-card.best .price s,
+.plan-card.best .price .per,
+.plan-card.best .launch {
+  color: var(--night-muted);
+}
+.plan-card.best .price .now {
+  color: var(--accent-soft);
 }
 .plan-name {
   display: flex;
@@ -1061,8 +1090,8 @@
   font-weight: 700;
 }
 .badge {
-  background: var(--tint);
-  color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--night);
   border-radius: 999px;
   padding: 3px 10px;
   font-size: 12px;
@@ -1128,8 +1157,8 @@
   width: 13px;
   height: 7px;
   margin: 7px 2px 0;
-  border-left: 2.5px solid var(--accent);
-  border-bottom: 2.5px solid var(--accent);
+  border-left: 2.5px solid var(--leaf);
+  border-bottom: 2.5px solid var(--leaf);
   transform: rotate(-45deg);
 }
 .plan-note {

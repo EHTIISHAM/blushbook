@@ -3,7 +3,7 @@ import { useId } from "react";
 
 /**
  * The BooknBloom mark: a calendar whose right edge is a "B", with an
- * amber check on its face. Shape from the logo concept in design_book.jpeg.
+ * rose check on its face. Shape from the logo concept in design_book.jpeg.
  */
 export function BrandMark({ className }: { className?: string }) {
   // A page can show the mark more than once, so each copy needs its own id.
@@ -18,8 +18,8 @@ export function BrandMark({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#4FB3A6" />
-          <stop offset="1" stopColor="#0F766E" />
+          <stop offset="0" stopColor="#C2255C" />
+          <stop offset="1" stopColor="#8F1A43" />
         </linearGradient>
       </defs>
       <path
@@ -34,7 +34,7 @@ export function BrandMark({ className }: { className?: string }) {
       />
       <path
         fill="none"
-        stroke="#E0A43B"
+        stroke="#C2255C"
         strokeWidth="6.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -46,8 +46,8 @@ export function BrandMark({ className }: { className?: string }) {
         width="7"
         height="17"
         rx="3.5"
-        fill="#F6F7F9"
-        stroke="#0F766E"
+        fill="#F7F6F8"
+        stroke="#8F1A43"
         strokeWidth="2"
       />
       <rect
@@ -56,15 +56,15 @@ export function BrandMark({ className }: { className?: string }) {
         width="7"
         height="17"
         rx="3.5"
-        fill="#F6F7F9"
-        stroke="#0F766E"
+        fill="#F7F6F8"
+        stroke="#8F1A43"
         strokeWidth="2"
       />
     </svg>
   );
 }
 
-/** "BooknBloom" set as in the logo: ink "Bookn", teal "Bloom". */
+/** "BooknBloom" set as in the logo: ink "Bookn", rose "Bloom". */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span className={`font-brand leading-none ${className}`}>

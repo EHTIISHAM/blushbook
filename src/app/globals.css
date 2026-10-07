@@ -1,25 +1,34 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Palette — calm and sector neutral, so the same app suits a clinic, a dental
-   practice, a tutor or a salon. Slate ink on a cool off-white, one teal accent
-   (5.5:1 with white text) and a soft amber for notices and the logo's check.
+   Palette — "Bloom". One rose accent on a cool, faintly violet off-white,
+   with Night for dark tiles, Leaf for success and Miss for alerts. Every text
+   pairing below clears 4.5:1.
    --------------------------------------------------------------------------- */
 
 :root {
-  --bg: #f6f7f9;
-  --paper: #ffffff;
-  --ink: #1b2430;
-  --muted: #5b6472;
-  --line: #e2e6eb;
-  --tint: #e6f2f0;
-  --bubble: #eef1f4;
-  --accent-soft: #6fb7ad;
-  --accent: #0f766e;
+  --bg: #f7f6f8;          /* Background: page */
+  --paper: #ffffff;       /* Surface: cards */
+  --ink: #16131c;         /* Text: body and headings */
+  --muted: #57525f;       /* Muted text: secondary copy */
+  --line: #e2dfe6;        /* Line: borders */
+  --bubble: #efedf1;      /* Sunk: inset rows, tab track, quiet heatmap cells */
+  --tint: #fce7ef;        /* Bloom soft: analytics tiles, selected service, step circles */
+  --notice: #fce7ef;      /* Notices and banners share Bloom soft */
+  --accent: #c2255c;      /* Bloom: buttons, eyebrows, links */
+  --accent-deep: #8f1a43; /* Bloom deep: button hover, step numbers */
+  --accent-soft: #ff9ec0; /* Petal: accent on dark tiles, pricing badge */
   --accent-ink: #ffffff;
-  --notice: #fbf1dc;
-  --highlight: #e0a43b;
-  --frame: #1b2430;
+  --highlight: #ff9ec0;   /* Petal */
+  --frame: #1c1424;       /* Night: dark tiles, device frames */
+  --night: #1c1424;       /* Night: hero feature tile, pricing card */
+  --night-2: #2a1f35;     /* Night 2: chat panel */
+  --night-3: #3a2c48;     /* Night 3: incoming chat bubble */
+  --night-text: #f6eef3;  /* Text on dark tiles */
+  --night-muted: #cdbfd0; /* Secondary text on dark tiles */
+  --leaf: #17604a;        /* Leaf: ticks, WhatsApp button */
+  --leaf-soft: #e1f3ea;   /* Leaf soft: booking-confirmed icon */
+  --miss: #b4232b;        /* Miss: "Missed" label */
 }
 
 /* Light is what everyone sees. BooknBloom deliberately does not follow
@@ -30,19 +39,28 @@
    <html data-theme="dark"> if a toggle is ever wanted. */
 
 :root[data-theme="dark"] {
-  --bg: #11161d;
-  --paper: #1b2430;
-  --ink: #f2f4f7;
-  --muted: #a9b2bf;
-  --line: #2e3a49;
-  --tint: #18332f;
-  --bubble: #243040;
-  --accent-soft: #6fb7ad;
-  --accent: #5fc2b5;
-  --accent-ink: #0d1a18;
-  --notice: #3d3220;
-  --highlight: #e0a43b;
-  --frame: #0a0e13;
+  --bg: #1c1424;
+  --paper: #2a1f35;
+  --ink: #f6eef3;
+  --muted: #cdbfd0;
+  --line: #3a2c48;
+  --bubble: #3a2c48;
+  --tint: #3d1f30;
+  --notice: #3d1f30;
+  --accent: #ff9ec0;
+  --accent-deep: #ffc2d8;
+  --accent-soft: #ff9ec0;
+  --accent-ink: #1c1424;
+  --highlight: #ff9ec0;
+  --frame: #120c18;
+  --night: #120c18;
+  --night-2: #2a1f35;
+  --night-3: #3a2c48;
+  --night-text: #f6eef3;
+  --night-muted: #cdbfd0;
+  --leaf: #5fc29e;
+  --leaf-soft: #17352b;
+  --miss: #ff7b82;
 }
 
 /* `inline` keeps the var() reference in the generated utility, so every colour
@@ -61,6 +79,15 @@
   --color-notice: var(--notice);
   --color-frame: var(--frame);
   --color-highlight: var(--highlight);
+  --color-accent-deep: var(--accent-deep);
+  --color-night: var(--night);
+  --color-night-2: var(--night-2);
+  --color-night-3: var(--night-3);
+  --color-night-text: var(--night-text);
+  --color-night-muted: var(--night-muted);
+  --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
+  --color-miss: var(--miss);
 
   --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
@@ -87,7 +114,7 @@
   font-weight: 600;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--accent);
 }
 
 /* ---------------------------------------------------------------------------
@@ -153,6 +180,28 @@
     text-decoration: none;
     background: var(--accent);
     color: var(--accent-ink);
+    transition: background-color 120ms ease;
+  }
+
+  /* Bloom deep on hover, for filled buttons only; outlined ones keep their
+     own look. */
+  .btn:not(.btn-ghost):not(.ghost):not(.btn-whatsapp):not(:disabled):hover {
+    background: var(--accent-deep);
+  }
+
+  /* WhatsApp actions in Leaf. */
+  .btn-whatsapp {
+    background: var(--leaf);
+    color: #ffffff;
+  }
+
+  .btn-whatsapp:not(:disabled):hover {
+    background: color-mix(in srgb, var(--leaf) 82%, black);
+  }
+
+  .btn-ghost:not(:disabled):hover,
+  .btn.ghost:not(:disabled):hover {
+    background: var(--bubble);
   }
 
   .btn:disabled {

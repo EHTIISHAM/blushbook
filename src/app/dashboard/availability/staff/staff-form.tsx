@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { IDLE } from "@/lib/action-state";
-import { SWATCHES } from "@/lib/swatches";
+import { swatchesWith } from "@/lib/swatches";
 import type { StaffRow } from "@/lib/supabase/database.types";
 
 import { WeekFields, type DayWindow } from "../week-fields";
@@ -84,7 +84,7 @@ export function StaffForm({
       <fieldset className="border-0 p-0">
         <legend className="label">Colour</legend>
         <div className="flex flex-wrap items-center gap-3">
-          {SWATCHES.map((swatch, index) => {
+          {swatchesWith(staff?.swatch).map((swatch, index) => {
             const id = `staff-swatch-${key}-${index}`;
             const checked = staff
               ? staff.swatch.toLowerCase() === swatch.toLowerCase()

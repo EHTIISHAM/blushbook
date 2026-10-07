@@ -62,7 +62,11 @@ function FollowUpList({ items }: { items: FollowUpItem[] }) {
     <ul className="mt-4 grid gap-3">
       {items.map((item) => (
         <li key={item.id} className="rounded-[18px] bg-paper p-4 shadow-[inset_0_0_0_1.5px_var(--line)]">
-          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted">
+          <p
+            className={`text-[12px] font-bold uppercase tracking-[0.12em] ${
+              item.kind === "no_show" ? "text-miss" : "text-muted"
+            }`}
+          >
             {item.kind === "no_show" ? "Missed appointment" : "Due back"}
           </p>
           <p className="mt-1 text-[15px] font-bold">{item.title}</p>
@@ -72,7 +76,7 @@ function FollowUpList({ items }: { items: FollowUpItem[] }) {
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <a
-              className="btn btn-sm"
+              className="btn btn-sm btn-whatsapp"
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"

@@ -160,7 +160,7 @@ function BusinessStep({
       {timezone && (
         <p className="rounded-[14px] bg-bubble px-4 py-3 text-[14px]">
           Times will show in <strong>{timezone.replace(/_/g, " ")}</strong>,
-          picked up from your phone. Change it any time on the Profile tab.
+          picked up from your phone. Change it any time in Settings.
         </p>
       )}
 
@@ -350,7 +350,7 @@ function HoursStep({ onDone }: { onDone: () => void }) {
 
       <p className="hint">
         Same hours on every day you picked. You can set different hours per day,
-        and block time off, on the Hours tab.
+        and block time off, on the Availability tab.
       </p>
 
       <Feedback state={state} />

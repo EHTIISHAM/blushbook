@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 
 import { requireProfile } from "@/lib/profile";
 
-import { PhotoUpload } from "./photo-upload";
-import { ProfileForm } from "./profile-form";
+import { RegionalForm } from "./regional-form";
 
-export const metadata: Metadata = { title: "Profile" };
+export const metadata: Metadata = { title: "Currency & timezone" };
 
 /** Every IANA zone, with a small fallback for runtimes that lack the list. */
 function timezoneOptions(current: string): string[] {
@@ -30,32 +29,22 @@ function timezoneOptions(current: string): string[] {
   return zones.includes(current) ? zones : [current, ...zones];
 }
 
-export default async function ProfilePage() {
+export default async function RegionalPage() {
   const profile = await requireProfile();
-
-  const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "booknbloom.app")
-    .replace(/^https?:\/\//, "")
-    .replace(/\/$/, "");
 
   return (
     <div className="max-w-[640px]">
-      <h1 className="font-display text-[27px] leading-none">Profile</h1>
+      <h1 className="font-display text-[27px] leading-none">
+        Currency &amp; timezone
+      </h1>
       <p className="mt-2 text-[15px] text-muted">
-        This is what clients see at the top of your booking page.
+        How your prices and times read, on your booking page and in here.
       </p>
 
-      <div className="mt-6">
-        <PhotoUpload
-          userId={profile.id}
-          businessName={profile.business_name}
-          initialPath={profile.photo_path}
-        />
-      </div>
-
-      <ProfileForm
-        profile={profile}
+      <RegionalForm
+        timezone={profile.timezone}
+        currency={profile.currency}
         timezones={timezoneOptions(profile.timezone)}
-        siteHost={siteHost}
       />
     </div>
   );

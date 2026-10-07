@@ -263,7 +263,7 @@ function ReviewList({
       {menuCurrency && (
         <p className="mt-3 rounded-[14px] bg-notice px-4 py-3 text-[14px]">
           Your rate card looks like it&rsquo;s priced in {menuCurrency}, but your
-          account uses {currency}. You can change that on the Profile tab.
+          account uses {currency}. You can change that in Settings.
         </p>
       )}
 

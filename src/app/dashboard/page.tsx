@@ -16,7 +16,7 @@ import type { BookingRow, StaffRow } from "@/lib/supabase/database.types";
 import { BookingStatusButtons } from "./booking-status";
 import { FollowUps, type FollowUpItem } from "./follow-ups";
 import { ReassignForm } from "./reassign";
-import { CopyField } from "./share/copy-field";
+import { CopyField } from "./settings/share/copy-field";
 
 /** How far back the Past list reaches. Older bookings still count in analytics. */
 const PAST_DAYS = 90;
@@ -290,7 +290,7 @@ export default async function BookingsPage({
     {
       label: "Add your business name",
       done: profile.business_name.trim().length > 0,
-      actions: [{ href: "/dashboard/profile", cta: "Profile" }],
+      actions: [{ href: "/dashboard/settings/profile", cta: "Profile" }],
     },
     {
       label: "Upload your rate card or add services",
@@ -303,18 +303,18 @@ export default async function BookingsPage({
     {
       label: "Set your working hours",
       done: hasHours,
-      actions: [{ href: "/dashboard/hours", cta: "Set your hours" }],
+      actions: [{ href: "/dashboard/availability", cta: "Set your hours" }],
     },
     // Payment links are switched off for now: clients pay at the business.
     // {
     //   label: "Add a payment or deposit link",
     //   done: Boolean(profile.deposit_link),
-    //   actions: [{ href: "/dashboard/profile", cta: "Add payment link" }],
+    //   actions: [{ href: "/dashboard/settings/profile", cta: "Add payment link" }],
     // },
     {
       label: "Add your no-show and cancellation policy",
       done: Boolean(profile.no_show_policy),
-      actions: [{ href: "/dashboard/profile", cta: "Add policy" }],
+      actions: [{ href: "/dashboard/settings/profile", cta: "Add policy" }],
     },
   ];
 
@@ -482,7 +482,7 @@ export default async function BookingsPage({
               Preview booking page
             </a>
             <CopyField label="Copy booking link" value={bookingUrl} />
-            <Link className="btn btn-sm" href="/dashboard/share">
+            <Link className="btn btn-sm" href="/dashboard/settings/share">
               Share with clients
             </Link>
           </div>

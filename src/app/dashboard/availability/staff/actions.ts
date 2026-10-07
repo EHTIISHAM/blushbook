@@ -24,7 +24,7 @@ const staffSchema = z.object({
 });
 
 function refresh() {
-  revalidatePath("/dashboard/staff");
+  revalidatePath("/dashboard/availability/staff");
   revalidatePath("/dashboard");
 }
 

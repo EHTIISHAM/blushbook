@@ -7,7 +7,7 @@ import { IDLE } from "@/lib/action-state";
 import { SWATCHES } from "@/lib/swatches";
 import type { StaffRow } from "@/lib/supabase/database.types";
 
-import { WeekFields, type DayWindow } from "../hours/week-fields";
+import { WeekFields, type DayWindow } from "../week-fields";
 import { saveStaff } from "./actions";
 
 export interface ServiceChoice {

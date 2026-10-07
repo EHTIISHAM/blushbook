@@ -193,7 +193,7 @@ export async function addFirstService(
    Step 3 — the days she works
    ------------------------------------------------------------------------- */
 // Onboarding applies one set of hours to every chosen day. Split shifts and
-// per-day differences are available afterwards on the Hours tab; asking for
+// per-day differences are available afterwards on the Availability tab; asking for
 // them here would be seven rows of inputs before she has seen the product.
 
 export async function saveSetupHours(
@@ -235,7 +235,7 @@ export async function saveSetupHours(
   }
 
   revalidatePath("/welcome");
-  revalidatePath("/dashboard/hours");
+  revalidatePath("/dashboard/availability");
   return {
     status: "success",
     message: `Open ${weekdays.length} day${weekdays.length === 1 ? "" : "s"} a week.`,

@@ -6,8 +6,8 @@ import { accessFor } from "@/lib/billing";
 import { getSessionProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 
-import { PlanPicker } from "./billing/plan-picker";
-import { DashboardNav } from "./dashboard-nav";
+import { PlanPicker } from "./settings/billing/plan-picker";
+import { CopyLinkButton, DashboardNav, SettingsButton } from "./dashboard-nav";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -59,33 +59,41 @@ async function Paywall({
   );
 }
 
+function siteBase(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://booknbloom.app").replace(/\/$/, "");
+}
+
 export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
-  const { email, profile } = await getSessionProfile();
+  const { profile } = await getSessionProfile();
   const access = profile ? accessFor(profile, new Date()) : null;
   const locked = access?.state === "locked";
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-4 px-5 py-4">
-        <BrandLock href="/dashboard" />
+      {/* Pinned, so switching section never means scrolling back up. */}
+      <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-2 px-4 py-3 sm:px-5">
+          <BrandLock href="/dashboard" />
 
-        <div className="flex items-center gap-3">
-          {email && (
-            <span className="hidden text-[13px] text-muted sm:inline">
-              {email}
-            </span>
+          {locked || !profile ? (
+            // Settings is out of reach behind the paywall, so log out stays here.
+            <form action="/auth/signout" method="post">
+              <button type="submit" className="btn btn-ghost btn-sm">
+                Log out
+              </button>
+            </form>
+          ) : (
+            <div className="flex flex-none items-center gap-1.5 sm:gap-2">
+              <CopyLinkButton url={`${siteBase()}/${profile.slug}`} />
+              <SettingsButton />
+            </div>
           )}
-          <form action="/auth/signout" method="post">
-            <button type="submit" className="btn btn-ghost btn-sm">
-              Log out
-            </button>
-          </form>
         </div>
-      </header>
 
-      {!locked && <DashboardNav />}
+        {!locked && <DashboardNav />}
+      </header>
 
       {access?.state === "grace" && (
         <div className="bg-notice">
@@ -95,7 +103,7 @@ export default async function DashboardLayout({
               {access.daysLeft} day{access.daysLeft === 1 ? "" : "s"}. Choose a
               plan to keep your dashboard open.
             </span>
-            <Link href="/dashboard/billing" className="btn btn-sm">
+            <Link href="/dashboard/settings/billing" className="btn btn-sm">
               Choose a plan
             </Link>
           </p>
@@ -105,11 +113,11 @@ export default async function DashboardLayout({
       {access?.state === "paid" && access.pastDue && (
         <div className="bg-notice">
           <p className="mx-auto w-full max-w-[1080px] px-5 py-3 text-[14px]">
-            Your last payment didn&rsquo;t go through. Update your card on the{" "}
-            <Link href="/dashboard/billing" className="font-semibold underline underline-offset-4">
+            Your last payment didn&rsquo;t go through. Update your card in{" "}
+            <Link href="/dashboard/settings/billing" className="font-semibold underline underline-offset-4">
               Billing
             </Link>{" "}
-            tab to keep your dashboard open.
+            to keep your dashboard open.
           </p>
         </div>
       )}

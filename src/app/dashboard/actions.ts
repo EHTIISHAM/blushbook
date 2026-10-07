@@ -107,6 +107,6 @@ export async function reassignBooking(
   }
 
   revalidatePath("/dashboard");
-  revalidatePath("/dashboard/staff");
+  revalidatePath("/dashboard/availability/staff");
   return { status: "success", message: "Moved." };
 }

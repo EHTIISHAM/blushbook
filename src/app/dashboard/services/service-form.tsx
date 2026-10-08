@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import { IDLE, type ActionState } from "@/lib/action-state";
 import { centsToInput, formatDuration } from "@/lib/format";
-import { SWATCHES } from "@/lib/swatches";
+import { swatchesWith } from "@/lib/swatches";
 import type { ServiceRow } from "@/lib/supabase/database.types";
 
 function SubmitButton({ label }: { label: string }) {
@@ -142,7 +142,7 @@ export function ServiceForm({
       <fieldset className="border-0 p-0">
         <legend className="label">Swatch</legend>
         <div className="flex flex-wrap items-center gap-3">
-          {SWATCHES.map((swatch, index) => {
+          {swatchesWith(service?.swatch).map((swatch, index) => {
             const id = `swatch-${service?.id ?? "new"}-${index}`;
             const checked = service
               ? service.swatch.toLowerCase() === swatch.toLowerCase()

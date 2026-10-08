@@ -75,7 +75,7 @@ function Cursor({ x, y, pressed }: { x: number; y: number; pressed?: boolean }) 
     >
       <path
         d="M5 3l14 8-6.2 1.6L10 19z"
-        fill="#1b2430"
+        fill="#1C1424"
         stroke="#fff"
         strokeWidth="1.6"
         strokeLinejoin="round"

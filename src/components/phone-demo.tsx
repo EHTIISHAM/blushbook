@@ -47,10 +47,10 @@ const PRESETS: Preset[] = [
     name: "Harbour Clinic",
     slug: "harbour-clinic",
     initial: "H",
-    colour: "#0F766E",
+    colour: "#C2255C",
     services: [
-      { id: "initial", name: "Initial consultation", mins: 45, price: 60, swatch: "#0F766E" },
-      { id: "follow-up", name: "Follow-up session", mins: 30, price: 40, swatch: "#E0A43B" },
+      { id: "initial", name: "Initial consultation", mins: 45, price: 60, swatch: "#C2255C" },
+      { id: "follow-up", name: "Follow-up session", mins: 30, price: 40, swatch: "#FF9EC0" },
       { id: "massage", name: "Sports massage", mins: 60, price: 75, swatch: "#5B7FA6" },
     ],
     plan: { svc: "initial", day: 0, time: "11:30am" },

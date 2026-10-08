@@ -10,7 +10,7 @@ everything from a dashboard.
 | --------- | ----------------------------------------------- |
 | App       | Next.js 16 (App Router, TypeScript, Tailwind v4) |
 | Backend   | Supabase (Postgres, Google sign-in, RLS, storage) |
-| Billing   | Paddle as merchant of record (not wired yet)    |
+| Billing   | Stripe Checkout + Customer Portal               |
 | Hosting   | Docker on a VPS, behind Caddy for HTTPS         |
 | CI/CD     | GitHub Actions building to GHCR                 |
 
@@ -96,5 +96,5 @@ reference/               the original static index.html and demo.html
 1. ~~Login, profiles, services and hours~~ — done
 2. Public booking page and booking creation, with rate limiting
 3. Dashboard bookings list, actions and WhatsApp reminders
-4. Paddle checkout, webhooks and pausing unpaid pages
+4. Stripe checkout, webhooks and locking unpaid dashboards
 5. Legal pages, domain, analytics, launch

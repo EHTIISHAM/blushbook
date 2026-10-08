@@ -4,6 +4,7 @@ import { accessFor } from "@/lib/billing";
 import { GRACE_DAYS } from "@/lib/plans";
 import { requireProfile } from "@/lib/profile";
 
+import { ManageBilling } from "./manage-billing";
 import { PlanPicker } from "./plan-picker";
 
 export const metadata: Metadata = { title: "Billing" };
@@ -28,6 +29,7 @@ export default async function BillingPage() {
       <div className="card mt-6">
         <p className="text-[13px] font-bold text-muted">Your plan</p>
         <p className="mt-2 text-[15px]">{status}</p>
+        {profile.stripe_customer_id && <ManageBilling />}
       </div>
 
       {access.state !== "paid" && (

@@ -126,7 +126,7 @@ export default function HomePage() {
             Log in
           </Link>
           <Link className="btn sm whitespace-nowrap" href="/login">
-            Get started
+            Create your Link
           </Link>
         </nav>
       </header>
@@ -145,7 +145,7 @@ export default function HomePage() {
             </p>
             <div className="cta-row">
               <Link className="btn" href="/login">
-                Get started
+                Create your Booking Link
               </Link>
               <a className="btn ghost" href="#features">
                 See how it works
@@ -273,7 +273,7 @@ export default function HomePage() {
 
           <div className="mt-8 text-center">
             <Link className="btn" href="/login">
-              Get started
+              Create your Booking Link
             </Link>
             <p className="plan-note">
               Launch prices stay locked in for as long as you stay subscribed.

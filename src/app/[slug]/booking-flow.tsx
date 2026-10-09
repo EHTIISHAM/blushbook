@@ -323,7 +323,7 @@ export function BookingFlow({
 
   /* Step 2: time and details --------------------------------------------- */
   return (
-    <form action={formAction} className="mt-8 grid gap-8">
+    <form action={formAction} className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8">
       <input type="hidden" name="slug" value={slug} />
       {picked.map((id) => (
         <input key={id} type="hidden" name="serviceId" value={id} />
@@ -331,6 +331,9 @@ export function BookingFlow({
       <input type="hidden" name="staffId" value={staffId ?? ""} />
       <input type="hidden" name="startsAt" value={slot ?? ""} />
 
+      {/* The column is capped at the page width: without that, the sideways-
+          scrolling day strip below stretches it and pushes the page off
+          centre. */}
       {/* What they picked, with a way back -------------------------------- */}
       <section aria-labelledby="visit-h" className="rounded-[16px] bg-bubble p-4">
         <div className="flex items-baseline justify-between gap-3">

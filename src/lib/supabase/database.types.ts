@@ -306,6 +306,47 @@ export type Database = {
           no_show_policy: string | null;
         }[];
       };
+      get_visit_slots: {
+        Args: {
+          p_slug: string;
+          /** One or more services, booked back to back. */
+          p_service_ids: string[];
+          p_from: string;
+          p_days: number;
+          /** Omit for "anyone available". */
+          p_staff_id?: string | null;
+        };
+        Returns: { slot_start: string }[];
+      };
+      create_visit: {
+        Args: {
+          p_slug: string;
+          p_service_ids: string[];
+          p_starts_at: string;
+          p_client_name: string;
+          p_client_contact: string;
+          p_contact_kind: ContactKind;
+          p_ip_hash: string;
+          p_client_email?: string | null;
+          /** Omit for "anyone available". */
+          p_staff_id?: string | null;
+        };
+        /** One row per service, in the order they happen. */
+        Returns: {
+          booking_id: string;
+          business_name: string;
+          service_name: string;
+          staff_name: string;
+          starts_at: string;
+          ends_at: string;
+          price_cents: number;
+          deposit_cents: number;
+          currency: string;
+          timezone: string;
+          deposit_link: string | null;
+          no_show_policy: string | null;
+        }[];
+      };
       get_busy_times: {
         Args: {
           p_profile_id: string;

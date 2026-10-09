@@ -31,20 +31,28 @@ async function ipHash(): Promise<string> {
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }
 
-/** Open slots for one service, as ISO strings. A null staff id means
- *  "anyone available": every time at least one of them is free. */
+const MAX_SERVICES = 6;
+
+const serviceIdsSchema = z
+  .array(z.uuid())
+  .min(1, "Pick a service.")
+  .max(MAX_SERVICES, `Please book up to ${MAX_SERVICES} services at a time.`);
+
+/** Open start times for a visit of one or more services, as ISO strings. A
+ *  null staff id means "anyone available": every time at least one person
+ *  who does all of them is free for the whole visit. */
 export async function fetchSlots(
   slug: string,
-  serviceId: string,
+  serviceIds: string[],
   staffId: string | null = null,
 ): Promise<SlotsResult> {
   const parsed = z
     .object({
       slug: z.string().min(1).max(40),
-      serviceId: z.uuid(),
+      serviceIds: serviceIdsSchema,
       staffId: z.uuid().nullable(),
     })
-    .safeParse({ slug, serviceId, staffId });
+    .safeParse({ slug, serviceIds, staffId });
 
   if (!parsed.success) {
     return { status: "error", message: "Couldn't load times for that service." };
@@ -56,9 +64,9 @@ export async function fetchSlots(
   // timezone, and filters out anything too soon to book.
   const from = new Date().toISOString().slice(0, 10);
 
-  const { data, error } = await supabase.rpc("get_available_slots", {
+  const { data, error } = await supabase.rpc("get_visit_slots", {
     p_slug: parsed.data.slug,
-    p_service_id: parsed.data.serviceId,
+    p_service_ids: parsed.data.serviceIds,
     p_from: from,
     p_days: SLOT_DAYS,
     p_staff_id: parsed.data.staffId,
@@ -73,7 +81,7 @@ export async function fetchSlots(
 
 const bookingSchema = z.object({
   slug: z.string().min(1).max(40),
-  serviceId: z.uuid("Pick a service."),
+  serviceIds: serviceIdsSchema,
   // Blank is "anyone available".
   staffId: z.union([z.literal(""), z.uuid()]),
   startsAt: z.iso.datetime({ offset: true }),
@@ -112,7 +120,7 @@ export async function submitBooking(
 ): Promise<BookingState> {
   const parsed = bookingSchema.safeParse({
     slug: formData.get("slug"),
-    serviceId: formData.get("serviceId"),
+    serviceIds: formData.getAll("serviceId").map(String),
     staffId: String(formData.get("staffId") ?? ""),
     startsAt: formData.get("startsAt"),
     clientName: formData.get("clientName"),
@@ -129,9 +137,9 @@ export async function submitBooking(
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase.rpc("create_booking", {
+  const { data, error } = await supabase.rpc("create_visit", {
     p_slug: parsed.data.slug,
-    p_service_id: parsed.data.serviceId,
+    p_service_ids: parsed.data.serviceIds,
     p_starts_at: parsed.data.startsAt,
     p_client_name: parsed.data.clientName,
     p_client_contact: parsed.data.clientContact,
@@ -153,20 +161,24 @@ export async function submitBooking(
     return { status: "error", message: friendly };
   }
 
-  const row = data?.[0];
-  if (!row) {
+  const rows = data ?? [];
+  const row = rows[0];
+  const last = rows[rows.length - 1];
+  if (!row || !last) {
     return { status: "error", message: "Something went wrong. Please try again." };
   }
 
   return {
     status: "booked",
     confirmation: {
-      bookingId: row.booking_id,
+      bookingIds: rows.map((r) => r.booking_id),
       businessName: row.business_name,
-      serviceName: row.service_name,
+      serviceNames: rows.map((r) => r.service_name),
       staffName: row.staff_name,
       startsAt: row.starts_at,
-      depositCents: row.deposit_cents,
+      endsAt: last.ends_at,
+      totalCents: rows.reduce((sum, r) => sum + r.price_cents, 0),
+      depositCents: rows.reduce((sum, r) => sum + r.deposit_cents, 0),
       currency: row.currency,
       timezone: row.timezone,
       depositLink: row.deposit_link,

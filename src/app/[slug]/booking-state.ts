@@ -11,12 +11,15 @@ export type SlotsResult =
   | { status: "error"; message: string };
 
 export interface Confirmation {
-  bookingId: string;
+  bookingIds: string[];
   businessName: string;
-  serviceName: string;
+  /** In the order they happen. */
+  serviceNames: string[];
   /** Who they're booked with; shown only when the business has several. */
   staffName: string;
   startsAt: string;
+  endsAt: string;
+  totalCents: number;
   depositCents: number;
   currency: string;
   timezone: string;

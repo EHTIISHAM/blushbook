@@ -16,6 +16,7 @@ import { IDLE, type ActionState } from "@/lib/action-state";
 import { WEEKDAYS } from "@/lib/format";
 import { normalizeSlug } from "@/lib/slug";
 import type { ProfileRow } from "@/lib/supabase/database.types";
+import type { Sector } from "@/lib/timing-rules";
 
 import {
   addFirstService,
@@ -175,10 +176,12 @@ function BusinessStep({
 function ServiceStep({
   currency,
   usualMinutes,
+  sector,
   onDone,
 }: {
   currency: string;
   usualMinutes: number;
+  sector: Sector | null;
   onDone: () => void;
 }) {
   const [state, formAction] = useActionState(addFirstService, IDLE);
@@ -188,7 +191,11 @@ function ServiceStep({
   if (mode === "scan") {
     return (
       <div className="grid gap-5">
-        <MenuScanner currency={currency} usualMinutes={usualMinutes} />
+        <MenuScanner
+          currency={currency}
+          usualMinutes={usualMinutes}
+          sector={sector}
+        />
         <button type="button" className="btn w-full" onClick={onDone}>
           Continue
         </button>
@@ -473,6 +480,7 @@ export function SetupWizard({
         <ServiceStep
           currency={profile.currency}
           usualMinutes={profile.default_duration_minutes}
+          sector={profile.business_sector}
           onDone={next}
         />
       )}

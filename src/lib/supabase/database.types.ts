@@ -5,6 +5,8 @@
  *   npx supabase gen types typescript --project-id <ref> > src/lib/supabase/database.types.ts
  */
 
+import type { Sector } from "@/lib/timing-rules";
+
 export type SubscriptionStatus =
   | "trialing"
   | "active"
@@ -33,6 +35,8 @@ export type ProfileRow = {
   no_show_policy: string | null;
   /** Length used by every service that has duration_is_default set. */
   default_duration_minutes: number;
+  /** Which rows of the timing rulebook her services are matched against. */
+  business_sector: Sector | null;
   subscription_status: SubscriptionStatus;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
@@ -65,6 +69,12 @@ export type ServiceRow = {
   duration_is_default: boolean;
   price_cents: number;
   deposit_cents: number;
+  /** Time kept free after the service. */
+  buffer_minutes: number;
+  /** Customer start times are offered every this many minutes. */
+  slot_step_minutes: number;
+  /** Why a suggested timing still needs her check; null once it's fine. */
+  timing_review_note: string | null;
   swatch: string;
   is_active: boolean;
   sort_order: number;
@@ -140,6 +150,10 @@ export type BookingRow = {
   client_email: string | null;
   starts_at: string;
   ends_at: string;
+  /** Time kept free after this booking. */
+  buffer_minutes: number;
+  /** ends_at plus the buffer; set by a trigger. */
+  blocked_until: string;
   status: BookingStatus;
   deposit_status: DepositStatus;
   service_name: string;

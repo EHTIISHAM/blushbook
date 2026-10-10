@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import { IDLE } from "@/lib/action-state";
 import { formatDuration } from "@/lib/format";
+import { SECTORS, SECTOR_DEFAULTS, isSector, type Sector } from "@/lib/timing-rules";
 
 import {
   importServices,
@@ -44,11 +45,15 @@ async function shrink(file: File): Promise<Blob> {
 export function MenuScanner({
   currency,
   usualMinutes,
+  sector: savedSector,
 }: {
   currency: string;
   usualMinutes: number;
+  /** Her business type, which picks the timing rules services are matched to. */
+  sector: Sector | null;
 }) {
   const [scan, scanAction, scanning] = useActionState(scanMenu, SCAN_IDLE);
+  const [sector, setSector] = useState<Sector | "">(savedSector ?? "");
   const [preparing, setPreparing] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
   // Each scan gets a number, so its review list starts fresh and an import
@@ -67,6 +72,7 @@ export function MenuScanner({
 
     try {
       const formData = new FormData();
+      formData.append("sector", sector);
       for (const file of files) {
         formData.append("photo", await shrink(file), "menu.jpg");
       }
@@ -93,6 +99,32 @@ export function MenuScanner({
         Upload a photo or screenshot of your rate card and we&rsquo;ll fill in
         your services. You check everything before it&rsquo;s added.
       </p>
+
+      <div className="mt-4">
+        <label className="label" htmlFor="scan-sector">
+          Type of business
+        </label>
+        <select
+          id="scan-sector"
+          className="field"
+          value={sector}
+          onChange={(event) =>
+            setSector(isSector(event.target.value) ? event.target.value : "")
+          }
+          disabled={busy}
+        >
+          <option value="">Not sure / other</option>
+          {SECTORS.map((value) => (
+            <option key={value} value={value}>
+              {SECTOR_DEFAULTS[value].label}
+            </option>
+          ))}
+        </select>
+        <p className="hint">
+          Where your rate card doesn&rsquo;t say how long something takes, we
+          suggest a time for your type of business.
+        </p>
+      </div>
 
       <label
         className={`btn btn-sm mt-4 cursor-pointer ${busy ? "pointer-events-none opacity-45" : ""}`}
@@ -156,8 +188,20 @@ interface Row {
   price: string;
   priceNote: string | null;
   minutes: string;
+  buffer: number;
+  step: number;
+  /** Where the suggested minutes came from, for the hint under the row. */
+  origin: string | null;
+  /** Why the timing needs her check. Cleared once she changes the minutes. */
+  review: string | null;
   include: boolean;
   duplicate: boolean;
+}
+
+function originOf(service: ScannedService): string | null {
+  if (service.source === "rate_card") return "Time from your rate card";
+  if (service.ruleName) return `Suggested time for ${service.ruleName.toLowerCase()}`;
+  return null;
 }
 
 function ImportButton({ count }: { count: number }) {
@@ -192,6 +236,10 @@ function ReviewList({
       price: service.price,
       priceNote: service.priceNote,
       minutes: service.minutes === null ? "" : String(service.minutes),
+      buffer: service.buffer,
+      step: service.step,
+      origin: originOf(service),
+      review: service.review,
       // Anything already on her list starts unticked so a re-scan
       // doesn't double the list.
       include: !service.duplicate,
@@ -223,8 +271,13 @@ function ReviewList({
       name: row.name,
       price_cents: row.price.trim() === "" ? null : Number(row.price),
       duration_minutes: row.minutes.trim() === "" ? null : Number(row.minutes),
+      buffer_minutes: row.buffer,
+      slot_step_minutes: row.step,
+      timing_review_note: row.review,
     })),
   );
+
+  const toCheck = chosen.filter((row) => row.review).length;
 
   // Group under the menu's own headings, keeping the menu's order.
   const sections: { title: string; rows: Row[] }[] = [];
@@ -259,6 +312,14 @@ function ReviewList({
         Blank minutes use your usual length ({formatDuration(usualMinutes)}).
         Prices are in {currency}.
       </p>
+
+      {toCheck > 0 && (
+        <p className="mt-3 rounded-[14px] bg-notice px-4 py-3 text-[14px]">
+          {toCheck} timing{toCheck === 1 ? " needs" : "s need"} checking. They
+          are marked below. Change the minutes, or add them as they are and
+          confirm them later on the Services page.
+        </p>
+      )}
 
       {menuCurrency && (
         <p className="mt-3 rounded-[14px] bg-notice px-4 py-3 text-[14px]">
@@ -326,17 +387,31 @@ function ReviewList({
                         value={row.minutes}
                         placeholder={String(usualMinutes)}
                         onChange={(event) =>
-                          update(row.key, { minutes: event.target.value })
+                          // Changing the time is her checking it.
+                          update(row.key, {
+                            minutes: event.target.value,
+                            review: null,
+                            origin: null,
+                          })
                         }
                         aria-label="Minutes (blank uses your usual length)"
                       />
                     </div>
                   </div>
 
-                  {(row.priceNote || row.duplicate) && (
+                  {(row.priceNote || row.duplicate || row.origin || row.buffer > 0) && (
                     <p className="hint ml-8">
                       {row.duplicate && "Already on your list. "}
-                      {row.priceNote && `Rate card says “${row.priceNote}”.`}
+                      {row.priceNote && `Rate card says “${row.priceNote}”. `}
+                      {row.origin && `${row.origin}. `}
+                      {row.buffer > 0 &&
+                        `${formatDuration(row.buffer)} kept free after it.`}
+                    </p>
+                  )}
+
+                  {row.review && (
+                    <p className="ml-8 mt-2 rounded-[10px] bg-notice px-3 py-2 text-[13px]">
+                      <strong>Check this time:</strong> {row.review}
                     </p>
                   )}
                 </li>

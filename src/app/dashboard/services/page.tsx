@@ -5,7 +5,13 @@ import { requireProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 import type { ServiceRow } from "@/lib/supabase/database.types";
 
-import { createService, deleteService, moveService, updateService } from "./actions";
+import {
+  confirmServiceTiming,
+  createService,
+  deleteService,
+  moveService,
+  updateService,
+} from "./actions";
 import { MenuScanner } from "./menu-scanner";
 import { ServiceForm } from "./service-form";
 import { UsualDurationForm } from "./usual-duration-form";
@@ -24,6 +30,7 @@ export default async function ServicesPage() {
     .order("created_at", { ascending: true });
 
   const services: ServiceRow[] = data ?? [];
+  const toCheck = services.filter((service) => service.timing_review_note);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
@@ -40,8 +47,51 @@ export default async function ServicesPage() {
           <MenuScanner
             currency={profile.currency}
             usualMinutes={profile.default_duration_minutes}
+            sector={profile.business_sector}
           />
         </div>
+
+        {toCheck.length > 0 && (
+          <section
+            aria-labelledby="check-h"
+            className="mt-6 rounded-[14px] bg-notice px-4 py-4"
+          >
+            <h2 id="check-h" className="text-[15px] font-semibold">
+              Check {toCheck.length} timing{toCheck.length === 1 ? "" : "s"}{" "}
+              before clients book
+            </h2>
+            <p className="mt-1 text-[14px]">
+              These times were suggested for you and vary a lot from business
+              to business. Confirm each one, or open Edit below to change it.
+            </p>
+            <ul className="mt-3 grid gap-2">
+              {toCheck.map((service) => (
+                <li
+                  key={service.id}
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[12px] bg-paper px-3 py-2"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-semibold">
+                      {service.name} &middot;{" "}
+                      {formatDuration(service.duration_minutes)}
+                      {service.buffer_minutes > 0 &&
+                        ` + ${formatDuration(service.buffer_minutes)} buffer`}
+                    </p>
+                    <p className="text-[13px] text-muted">
+                      {service.timing_review_note}
+                    </p>
+                  </div>
+                  <form action={confirmServiceTiming}>
+                    <input type="hidden" name="id" value={service.id} />
+                    <button type="submit" className="btn btn-sm">
+                      Looks right
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {error && (
           <p className="mt-6 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
@@ -74,10 +124,17 @@ export default async function ServicesPage() {
                         Hidden
                       </span>
                     )}
+                    {service.timing_review_note && (
+                      <span className="ml-2 rounded-full bg-notice px-2 py-0.5 align-middle text-[11px] font-bold">
+                        Check time
+                      </span>
+                    )}
                   </p>
                   <p className="text-[13px] text-muted">
                     {formatDuration(service.duration_minutes)}
                     {service.duration_is_default && " (usual)"}
+                    {service.buffer_minutes > 0 &&
+                      ` + ${formatDuration(service.buffer_minutes)} buffer`}
                     {/* Deposits are switched off for now: clients pay at the business.
                     {" · "}
                     {formatMoney(service.deposit_cents, profile.currency)}{" "}

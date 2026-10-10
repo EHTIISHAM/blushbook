@@ -12,6 +12,14 @@ import {
 import { requireProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 import { SWATCHES } from "@/lib/swatches";
+import {
+  SECTOR_DEFAULTS,
+  isSector,
+  suggestTiming,
+  type Confidence,
+  type Sector,
+  type TimingSource,
+} from "@/lib/timing-rules";
 
 /** Prices arrive as decimal currency and are stored as whole cents. */
 const money = z
@@ -26,6 +34,14 @@ const minutes = z.coerce
   .min(5, "Minimum is 5 minutes.")
   .max(1440, "Maximum is 24 hours.");
 
+const bufferMinutes = z.coerce
+  .number<number>()
+  .int("Use whole minutes for the buffer.")
+  .min(0, "The buffer can't be negative.")
+  .max(240, "Keep the buffer under 4 hours.");
+
+const SLOT_STEPS = [5, 10, 15, 20, 30, 60] as const;
+
 const serviceSchema = z
   .object({
     name: z
@@ -35,6 +51,7 @@ const serviceSchema = z
       .max(80, "Keep the name under 80 characters."),
     // Blank means "my usual length"; the database fills in the number.
     duration_minutes: minutes.nullable(),
+    buffer_minutes: bufferMinutes,
     price_cents: money,
     // Deposits are switched off for now: clients pay at the business.
     // deposit_cents: money,
@@ -54,6 +71,7 @@ function parseService(formData: FormData) {
   return serviceSchema.safeParse({
     name: formData.get("name"),
     duration_minutes: duration || null,
+    buffer_minutes: String(formData.get("buffer_minutes") ?? "").trim() || 0,
     price_cents: formData.get("price"),
     // deposit_cents: formData.get("deposit"),
     swatch: formData.get("swatch"),
@@ -63,13 +81,15 @@ function parseService(formData: FormData) {
 
 type ParsedService = z.infer<typeof serviceSchema>;
 
-/** A blank length becomes "follow my usual length". */
+/** A blank length becomes "follow my usual length". Saving the form counts
+ *  as her checking the timing, so any review flag is cleared. */
 function toRow(service: ParsedService, usualMinutes: number) {
   const { duration_minutes, ...rest } = service;
   return {
     ...rest,
     duration_is_default: duration_minutes === null,
     duration_minutes: duration_minutes ?? usualMinutes,
+    timing_review_note: null,
   };
 }
 
@@ -101,6 +121,9 @@ export async function createService(
   const { error } = await supabase.from("services").insert({
     ...toRow(parsed.data, profile.default_duration_minutes),
     profile_id: profile.id,
+    slot_step_minutes: profile.business_sector
+      ? SECTOR_DEFAULTS[profile.business_sector].step
+      : 15,
     sort_order: (last?.sort_order ?? -1) + 1,
   });
 
@@ -164,6 +187,24 @@ export async function deleteService(formData: FormData): Promise<void> {
     .eq("profile_id", profile.id);
 
   revalidatePath("/dashboard/services");
+}
+
+/** She has looked at a suggested timing and it's right as it is. */
+export async function confirmServiceTiming(formData: FormData): Promise<void> {
+  const id = z.uuid().safeParse(formData.get("id"));
+  if (!id.success) return;
+
+  const profile = await requireProfile();
+  const supabase = await createClient();
+
+  await supabase
+    .from("services")
+    .update({ timing_review_note: null })
+    .eq("id", id.data)
+    .eq("profile_id", profile.id);
+
+  revalidatePath("/dashboard/services");
+  revalidatePath("/dashboard/settings/share");
 }
 
 export async function moveService(formData: FormData): Promise<void> {
@@ -260,6 +301,14 @@ export interface ScannedService {
   priceNote: string | null;
   /** Null means "use my usual length". */
   minutes: number | null;
+  buffer: number;
+  step: number;
+  confidence: Confidence;
+  source: TimingSource;
+  /** The rulebook service the timing was taken from. */
+  ruleName: string | null;
+  /** Why she should check this timing before clients book it. */
+  review: string | null;
   /** A service with this name is already on her list. */
   duplicate: boolean;
 }
@@ -300,8 +349,20 @@ export async function scanMenu(
     }
   }
 
+  const rawSector = String(formData.get("sector") ?? "");
+  const sector: Sector | null = isSector(rawSector) ? rawSector : null;
+
   const profile = await requireProfile();
   const supabase = await createClient();
+
+  // Remembered on her profile so the next scan, and services she adds by
+  // hand, start from the same rulebook rows.
+  if (sector !== profile.business_sector) {
+    await supabase
+      .from("profiles")
+      .update({ business_sector: sector })
+      .eq("id", profile.id);
+  }
 
   const photos: MenuPhoto[] = await Promise.all(
     files.map(async (file) => ({
@@ -337,21 +398,29 @@ export async function scanMenu(
   const services = menu.items
     .map((item): ScannedService => {
       const name = item.name.trim().slice(0, 80);
+      const section = item.section.trim();
       const length = item.duration_minutes;
-
-      return {
-        section: item.section.trim(),
+      const timing = suggestTiming({
         name,
-        price:
-          item.price !== null && item.price >= 0 ? item.price.toFixed(2) : "",
-        priceNote: item.price_note?.trim() || null,
-        minutes:
+        section,
+        statedMinutes:
           length !== null &&
           Number.isInteger(length) &&
           length >= 5 &&
           length <= 1440
             ? length
             : null,
+        sector,
+        usualMinutes: profile.default_duration_minutes,
+      });
+
+      return {
+        section,
+        name,
+        price:
+          item.price !== null && item.price >= 0 ? item.price.toFixed(2) : "",
+        priceNote: item.price_note?.trim() || null,
+        ...timing,
         duplicate: taken.has(name.toLowerCase()),
       };
     })
@@ -395,6 +464,13 @@ const importSchema = z
         .min(5, "Minimum is 5 minutes")
         .max(1440, "Maximum is 24 hours")
         .nullable(),
+      buffer_minutes: z
+        .number()
+        .int("Use whole minutes for the buffer")
+        .min(0, "The buffer can't be negative")
+        .max(240, "Keep the buffer under 4 hours"),
+      slot_step_minutes: z.union(SLOT_STEPS.map((step) => z.literal(step))),
+      timing_review_note: z.string().trim().max(300).nullable(),
     }),
   )
   .min(1, "Tick at least one service to add")
@@ -449,6 +525,7 @@ export async function importServices(
       ...service,
       profile_id: profile.id,
       deposit_cents: 0,
+      timing_review_note: service.timing_review_note || null,
       duration_is_default: duration_minutes === null,
       duration_minutes: duration_minutes ?? profile.default_duration_minutes,
       swatch: SWATCHES[sections.indexOf(section) % SWATCHES.length],
@@ -463,6 +540,7 @@ export async function importServices(
 
   const count = parsed.data.length;
   revalidatePath("/dashboard/services");
+  revalidatePath("/dashboard/settings/share");
   revalidatePath("/welcome");
   return {
     status: "success",

@@ -107,6 +107,25 @@ export function ServiceForm({
           />
         </div>
 
+        <div>
+          <label className="label" htmlFor={`buffer-${service?.id ?? "new"}`}>
+            Buffer after
+          </label>
+          <input
+            id={`buffer-${service?.id ?? "new"}`}
+            name="buffer_minutes"
+            className="field"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={240}
+            step={5}
+            placeholder="0"
+            defaultValue={service?.buffer_minutes || ""}
+            aria-describedby={`duration-hint-${service?.id ?? "new"}`}
+          />
+        </div>
+
         {/* Deposits are switched off for now: clients pay at the business.
         <div>
           <label
@@ -136,7 +155,8 @@ export function ServiceForm({
         className="hint -mt-2"
       >
         Leave minutes blank to use your usual length (
-        {formatDuration(usualMinutes)}).
+        {formatDuration(usualMinutes)}). The buffer is time kept free after
+        it for clean-up; clients don&rsquo;t see it.
       </p>
 
       <fieldset className="border-0 p-0">

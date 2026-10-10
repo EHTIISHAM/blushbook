@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { requireProfile } from "@/lib/profile";
+import { createClient } from "@/lib/supabase/server";
 
 import { CopyField } from "./copy-field";
 
@@ -8,6 +10,16 @@ export const metadata: Metadata = { title: "Share" };
 
 export default async function SharePage() {
   const profile = await requireProfile();
+  const supabase = await createClient();
+
+  // Suggested timings she hasn't checked yet: worth doing before the link
+  // goes out, since clients book against them.
+  const { count: toCheck } = await supabase
+    .from("services")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", profile.id)
+    .eq("is_active", true)
+    .not("timing_review_note", "is", null);
 
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://booknbloom.app")
     .replace(/\/$/, "");
@@ -28,6 +40,16 @@ export default async function SharePage() {
         One link for every client. Add it to your website and profiles, and
         send it to anyone who asks.
       </p>
+
+      {!!toCheck && (
+        <p className="mt-6 rounded-[14px] bg-notice px-4 py-3 text-[15px]">
+          {toCheck} service time{toCheck === 1 ? " still needs" : "s still need"}{" "}
+          checking before you share this.{" "}
+          <Link href="/dashboard/services" className="font-semibold">
+            Check them on Services
+          </Link>
+        </p>
+      )}
 
       <div className="card mt-6 grid gap-7">
         <CopyField label="Your booking link" value={bookingUrl} />

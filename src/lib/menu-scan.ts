@@ -41,7 +41,7 @@ const menuSchema = z.object({
 
 export type ScannedMenu = z.infer<typeof menuSchema>;
 
-const INSTRUCTIONS = `These are photos of a beauty salon's price list. List every bookable service on it, in the order it appears.
+const INSTRUCTIONS = `These are photos of a business's price list or rate card. List every bookable service on it, in the order it appears.
 
 - Names: use the wording on the menu, tidied into title case. When the same item appears under two headings (for example "Eyebrows" under both Threading and Waxing), make each name say which one it is, like "Eyebrow Threading" and "Eyebrow Wax". Put helpful qualifiers that are printed next to a name, such as "(full head)", into the name. Keep names under 80 characters.
 - Prices: give the lowest price that applies. When the menu shows a range ("£45-£55"), alternatives ("£25/30"), a "from" marker on the item or its whole section, or a word instead of a number ("FREE", "POA"), still give the lowest number (FREE is 0, POA is null) and copy what the menu says into price_note. Otherwise price_note is null.

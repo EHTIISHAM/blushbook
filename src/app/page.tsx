@@ -137,7 +137,7 @@ export default function HomePage() {
             <h1>
               One booking link.
               <br />
-              Clearer business insights.
+              <span className="font-extrabold text-accent">Clearer business insights.</span>
             </h1>
             <p className="lede">
               Clients book your services and choose a time. You track revenue,

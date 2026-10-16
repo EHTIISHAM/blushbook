@@ -14,7 +14,7 @@ const planSchema = z.enum(["monthly", "annual"]);
 const UNAVAILABLE: ActionState = {
   status: "error",
   message:
-    "Payments aren't available just yet. Please try again shortly, and your bookings stay safe in the meantime.",
+    "Payments aren't available just yet. Please try again shortly; your setup is saved.",
 };
 
 async function origin(): Promise<string> {
@@ -64,7 +64,7 @@ export async function startCheckout(
       subscription_data: { metadata: { profile_id: profile.id } },
       allow_promotion_codes: true,
       success_url: `${base}/api/stripe/return?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${base}/dashboard/settings/billing`,
+      cancel_url: `${base}/dashboard`,
     });
     url = session.url;
   } catch (error) {

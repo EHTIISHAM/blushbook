@@ -1,9 +1,9 @@
 /** Swatches drawn from the Bloom palette, distinct enough to tell services
  *  and staff apart at a glance. */
 export const SWATCHES = [
-  "#C2255C",
-  "#8F1A43",
-  "#FF9EC0",
+  "#D6006E",
+  "#A8004F",
+  "#FF7AB6",
   "#3A2C48",
   "#17604A",
   "#9C7BB5",

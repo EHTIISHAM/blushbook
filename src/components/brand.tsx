@@ -18,8 +18,8 @@ export function BrandMark({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#C2255C" />
-          <stop offset="1" stopColor="#8F1A43" />
+          <stop offset="0" stopColor="#D6006E" />
+          <stop offset="1" stopColor="#A8004F" />
         </linearGradient>
       </defs>
       <path
@@ -34,7 +34,7 @@ export function BrandMark({ className }: { className?: string }) {
       />
       <path
         fill="none"
-        stroke="#C2255C"
+        stroke="#D6006E"
         strokeWidth="6.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -47,7 +47,7 @@ export function BrandMark({ className }: { className?: string }) {
         height="17"
         rx="3.5"
         fill="#F7F6F8"
-        stroke="#8F1A43"
+        stroke="#A8004F"
         strokeWidth="2"
       />
       <rect
@@ -57,7 +57,7 @@ export function BrandMark({ className }: { className?: string }) {
         height="17"
         rx="3.5"
         fill="#F7F6F8"
-        stroke="#8F1A43"
+        stroke="#A8004F"
         strokeWidth="2"
       />
     </svg>

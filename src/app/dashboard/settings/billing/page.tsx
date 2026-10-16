@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { accessFor } from "@/lib/billing";
-import { GRACE_DAYS } from "@/lib/plans";
 import { requireProfile } from "@/lib/profile";
 
 import { ManageBilling } from "./manage-billing";
@@ -11,16 +10,14 @@ export const metadata: Metadata = { title: "Billing" };
 
 export default async function BillingPage() {
   const profile = await requireProfile();
-  const access = accessFor(profile, new Date());
+  const access = accessFor(profile);
 
   const status =
     access.state === "paid"
       ? access.pastDue
         ? "Your last payment didn't go through. Update your card to keep your dashboard open."
         : "Your plan is active. Thank you!"
-      : access.state === "grace"
-        ? `Your bookings have started. You have ${access.daysLeft} day${access.daysLeft === 1 ? "" : "s"} left to choose a plan.`
-        : `Free while you set up. Once bookings start, you have ${GRACE_DAYS} days to choose a plan.`;
+      : "Choose a plan to put your booking page live.";
 
   return (
     <div className="max-w-[720px]">

@@ -9,7 +9,7 @@ import {
 } from "@/components/feature-scenes";
 import { PhoneDemo, type DemoDay } from "@/components/phone-demo";
 import { formatMoney } from "@/lib/format";
-import { ANNUAL_SAVING_CENTS, GRACE_DAYS, PLANS } from "@/lib/plans";
+import { ANNUAL_SAVING_CENTS, PLANS } from "@/lib/plans";
 
 import "./landing.css";
 
@@ -287,9 +287,9 @@ export default function HomePage() {
           <details>
             <summary>When do I start paying?</summary>
             <p>
-              Setting up your page and sharing your link costs nothing. Once
-              bookings start coming in, you have {GRACE_DAYS} days to choose
-              monthly or annual and keep your dashboard open.
+              When you set up your business. Add your services and hours,
+              then choose monthly or annual and your booking link goes live
+              straight away.
             </p>
           </details>
 

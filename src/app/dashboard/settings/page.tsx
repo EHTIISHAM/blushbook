@@ -8,10 +8,6 @@ export const metadata: Metadata = { title: "Settings" };
 
 function planLine(access: ReturnType<typeof accessFor>): string {
   switch (access.state) {
-    case "free":
-      return "Free while you set up";
-    case "grace":
-      return `Free period ends in ${access.daysLeft} day${access.daysLeft === 1 ? "" : "s"}`;
     case "paid":
       return access.pastDue ? "Payment needs attention" : "Plan active";
     case "locked":
@@ -22,7 +18,7 @@ function planLine(access: ReturnType<typeof accessFor>): string {
 export default async function SettingsPage() {
   const profile = await requireProfile();
   const { email } = await getSessionProfile();
-  const access = accessFor(profile, new Date());
+  const access = accessFor(profile);
 
   const sections = [
     {

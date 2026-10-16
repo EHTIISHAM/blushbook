@@ -1,3 +1,4 @@
+import { accessFor } from "@/lib/billing";
 import { requireProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 
@@ -7,7 +8,8 @@ import { SetupWizard } from "./setup-wizard";
  * Resume wherever she left off. Every step writes as it completes, so a
  * half-finished setup survives closing the tab, and someone who already has
  * services and hours lands on the finished screen rather than being walked
- * through it again.
+ * through it again. Setup ends on choosing a plan, which is skipped once she
+ * is paying.
  */
 function startingStep(input: {
   hasName: boolean;
@@ -17,7 +19,7 @@ function startingStep(input: {
   if (!input.hasName) return 0;
   if (input.services === 0) return 1;
   if (input.availability === 0) return 2;
-  return 3; // past the last step: the finished screen
+  return 3; // the plan step, or the finished screen once paid
 }
 
 export default async function WelcomePage() {
@@ -41,6 +43,7 @@ export default async function WelcomePage() {
   return (
     <SetupWizard
       profile={profile}
+      paid={accessFor(profile).state === "paid"}
       startStep={startingStep({
         hasName: profile.business_name.trim().length > 0,
         services: services.count ?? 0,

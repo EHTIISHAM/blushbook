@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import {
   findFollowUps,
@@ -182,13 +181,6 @@ export default async function BookingsPage({
         </p>
       </div>
     );
-  }
-
-  // A brand-new account lands here straight from its first sign-in. Send it
-  // through setup once; naming the business is what marks that as done, so
-  // this cannot bounce anyone back after they have started.
-  if (!profile.business_name.trim()) {
-    redirect("/welcome");
   }
 
   const supabase = await createClient();

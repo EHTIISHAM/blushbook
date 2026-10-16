@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Palette — "Bloom". One rose accent on a cool, faintly violet off-white,
+   Palette — "Bloom". One bold pink accent on a cool, faintly violet off-white,
    with Night for dark tiles, Leaf for success and Miss for alerts. Every text
    pairing below clears 4.5:1.
    --------------------------------------------------------------------------- */
@@ -13,13 +13,13 @@
   --muted: #57525f;       /* Muted text: secondary copy */
   --line: #e2dfe6;        /* Line: borders */
   --bubble: #efedf1;      /* Sunk: inset rows, tab track, quiet heatmap cells */
-  --tint: #fce7ef;        /* Bloom soft: analytics tiles, selected service, step circles */
-  --notice: #fce7ef;      /* Notices and banners share Bloom soft */
-  --accent: #c2255c;      /* Bloom: buttons, eyebrows, links */
-  --accent-deep: #8f1a43; /* Bloom deep: button hover, step numbers */
-  --accent-soft: #ff9ec0; /* Petal: accent on dark tiles, pricing badge */
+  --tint: #ffedf5;        /* Bloom soft: analytics tiles, selected service, step circles */
+  --notice: #ffedf5;      /* Notices and banners share Bloom soft */
+  --accent: #d6006e;      /* Bloom: buttons, eyebrows, links */
+  --accent-deep: #a8004f; /* Bloom deep: button hover, step numbers */
+  --accent-soft: #ff7ab6; /* Petal: accent on dark tiles, pricing badge */
   --accent-ink: #ffffff;
-  --highlight: #ff9ec0;   /* Petal */
+  --highlight: #ff7ab6;   /* Petal */
   --frame: #1c1424;       /* Night: dark tiles, device frames */
   --night: #1c1424;       /* Night: hero feature tile, pricing card */
   --night-2: #2a1f35;     /* Night 2: chat panel */
@@ -47,11 +47,11 @@
   --bubble: #3a2c48;
   --tint: #3d1f30;
   --notice: #3d1f30;
-  --accent: #ff9ec0;
+  --accent: #ff7ab6;
   --accent-deep: #ffc2d8;
-  --accent-soft: #ff9ec0;
+  --accent-soft: #ff7ab6;
   --accent-ink: #1c1424;
-  --highlight: #ff9ec0;
+  --highlight: #ff7ab6;
   --frame: #120c18;
   --night: #120c18;
   --night-2: #2a1f35;
@@ -258,6 +258,38 @@
     border-color: var(--accent);
     outline: none;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  /* A number field that carries its unit inside it ("USD" before a price,
+     "min" after a time), so price and time can't be mistaken for each other. */
+  .unit-field {
+    position: relative;
+    display: block;
+  }
+
+  .unit-field > .field {
+    padding-right: 50px;
+  }
+
+  .unit-field > .unit {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .unit-field.unit-before > .field {
+    padding-right: 14px;
+    padding-left: 54px;
+  }
+
+  .unit-field.unit-before > .unit {
+    right: auto;
+    left: 14px;
   }
 
   /* A service's colour swatch. Also used as a list bullet. */

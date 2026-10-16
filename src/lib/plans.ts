@@ -35,6 +35,3 @@ export const PLANS: Record<PlanKey, Plan> = {
 /** What a year costs on the monthly plan, minus the annual price. */
 export const ANNUAL_SAVING_CENTS =
   PLANS.monthly.priceCents * 12 - PLANS.annual.priceCents;
-
-/** Days a business keeps full access after its first booking before paying. */
-export const GRACE_DAYS = 3;

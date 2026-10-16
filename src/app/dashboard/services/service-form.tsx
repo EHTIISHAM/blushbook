@@ -64,66 +64,84 @@ export function ServiceForm({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
+          <label className="label" htmlFor={`price-${service?.id ?? "new"}`}>
+            Price
+          </label>
+          <span className="unit-field unit-before">
+            <span className="unit" aria-hidden>
+              {currency}
+            </span>
+            <input
+              id={`price-${service?.id ?? "new"}`}
+              name="price"
+              className="field"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step="0.01"
+              placeholder="60.00"
+              defaultValue={service ? centsToInput(service.price_cents) : ""}
+              aria-label={`Price in ${currency}`}
+              required
+            />
+          </span>
+        </div>
+
+        <div>
           <label
             className="label"
             htmlFor={`duration-${service?.id ?? "new"}`}
           >
-            Minutes
+            How long it takes
           </label>
-          <input
-            id={`duration-${service?.id ?? "new"}`}
-            name="duration_minutes"
-            className="field"
-            type="number"
-            inputMode="numeric"
-            min={5}
-            max={1440}
-            step={5}
-            placeholder={String(usualMinutes)}
-            defaultValue={
-              service && !service.duration_is_default
-                ? service.duration_minutes
-                : ""
-            }
-            aria-describedby={`duration-hint-${service?.id ?? "new"}`}
-          />
-        </div>
-
-        <div>
-          <label className="label" htmlFor={`price-${service?.id ?? "new"}`}>
-            Price ({currency})
-          </label>
-          <input
-            id={`price-${service?.id ?? "new"}`}
-            name="price"
-            className="field"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="0.01"
-            placeholder="60.00"
-            defaultValue={service ? centsToInput(service.price_cents) : ""}
-            required
-          />
+          <span className="unit-field">
+            <input
+              id={`duration-${service?.id ?? "new"}`}
+              name="duration_minutes"
+              className="field"
+              type="number"
+              inputMode="numeric"
+              min={5}
+              max={1440}
+              step={5}
+              placeholder={String(usualMinutes)}
+              defaultValue={
+                service && !service.duration_is_default
+                  ? service.duration_minutes
+                  : ""
+              }
+              aria-label="How long it takes, in minutes"
+              aria-describedby={`duration-hint-${service?.id ?? "new"}`}
+            />
+            <span className="unit" aria-hidden>
+              min
+            </span>
+          </span>
         </div>
 
         <div>
           <label className="label" htmlFor={`buffer-${service?.id ?? "new"}`}>
-            Buffer after
+            Break after
           </label>
-          <input
-            id={`buffer-${service?.id ?? "new"}`}
-            name="buffer_minutes"
-            className="field"
-            type="number"
-            inputMode="numeric"
-            min={0}
-            max={240}
-            step={5}
-            placeholder="0"
-            defaultValue={service?.buffer_minutes || ""}
-            aria-describedby={`duration-hint-${service?.id ?? "new"}`}
-          />
+          <span className="unit-field">
+            <input
+              id={`buffer-${service?.id ?? "new"}`}
+              name="buffer_minutes"
+              className="field"
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={240}
+              step={5}
+              placeholder="0"
+              defaultValue={service?.buffer_minutes || ""}
+              aria-label="Break after, in minutes"
+              aria-describedby={`duration-hint-${service?.id ?? "new"}`}
+            />
+            <span className="unit" aria-hidden>
+              min
+            </span>
+          </span>
         </div>
 
         {/* Deposits are switched off for now: clients pay at the business.
@@ -154,8 +172,8 @@ export function ServiceForm({
         id={`duration-hint-${service?.id ?? "new"}`}
         className="hint -mt-2"
       >
-        Leave minutes blank to use your usual length (
-        {formatDuration(usualMinutes)}). The buffer is time kept free after
+        Leave &ldquo;How long it takes&rdquo; blank to use your usual length (
+        {formatDuration(usualMinutes)}). The break is time kept free after
         it for clean-up; clients don&rsquo;t see it.
       </p>
 

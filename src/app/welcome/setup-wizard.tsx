@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
+import { PlanPicker } from "@/app/dashboard/settings/billing/plan-picker";
 import { MenuScanner } from "@/app/dashboard/services/menu-scanner";
 import { UsualDurationPicker } from "@/components/usual-duration-picker";
 import { IDLE, type ActionState } from "@/lib/action-state";
@@ -24,7 +25,9 @@ import {
   saveStudio,
 } from "./actions";
 
-const STEPS = ["Your business", "Your services", "Your hours"];
+const SETUP_STEPS = ["Your business", "Your services", "Your hours"];
+/** Paying is the last step of setup; there is no free period. */
+const ALL_STEPS = [...SETUP_STEPS, "Your plan"];
 
 const CURRENCIES = [
   "USD",
@@ -368,6 +371,23 @@ function HoursStep({ onDone }: { onDone: () => void }) {
 
 /* ------------------------------------------------------------------ */
 
+function PlanStep({ bookingUrl }: { bookingUrl: string }) {
+  return (
+    <div>
+      <p className="text-[15px] text-muted">
+        Your page is set up. Choose a plan and your booking link,{" "}
+        <span className="font-semibold text-ink">{bookingUrl.replace(/^https?:\/\//, "")}</span>,
+        goes live straight away.
+      </p>
+      <div className="mt-6">
+        <PlanPicker />
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
 function DoneStep({ bookingUrl }: { bookingUrl: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -422,11 +442,14 @@ function DoneStep({ bookingUrl }: { bookingUrl: string }) {
 
 export function SetupWizard({
   profile,
+  paid,
   startStep,
   bookingHost,
   bookingUrl,
 }: {
   profile: ProfileRow;
+  /** Already on an active plan, so the plan step is skipped. */
+  paid: boolean;
   startStep: number;
   bookingHost: string;
   bookingUrl: string;
@@ -434,6 +457,7 @@ export function SetupWizard({
   const [step, setStep] = useState(startStep);
   const next = useCallback(() => setStep((current) => current + 1), []);
 
+  const STEPS = paid ? SETUP_STEPS : ALL_STEPS;
   const isDone = step >= STEPS.length;
 
   return (
@@ -485,6 +509,7 @@ export function SetupWizard({
         />
       )}
       {step === 2 && <HoursStep onDone={next} />}
+      {step === 3 && !paid && <PlanStep bookingUrl={bookingUrl} />}
       {isDone && <DoneStep bookingUrl={bookingUrl} />}
 
       {!isDone && step > 0 && (

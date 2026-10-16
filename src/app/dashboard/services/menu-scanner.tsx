@@ -309,8 +309,8 @@ function ReviewList({
       </div>
 
       <p className="hint">
-        Blank minutes use your usual length ({formatDuration(usualMinutes)}).
-        Prices are in {currency}.
+        Each row is the name, the price ({currency}) and how long it takes
+        (min). Blank times use your usual length ({formatDuration(usualMinutes)}).
       </p>
 
       {toCheck > 0 && (
@@ -354,9 +354,9 @@ function ReviewList({
                       aria-label={`Add ${row.name || "this service"}`}
                     />
 
-                    <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1fr)_110px_90px]">
+                    <div className="grid min-w-0 flex-1 grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_140px_110px]">
                       <input
-                        className="field"
+                        className="field col-span-2 sm:col-span-1"
                         value={row.name}
                         maxLength={80}
                         onChange={(event) =>
@@ -364,38 +364,48 @@ function ReviewList({
                         }
                         aria-label="Service name"
                       />
-                      <input
-                        className="field"
-                        type="number"
-                        inputMode="decimal"
-                        min={0}
-                        step="0.01"
-                        value={row.price}
-                        placeholder="Price"
-                        onChange={(event) =>
-                          update(row.key, { price: event.target.value })
-                        }
-                        aria-label={`Price in ${currency}`}
-                      />
-                      <input
-                        className="field"
-                        type="number"
-                        inputMode="numeric"
-                        min={5}
-                        max={1440}
-                        step={5}
-                        value={row.minutes}
-                        placeholder={String(usualMinutes)}
-                        onChange={(event) =>
-                          // Changing the time is her checking it.
-                          update(row.key, {
-                            minutes: event.target.value,
-                            review: null,
-                            origin: null,
-                          })
-                        }
-                        aria-label="Minutes (blank uses your usual length)"
-                      />
+                      <span className="unit-field unit-before">
+                        <span className="unit" aria-hidden>
+                          {currency}
+                        </span>
+                        <input
+                          className="field"
+                          type="number"
+                          inputMode="decimal"
+                          min={0}
+                          step="0.01"
+                          value={row.price}
+                          placeholder="Price"
+                          onChange={(event) =>
+                            update(row.key, { price: event.target.value })
+                          }
+                          aria-label={`Price in ${currency}`}
+                        />
+                      </span>
+                      <span className="unit-field">
+                        <input
+                          className="field"
+                          type="number"
+                          inputMode="numeric"
+                          min={5}
+                          max={1440}
+                          step={5}
+                          value={row.minutes}
+                          placeholder={String(usualMinutes)}
+                          onChange={(event) =>
+                            // Changing the time is her checking it.
+                            update(row.key, {
+                              minutes: event.target.value,
+                              review: null,
+                              origin: null,
+                            })
+                          }
+                          aria-label="How long it takes, in minutes (blank uses your usual length)"
+                        />
+                        <span className="unit" aria-hidden>
+                          min
+                        </span>
+                      </span>
                     </div>
                   </div>
 

@@ -9,7 +9,8 @@ import { stripe, syncSubscription } from "@/lib/stripe";
  * Where Stripe Checkout sends the business after paying.
  *
  * The webhook may land a moment after this redirect, so the subscription is
- * synced here too; otherwise she would come back to a still-locked dashboard.
+ * synced here too; otherwise she would come back to a still-locked dashboard
+ * and a paused booking page.
  * The session must belong to the signed-in profile.
  */
 export async function GET(request: NextRequest) {
@@ -32,5 +33,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/dashboard/settings/billing`);
+  return NextResponse.redirect(`${origin}/dashboard`);
 }

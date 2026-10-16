@@ -75,7 +75,7 @@ export default async function ServicesPage() {
                       {service.name} &middot;{" "}
                       {formatDuration(service.duration_minutes)}
                       {service.buffer_minutes > 0 &&
-                        ` + ${formatDuration(service.buffer_minutes)} buffer`}
+                        ` + ${formatDuration(service.buffer_minutes)} break`}
                     </p>
                     <p className="text-[13px] text-muted">
                       {service.timing_review_note}
@@ -130,21 +130,29 @@ export default async function ServicesPage() {
                       </span>
                     )}
                   </p>
-                  <p className="text-[13px] text-muted">
-                    {formatDuration(service.duration_minutes)}
-                    {service.duration_is_default && " (usual)"}
-                    {service.buffer_minutes > 0 &&
-                      ` + ${formatDuration(service.buffer_minutes)} buffer`}
+                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-[14px]">
+                    <span>
+                      <span className="text-muted">Price </span>
+                      <strong>{formatMoney(service.price_cents, profile.currency)}</strong>
+                    </span>
+                    <span>
+                      <span className="text-muted">Time </span>
+                      <strong>{formatDuration(service.duration_minutes)}</strong>
+                      {service.duration_is_default && (
+                        <span className="text-muted"> (usual)</span>
+                      )}
+                      {service.buffer_minutes > 0 && (
+                        <span className="text-muted">
+                          {` + ${formatDuration(service.buffer_minutes)} break`}
+                        </span>
+                      )}
+                    </span>
                     {/* Deposits are switched off for now: clients pay at the business.
                     {" · "}
                     {formatMoney(service.deposit_cents, profile.currency)}{" "}
                     deposit */}
                   </p>
                 </div>
-
-                <span className="font-display text-[15px] leading-none">
-                  {formatMoney(service.price_cents, profile.currency)}
-                </span>
 
                 <span className="flex flex-col gap-1">
                   <form action={moveService}>

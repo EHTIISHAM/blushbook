@@ -62,7 +62,10 @@ export function ServiceForm({
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      {/* Two columns even on wide screens: the add form sits in a narrow side
+          card, where three left the labels wrapping. items-end keeps the
+          boxes level if a label still wraps on a small phone. */}
+      <div className="grid grid-cols-2 items-end gap-4">
         <div>
           <label className="label" htmlFor={`price-${service?.id ?? "new"}`}>
             Price
